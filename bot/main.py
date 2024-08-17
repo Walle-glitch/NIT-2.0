@@ -1,4 +1,4 @@
-import os , discord , time , asyncio , sys , Bot , asyncio
+import os , discord , time , asyncio , sys , bot , asyncio
 # Bot is BOT-INFO, Token key etc in that modul. 
 #
 from urllib.request import urlopen
@@ -47,5 +47,5 @@ async def on_message(message):
 #    await channel.send(message)
 #
 # this line authenticats the bot, The Token string coms from the module bot. 
-client.run(token.DISCORD_TOKEN())
+client.run(bot.DISCORD_TOKEN())
 #
