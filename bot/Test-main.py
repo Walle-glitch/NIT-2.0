@@ -10,7 +10,7 @@ import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 # Setup för intents
 intents = discord.Intents.all()
 intents.message_content = True
-client = discord.Client(intents=intents)
+#client = discord.Client(intents=intents)
 # Skapa en bot med ett specifikt kommando-prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
@@ -65,4 +65,4 @@ async def reboot_error(ctx, error):
         await ctx.send("Du har inte behörighet att använda detta kommando.")
 
 # Kör boten med token från modulen bot
-client.run(botConfig._Bot_Token())
+bot.run(botConfig._Bot_Token())
