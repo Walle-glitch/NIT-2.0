@@ -5,22 +5,22 @@ import subprocess
 import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
-import botConfig  # Bot-token och annan konfiguration kommer från denna modul
+import botConfig  # Bot-token and Bot info exists Localy on the server, This Mod contains that info. 
+import _Bot_Modul # use this if you want to write functions. 
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-verson_nr = "Current Version is 24/08/17.10"
+verson_nr = "Current Version is 24/08/17.11"
 
-# Setup för intents
+# Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
-#client = discord.Client(intents=intents)
-# Skapa en bot med ett specifikt kommando-prefix
+# The following line makes sure all commands in the server neds to use "./" in fromt of the command
 bot = commands.Bot(command_prefix="./", intents=intents)
 
-# Full Access to the Bot... 
+# The wollowing roles have access to "Sudo commands" 
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
 
-# Bekräftelse att boten är online
+# a verification on the server that the bot is alive. 
 @bot.event
 async def on_ready():
     print(f'Vi har loggat in som {bot.user}')
@@ -33,7 +33,12 @@ async def on_ready():
 #    await ctx.send(Reply)  # This sends the reply
 #
 
-# Kommandon som användaren kan använda
+# Every user can use the following commands. 
+@bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
+async def help(ctx):
+    Reply = 'you can use the following: ./git , ./Hello , ./about ./ping [and a IP if you wish] The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
+    await ctx.send(Reply)
+    
 @bot.command()
 async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
@@ -56,22 +61,22 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     används 8.8.8.8 som standard.
     """
     try:
-        # Kör ping-kommandot till den angivna IP-adressen (eller standard: 8.8.8.8)
+        # Do the ping Command + a IP addr (If no IP is specified it will default to 8.8.8.8)
         result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
         
-        # Skicka utdata från ping-kommandot till Discord-kanalen
+        # Sends The output of Ping to the server.
         await ctx.send(f"Ping resultat för {ip}:\n```\n{result.stdout}\n```")
     except subprocess.CalledProcessError as e:
-        # Hantera fel och skicka ett meddelande om något går fel
-        await ctx.send(f"Fel vid körning av ping:\n```\n{e.stderr}\n```")
+        # If somthing goes wrong:
+        await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
 
-# Kommandot som kör en `git pull` och startar om boten (endast för administratörer)
+# Command does a `git pull` reboots the bot (only the role "Bot-Master")
 @bot.command(name="Reboot")
-@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Kontrollera om användaren har adminrollen
+@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
 async def reboot(ctx):
     await ctx.send("Kör `git pull` och startar om boten...")
 
-    # Kör git pull i botens directory
+    # Executes "git pull" directory
     try:
         result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
         await ctx.send(f"`git pull` utförd:\n```\n{result.stdout}\n```")
@@ -79,17 +84,17 @@ async def reboot(ctx):
         await ctx.send(f"Fel vid `git pull`:\n```\n{e.stderr}\n```")
         return
 
-    # Spara nuvarande python-exekveringsfil (dvs scriptets namn)
+    # Saves current Python."exe" file 
     python = sys.executable
 
-    # Starta om processen genom att köra om samma script
+    # Reboots the Python Script 
     os.execl(python, python, *sys.argv)
 
-# Hantera fel om någon utan adminrollen försöker använda kommandot
+# Manages Errors if a none "Bot-Master" tries the command.
 @reboot.error
 async def reboot_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("Du har inte behörighet att använda detta kommando.")
 
-# Kör boten med token från modulen bot
+# Exe the bot using its token. 
 bot.run(botConfig._Bot_Token())
