@@ -38,10 +38,16 @@ async def on_ready():
 #    await ctx.send(Reply)  # This sends the reply
 #
 
+    
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
 # Help = h  #
 async def h(ctx):
-    Reply = 'you can use the following: ./h , ./git , ./Hello , ./about ./ping [and a IP if you wish] , ./rfc [number] .  The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
+    Reply = 'you can use the following: ./h , ./git , ./Hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./Version for the Bot version.  The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
+    await ctx.send(Reply)
+# Version Number # 
+@bot.command()
+async def version(ctx):
+    Reply = verson_nr
     await ctx.send(Reply)
 # git #
 @bot.command()
@@ -57,8 +63,7 @@ async def hello(ctx):
 @bot.command()
 async def about(ctx):
     Reply = 'The NIT-BOT is a for fun bot here on our Diacord, Its Public on github and anyone is free to contribiute to it, ether for fun or another (non malicious) projects. The Server its hosted on is at my home so its behind a normal (NAT Gateway) Contact Walle/Nicklas for more info Use ./git for the link to Github repo'
-    verson_nr = verson_nr
-    await ctx.send(verson_nr, Reply) 
+    await ctx.send(Reply) 
 # PING # 
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
