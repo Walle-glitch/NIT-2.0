@@ -34,9 +34,7 @@ async def on_message(message):
         await message.channel.send(Reply)
         return
     if message.content.startswith('./hello'):
-        Reply = 'Hello! '/n 
-        'I am the NIT-Bot and exists on GitHub, Feel free to Commit to me ;) '/n 
-        'Curently only ./git , ./who and ./hello exits... Feal free to add more !' 
+        Reply = 'Hello! I am the NIT-Bot and exists on GitHub, Feel free to Commit to me ;) Curently only ./git , ./who and ./hello exits... Feal free to add more !' 
         await message.channel.send(Reply)
         return    
     return
