@@ -15,7 +15,7 @@ client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="./", intents=intents)
 
 # Full Access to the Bot... 
-BOT-ADMIN_ROLE_NAME = "Bot-Master"
+BOT_ADMIN_ROLE_NAME = "Bot-Master"
 
 # Bekräftelse att boten är online
 @bot.event
@@ -40,7 +40,7 @@ async def hello(ctx):
 
 # Kommandot som kör en `git pull` och startar om boten (endast för administratörer)
 @bot.command(name="Reboot")
-@commands.has_role(BOT-ADMIN_ROLE_NAME)  # Kontrollera om användaren har adminrollen
+@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Kontrollera om användaren har adminrollen
 async def reboot(ctx):
     await ctx.send("Kör `git pull` och startar om boten...")
 
