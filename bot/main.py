@@ -21,22 +21,6 @@ async def on_message(message):
     if message.author == client.user: # Making sure the bot dose not reply to it self. 
         return    
 #
-    if message.content.startswith('./hello'):
-        Reply = 'Hello!'
-        await message.channel.send(Reply)
-        return
-    return
-#
-@client.event
-async def on_message(message):
-    if message.author == client.user: # Making sure the bot dose not reply to it self. 
-        return 
-    if message.content.startswith('./who'):
-        Reply = 'I am the NIT-BOT, use ./bot to get my GitHub link.'
-        await message.channel.send(Reply)
-        return
-    return
-#
 @client.event
 async def on_message(message):
     if message.author == client.user: # Making sure the bot dose not reply to it self. 
@@ -45,6 +29,14 @@ async def on_message(message):
         Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
         await message.channel.send(Reply)
         return
+    if message.content.startswith('./who'):
+        Reply = 'I am the NIT-BOT, use ./bot to get my GitHub link.'
+        await message.channel.send(Reply)
+        return
+    if message.content.startswith('./hello'):
+        Reply = 'Hello!'
+        await message.channel.send(Reply)
+        return    
     return
 #
 #@client.event   
