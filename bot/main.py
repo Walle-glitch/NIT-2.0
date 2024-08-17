@@ -7,8 +7,8 @@ from discord.ext import commands, tasks
 from urllib.request import urlopen
 import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 
-# Make sure to update this =) 
-verson_nr = "Current Version is 1.0.1.0"
+# Make sure to update this =) We use YY/MM/DD.VERSION-NR
+verson_nr = "Current Version is 24/08/17.10"
 
 # Setup för intents
 intents = discord.Intents.all()
@@ -25,26 +25,29 @@ BOT_ADMIN_ROLE_NAME = "Bot-Master"
 async def on_ready():
     print(f'Vi har loggat in som {bot.user}')
 
+#
+#           Example for a Simple Command: 
+#@bot.command()
+#async def NAME_OF_THE_COMMAND(ctx):
+#    Reply = 'String Output' 
+#    await ctx.send(Reply)  # This sends the reply
+#
+
 # Kommandon som användaren kan använda
 @bot.command()
 async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
     await ctx.send(Reply)
-    
-@bot.command()
-async def who(ctx):
-    Reply = 'I am the NIT-BOT, use ./git to get my GitHub link.'
-    await ctx.send(Reply)
 
 @bot.command()
 async def hello(ctx):
-    Reply = 'Hello! I am the NIT-Bot and exist on GitHub. Feel free to contribute! Current commands: ./git, ./who, ./hello... Add more if you wish!'
+    Reply = 'Hello?'
     await ctx.send(Reply)
 
 @bot.command()
-async def version(ctx):
+async def about(ctx):
     Reply = verson_nr
-    await ctx.send(Reply)
+    await ctx.send(Reply, 'The NIT-BOT is a for fun bot here on our Diacord, Its Public on github and anyone is free to contribiute to it, ether for fun or another (non malicious) projects. The Server its hosted on is at my home so its behind a normal (NAT Gateway) Contact Walle/Nicklas for more info Use ./git for the link to Github repo') 
 #
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
