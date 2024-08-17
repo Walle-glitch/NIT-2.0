@@ -10,14 +10,12 @@ import bot  # Bot-token och annan konfiguration kommer från denna modul
 # Setup för intents
 intents = discord.Intents.all()
 intents.message_content = True
-
+client = discord.Client(intents=intents)
 # Skapa en bot med ett specifikt kommando-prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
-client = discord.Client(intents=intents)
-
-# Byt till namnet på din adminroll
-ADMIN_ROLE_NAME = "Admin"
+# Full Access to the Bot... 
+BOT-ADMIN_ROLE_NAME = "Bot-Master"
 
 # Bekräftelse att boten är online
 @bot.event
@@ -29,7 +27,7 @@ async def on_ready():
 async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
     await ctx.send(Reply)
-
+    
 @bot.command()
 async def who(ctx):
     Reply = 'I am the NIT-BOT, use ./git to get my GitHub link.'
@@ -42,7 +40,7 @@ async def hello(ctx):
 
 # Kommandot som kör en `git pull` och startar om boten (endast för administratörer)
 @bot.command(name="Reboot")
-@commands.has_role(ADMIN_ROLE_NAME)  # Kontrollera om användaren har adminrollen
+@commands.has_role(BOT-ADMIN_ROLE_NAME)  # Kontrollera om användaren har adminrollen
 async def reboot(ctx):
     await ctx.send("Kör `git pull` och startar om boten...")
 
