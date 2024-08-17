@@ -65,4 +65,4 @@ async def reboot_error(ctx, error):
         await ctx.send("Du har inte behörighet att använda detta kommando.")
 
 # Kör boten med token från modulen bot
-bot.run(bot._Bot_Token())
+client.run(bot._Bot_Token())
