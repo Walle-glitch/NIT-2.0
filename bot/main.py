@@ -9,7 +9,7 @@ import botConfig  # Bot-token and Bot info exists Localy on the server, This Mod
 import _Bot_Modul # use this if you want to write functions. 
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-verson_nr = "Current Version is 24/08/17.11"
+verson_nr = "Current Version is 24/08/17.13"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -26,12 +26,10 @@ async def on_ready():
     print(f'Vi har loggat in som {bot.user}')
 
 
-
-
-
 ###########################################_Below this line_##########################################
 #############################################_All users_##############################################
 ###########################################_can run the code_#########################################
+
 #
 #           Example for a Simple Command: 
 #@bot.command()
@@ -41,25 +39,26 @@ async def on_ready():
 #
 
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
+# Help = h  #
 async def h(ctx):
-    Reply = 'you can use the following: ./git , ./Hello , ./about ./ping [and a IP if you wish] The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
+    Reply = 'you can use the following: ./h , ./git , ./Hello , ./about ./ping [and a IP if you wish] , ./rfc [number] .  The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
     await ctx.send(Reply)
-    
+# git #
 @bot.command()
 async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
     await ctx.send(Reply)
-
+# hello #
 @bot.command()
 async def hello(ctx):
     Reply = 'Hello?'
     await ctx.send(Reply)
-
+# Version number # 
 @bot.command()
 async def about(ctx):
     Reply = verson_nr
     await ctx.send(Reply, 'The NIT-BOT is a for fun bot here on our Diacord, Its Public on github and anyone is free to contribiute to it, ether for fun or another (non malicious) projects. The Server its hosted on is at my home so its behind a normal (NAT Gateway) Contact Walle/Nicklas for more info Use ./git for the link to Github repo') 
-#
+# PING # 
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
     """
@@ -75,15 +74,26 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     except subprocess.CalledProcessError as e:
         # If somthing goes wrong:
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
-
+# Get an RFC # 
 @bot.command()
-async def rfc(ctx, rfc_number: int):
+async def rfc(ctx, rfc_number: str = None):
     """
     Hämtar och visar information om en RFC baserat på nummer.
     
-    :param rfc_number: RFC-nummer att hämta.
+    :param rfc_number: RFC-nummer att hämta. Om inget anges, visas ett felmeddelande.
     """
-    result = _Bot_Modul.get_rfc(rfc_number)
+    if rfc_number is None:
+        await ctx.send("Fel: Ingen RFC-nummer angivet. Vänligen ange ett RFC-nummer efter kommandot.")
+        return
+
+    try:
+        # Konvertera rfc_number till heltal
+        rfc_number = int(rfc_number)
+        result = _Bot_Modul.get_rfc(rfc_number)
+    except ValueError:
+        # Hantera fallet där rfc_number inte kan konverteras till heltal
+        result = "Fel: Ogiltigt RFC-nummer. Vänligen ange ett giltigt heltal."
+
     await ctx.send(result)
 
 
