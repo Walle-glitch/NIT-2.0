@@ -157,9 +157,6 @@ async def removerole(ctx):
     # Skicka ett inbäddat meddelande som svar
     await ctx.send(embed=embed)
 
-
-
-
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
 
@@ -188,6 +185,80 @@ async def reboot(ctx):
 async def reboot_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("Du har inte behörighet att använda detta kommando.")
+
+
+# Roll-ID:n för roller som ska tilldelas
+ROLE_EMOJI_MAP = {
+    "🟢": "Role1_ID",  # Grön emoji motsvarar roll 1
+    "🔵": "Role2_ID",  # Blå emoji motsvarar roll 2
+    "🔴": "Role3_ID",  # Röd emoji motsvarar roll 3
+}
+
+# Kommandot för att skapa ett inbäddat meddelande med reaktionsroller
+@bot.command()
+@commands.has_permissions(administrator=True)  # Endast administratörer kan köra detta kommando
+async def setup_roles(ctx):
+    """
+    Skapar ett inbäddat meddelande för rolltilldelning via reaktioner.
+    """
+    embed = discord.Embed(
+        title="Välj din roll!",
+        description="Reagera med en emoji för att få motsvarande roll:\n\n"
+                    "🟢 - Grön Roll\n"
+                    "🔵 - Blå Roll\n"
+                    "🔴 - Röd Roll\n",
+        color=discord.Color.blue()
+    )
+    embed.set_footer(text="Klicka på en emoji för att få en roll tilldelad.")
+    
+    # Skicka det inbäddade meddelandet
+    message = await ctx.send(embed=embed)
+    
+    # Lägg till reaktionerna (emoji) till meddelandet
+    for emoji in ROLE_EMOJI_MAP.keys():
+        await message.add_reaction(emoji)
+
+# Event för att lyssna på reaktioner och tilldela roller
+@bot.event
+async def on_raw_reaction_add(payload):
+    """
+    Event som hanterar rolltilldelning när en användare reagerar på ett meddelande.
+    """
+    if payload.message_id == MESSAGE_ID:  # Byt ut detta mot meddelande-ID för ditt inbäddade meddelande
+        guild = bot.get_guild(payload.guild_id)
+        role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
+        
+        if role_id:
+            role = guild.get_role(int(role_id))
+            member = guild.get_member(payload.user_id)
+            
+            if role and member:
+                await member.add_roles(role)
+                try:
+                    await member.send(f"Du har tilldelats rollen: {role.name}")
+                except discord.Forbidden:
+                    pass  # Ignorera om användaren har stängt av direktmeddelanden
+
+# Event för att hantera borttagning av roller när en användare tar bort sin reaktion
+@bot.event
+async def on_raw_reaction_remove(payload):
+    """
+    Event som hanterar borttagning av roller när en användare tar bort sin reaktion.
+    """
+    if payload.message_id == MESSAGE_ID:  # Byt ut detta mot meddelande-ID för ditt inbäddade meddelande
+        guild = bot.get_guild(payload.guild_id)
+        role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
+        
+        if role_id:
+            role = guild.get_role(int(role_id))
+            member = guild.get_member(payload.user_id)
+            
+            if role and member:
+                await member.remove_roles(role)
+                try:
+                    await member.send(f"Rollen {role.name} har tagits bort från dig.")
+                except discord.Forbidden:
+                    pass  # Ignorera om användaren har stängt av direktmeddelanden
 
 # Exe the bot using its token. 
 bot.run(botConfig._Bot_Token())
