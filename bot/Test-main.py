@@ -14,6 +14,8 @@ intents.message_content = True
 # Skapa en bot med ett specifikt kommando-prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
+client = discord.Client(intents=intents)
+
 # Byt till namnet på din adminroll
 ADMIN_ROLE_NAME = "Admin"
 
