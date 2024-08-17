@@ -7,6 +7,9 @@ from discord.ext import commands, tasks
 from urllib.request import urlopen
 import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 
+# Make sure to update this =) 
+verson_nr = "1.0"
+
 # Setup för intents
 intents = discord.Intents.all()
 intents.message_content = True
@@ -36,6 +39,11 @@ async def who(ctx):
 @bot.command()
 async def hello(ctx):
     Reply = 'Hello! I am the NIT-Bot and exist on GitHub. Feel free to contribute! Current commands: ./git, ./who, ./hello... Add more if you wish!'
+    await ctx.send(Reply)
+
+@bot.command()
+async def version(ctx):
+    Reply = verson_nr
     await ctx.send(Reply)
 
 # Kommandot som kör en `git pull` och startar om boten (endast för administratörer)
