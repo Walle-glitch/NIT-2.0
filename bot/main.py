@@ -57,6 +57,7 @@ async def hello(ctx):
 @bot.command()
 async def about(ctx):
     Reply = 'The NIT-BOT is a for fun bot here on our Diacord, Its Public on github and anyone is free to contribiute to it, ether for fun or another (non malicious) projects. The Server its hosted on is at my home so its behind a normal (NAT Gateway) Contact Walle/Nicklas for more info Use ./git for the link to Github repo'
+    verson_nr = verson_nr
     await ctx.send(verson_nr, Reply) 
 # PING # 
 @bot.command()
