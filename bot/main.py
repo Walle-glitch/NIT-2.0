@@ -8,7 +8,7 @@ from urllib.request import urlopen
 import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 
 # Make sure to update this =) 
-verson_nr = "Current Version is 1.0"
+verson_nr = "Current Version is 1.0.1.0"
 
 # Setup för intents
 intents = discord.Intents.all()
@@ -45,6 +45,22 @@ async def hello(ctx):
 async def version(ctx):
     Reply = verson_nr
     await ctx.send(Reply)
+#
+@bot.command()
+async def ping(ctx, ip: str = "8.8.8.8"):
+    """
+    Gör ett ping-test till en given IP-adress. Om ingen IP-adress anges,
+    används 8.8.8.8 som standard.
+    """
+    try:
+        # Kör ping-kommandot till den angivna IP-adressen (eller standard: 8.8.8.8)
+        result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
+        
+        # Skicka utdata från ping-kommandot till Discord-kanalen
+        await ctx.send(f"Ping resultat för {ip}:\n```\n{result.stdout}\n```")
+    except subprocess.CalledProcessError as e:
+        # Hantera fel och skicka ett meddelande om något går fel
+        await ctx.send(f"Fel vid körning av ping:\n```\n{e.stderr}\n```")
 
 # Kommandot som kör en `git pull` och startar om boten (endast för administratörer)
 @bot.command(name="Reboot")
