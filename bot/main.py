@@ -31,13 +31,21 @@ async def on_message(message):
 async def on_message(message):
     if message.author == client.user: # Making sure the bot dose not reply to it self. 
         return 
-#
     if message.content.startswith('./who'):
-        Reply = 'NIT - BOT'
+        Reply = 'I am the NIT-BOT, use ./bot to get my GitHub link.'
         await message.channel.send(Reply)
         return
     return
 #
+@client.event
+async def on_message(message):
+    if message.author == client.user: # Making sure the bot dose not reply to it self. 
+        return 
+    if message.content.startswith('./git'):
+        Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
+        await message.channel.send(Reply)
+        return
+    return
 #
 #@client.event   
 #async def on_message(message):
