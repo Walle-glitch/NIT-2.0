@@ -47,5 +47,5 @@ async def on_message(message):
 #    await channel.send(message)
 #
 # this line authenticats the bot, The Token string coms from the module bot. 
-client.run(bot.DISCORD_TOKEN())
+client.run(bot._Bot_Token())
 #
