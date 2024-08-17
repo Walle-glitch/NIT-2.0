@@ -25,6 +25,13 @@ BOT_ADMIN_ROLE_NAME = "Bot-Master"
 async def on_ready():
     print(f'Vi har loggat in som {bot.user}')
 
+
+
+
+
+###########################################_Below this line_##########################################
+#############################################_All users_##############################################
+###########################################_can run the code_#########################################
 #
 #           Example for a Simple Command: 
 #@bot.command()
@@ -33,7 +40,6 @@ async def on_ready():
 #    await ctx.send(Reply)  # This sends the reply
 #
 
-# Every user can use the following commands. 
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
 async def help(ctx):
     Reply = 'you can use the following: ./git , ./Hello , ./about ./ping [and a IP if you wish] The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
@@ -70,6 +76,20 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         # If somthing goes wrong:
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
 
+@bot.command()
+async def rfc(ctx, rfc_number: int):
+    """
+    Hämtar och visar information om en RFC baserat på nummer.
+    
+    :param rfc_number: RFC-nummer att hämta.
+    """
+    result = _Bot_Modul.get_rfc(rfc_number)
+    await ctx.send(result)
+
+
+###########################################_Below this line_##########################################
+###########################################_Only Admin Code_##########################################
+
 # Command does a `git pull` reboots the bot (only the role "Bot-Master")
 @bot.command(name="Reboot")
 @commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
@@ -98,3 +118,4 @@ async def reboot_error(ctx, error):
 
 # Exe the bot using its token. 
 bot.run(botConfig._Bot_Token())
+
