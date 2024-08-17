@@ -5,7 +5,7 @@ import subprocess
 import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
-import bot  # Bot-token och annan konfiguration kommer från denna modul
+import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 
 # Setup för intents
 intents = discord.Intents.all()
@@ -65,4 +65,4 @@ async def reboot_error(ctx, error):
         await ctx.send("Du har inte behörighet att använda detta kommando.")
 
 # Kör boten med token från modulen bot
-client.run(bot._Bot_Token())
+client.run(botConfig._Bot_Token())
