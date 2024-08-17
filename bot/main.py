@@ -8,7 +8,7 @@ from urllib.request import urlopen
 import botConfig  # Bot-token och annan konfiguration kommer från denna modul
 
 # Make sure to update this =) 
-verson_nr = "1.0"
+verson_nr = "Current Version is 1.0"
 
 # Setup för intents
 intents = discord.Intents.all()
