@@ -40,3 +40,71 @@ def get_rfc(rfc_number):
         return f"Fel vid hämtning av RFC: {e}"
 
 #############################################
+
+import paramiko
+import time
+import _Router_Conf  # Hämtar användarnamn och lösenord från denna modul
+
+def configure_bgp_neighbor(router_ip, bgp_neighbor_ip, bgp_as_number, neighbor_as_number):
+    """
+    Konfigurerar en BGP-nabo på en Cisco-router via SSH.
+    
+    :param router_ip: IP-adressen till Cisco-routern
+    :param bgp_neighbor_ip: IP-adressen till BGP-nabon
+    :param bgp_as_number: Det lokala AS-numret för BGP
+    :param neighbor_as_number: AS-numret för BGP-nabon
+    :return: Sträng med nödvändig information om BGP-konfigurationen
+    """
+    
+    username = _Router_Conf.SSH_USERNAME
+    password = _Router_Conf.SSH_PASSWORD
+    
+    # Skapa en SSH-klient
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+    try:
+        # Anslut till routern via SSH
+        ssh_client.connect(hostname=router_ip, username=username, password=password)
+        
+        # Starta en interaktiv session
+        remote_conn = ssh_client.invoke_shell()
+        
+        # Vänta lite för att få ett skal
+        time.sleep(1)
+        
+        # Töm utgångsbuffer
+        output = remote_conn.recv(65535)
+        
+        # Gå in i privilegierat läge
+        remote_conn.send("enable\n")
+        time.sleep(1)
+        remote_conn.send(password + "\n")
+        time.sleep(1)
+        
+        # Gå in i global konfigurationsläge
+        remote_conn.send("configure terminal\n")
+        time.sleep(1)
+        
+        # Konfigurera BGP
+        remote_conn.send(f"router bgp {bgp_as_number}\n")
+        time.sleep(1)
+        remote_conn.send(f"neighbor {bgp_neighbor_ip} remote-as {neighbor_as_number}\n")
+        time.sleep(1)
+        
+        # Slutför konfigurationen
+        remote_conn.send("end\n")
+        time.sleep(1)
+        
+        # Samla och returnera utgångsdata
+        output = remote_conn.recv(65535).decode('utf-8')
+        
+        # Stäng anslutningen
+        ssh_client.close()
+        
+        return f"BGP-peering har konfigurerats med nabon {bgp_neighbor_ip} i AS {neighbor_as_number}.\n\nUtgång:\n{output}"
+    
+    except Exception as e:
+        return f"Ett fel inträffade: {str(e)}"
+
+
