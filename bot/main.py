@@ -104,6 +104,63 @@ async def rfc(ctx, rfc_number: str = None):
 
 
 ###########################################_Below this line_##########################################
+###########################################_Work In progress_##########################################
+
+# Rollnamn som ska tilldelas av boten
+ROLE_NAME = "YourRoleName"  # Ändra detta till din roll som du vill att boten ska tilldela
+
+@bot.command()
+async def addrole(ctx):
+    """
+    Tilldelar en specifik roll till den användare som kör kommandot.
+    Använder ett inbäddat meddelande för att ge feedback.
+    """
+    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
+    
+    if role is None:
+        await ctx.send(f"Roll '{ROLE_NAME}' kunde inte hittas på servern.")
+        return
+
+    if role in ctx.author.roles:
+        embed = discord.Embed(title="Roll tilldelad", description=f"Du har redan rollen **{ROLE_NAME}**.", color=discord.Color.orange())
+    else:
+        try:
+            await ctx.author.add_roles(role)
+            embed = discord.Embed(title="Roll tilldelad", description=f"Rollen **{ROLE_NAME}** har tilldelats dig!", color=discord.Color.green())
+        except discord.Forbidden:
+            embed = discord.Embed(title="Fel", description="Jag har inte tillräckliga rättigheter för att tilldela denna roll.", color=discord.Color.red())
+    
+    # Skicka ett inbäddat meddelande som svar
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def removerole(ctx):
+    """
+    Tar bort en specifik roll från den användare som kör kommandot.
+    Använder ett inbäddat meddelande för att ge feedback.
+    """
+    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
+    
+    if role is None:
+        await ctx.send(f"Roll '{ROLE_NAME}' kunde inte hittas på servern.")
+        return
+
+    if role not in ctx.author.roles:
+        embed = discord.Embed(title="Roll borttagen", description=f"Du har inte rollen **{ROLE_NAME}**.", color=discord.Color.orange())
+    else:
+        try:
+            await ctx.author.remove_roles(role)
+            embed = discord.Embed(title="Roll borttagen", description=f"Rollen **{ROLE_NAME}** har tagits bort från dig.", color=discord.Color.green())
+        except discord.Forbidden:
+            embed = discord.Embed(title="Fel", description="Jag har inte tillräckliga rättigheter för att ta bort denna roll.", color=discord.Color.red())
+    
+    # Skicka ett inbäddat meddelande som svar
+    await ctx.send(embed=embed)
+
+
+
+
+###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
 
 # Command does a `git pull` reboots the bot (only the role "Bot-Master")
