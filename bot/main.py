@@ -10,7 +10,7 @@ import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-version_nr = "Current Version is 24/08/18.13"
+version_nr = "Current Version is 24/08/18.14"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -43,11 +43,11 @@ async def on_ready():
 @bot.command()
 async def h(ctx):
     """
-    Display a list of all available commands with descriptions.
+    Display a list of all available commands with descriptions and the current bot version.
     """
     embed = discord.Embed(
         title="Available Commands",
-        description="Here is a list of all available commands:",
+        description=f"Current version: {verson_nr}\n\nHere is a list of all available commands:",
         color=discord.Color.blue()
     )
     
@@ -68,6 +68,7 @@ async def h(ctx):
         embed.add_field(name=command, value=description, inline=False)
     
     await ctx.send(embed=embed)
+
 
 # Version Number # 
 @bot.command()
