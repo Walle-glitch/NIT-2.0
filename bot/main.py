@@ -140,10 +140,11 @@ async def on_message(message):
     
     # Tillåt andra kommandon att hanteras normalt
     await bot.process_commands(message)
-
-
-###########################################_Below this line_##########################################
-###########################################_Work In progress_##########################################
+    #how to use the BGP_Setup Command 
+@bot.command()
+async def BGP(ctx):
+    Reply = 'When Using the ./BGP-Setup You need to input two variabels, like this: "./BGP-Setup [your IP-address] [your AS-Number]" You will get a reply whit the needed info when config is complete.'
+    await ctx.send(Reply)
 
 # Kommandot för att konfigurera BGP-peering
 @bot.command()
