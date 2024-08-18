@@ -102,6 +102,10 @@ async def rfc(ctx, rfc_number: str = None):
 
     await ctx.send(result)
 
+
+###########################################_Below this line_##########################################
+###########################################_Work In progress_##########################################
+
 # Kommandot för att konfigurera BGP-peering
 @bot.command()
 async def BGP(ctx, bgp_neighbor_ip: str = "8.8.8.8", bgp_as_number: str = "65000", neighbor_as_number: str = "65001"):
