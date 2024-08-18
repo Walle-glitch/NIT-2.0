@@ -10,7 +10,7 @@ import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-version_nr = "Current Version is 24/08/18.2"
+version_nr = "Current Version is 24/08/18.10"
 
 # Setup for intents
 intents = discord.Intents.all()
