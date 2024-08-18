@@ -343,7 +343,6 @@ async def on_raw_reaction_remove(payload):
 async def test(ctx):
     test_commands = [
         ("version", None),
-        ("Reboot", None),
         ("h", None),
         ("git", None),
         ("hello", None),
@@ -356,6 +355,7 @@ async def test(ctx):
         ("stop_game", None),
         ("start_game", "network"),
         ("stop_game", None),
+        ("Reboot", None),
     ]
     
     for command_name, arg in test_commands:
