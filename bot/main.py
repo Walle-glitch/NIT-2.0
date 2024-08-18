@@ -8,6 +8,7 @@ from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
+import _Games # Module for the games.
 
 # Global version number variable
 version_nr = "Current Version is 24/08/18.30"
