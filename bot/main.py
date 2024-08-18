@@ -5,27 +5,26 @@ import subprocess
 import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
-import botConfig  # Bot-token and Bot info exists Localy on the server, This Mod contains that info. 
-import _Bot_Modul # use this if you want to write functions. 
-import _Subnet_Game # Modul for the Subnet game. 
-
+import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
+import _Bot_Modul # Module for various functions.
+import _Subnet_Game # Module for the Subnet game.
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-verson_nr = "Current Version is 24/08/18.2"
+version_nr = "Current Version is 24/08/18.2"
 
 # Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
-# The following line makes sure all commands in the server neds to use "./" in fromt of the command
+# The following line ensures all commands in the server need to use "./" in front of the command
 bot = commands.Bot(command_prefix="./", intents=intents)
 
-# The wollowing roles have access to "Sudo commands" 
+# The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
 
-# a verification on the server that the bot is alive. 
+# A verification event to check if the bot is alive
 @bot.event
 async def on_ready():
-    print(f'Vi har loggat in som {bot.user}')
+    print(f'Logged in as {bot.user}')
 
 
 ###########################################_Below this line_##########################################
@@ -44,12 +43,12 @@ async def on_ready():
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
 # Help = h  #
 async def h(ctx):
-    Reply = 'you can use the following: ./h , ./git , ./hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./subnet'
+    Reply = 'You can use the following: ./h , ./git , ./hello , ./about ./ping [and an IP if you wish] , ./rfc [number] , ./subnet'
     await ctx.send(Reply)
 # Version Number # 
 @bot.command()
 async def version(ctx):
-    Reply = verson_nr
+    Reply = version_nr
     await ctx.send(Reply)
 # git #
 @bot.command()
@@ -61,228 +60,229 @@ async def git(ctx):
 async def hello(ctx):
     Reply = 'Hello?'
     await ctx.send(Reply)
-# Version number # 
+# About #
 @bot.command()
 async def about(ctx):
-    Reply = 'The NIT-BOT is a for fun bot here on our Diacord, Its Public on github and anyone is free to contribiute to it, ether for fun or another (non malicious) projects. The Server its hosted on is at my home so its behind a normal (NAT Gateway) Contact Walle/Nicklas for more info Use ./git for the link to Github repo'
+    Reply = 'The NIT-BOT is a fun bot here on our Discord. It is public on GitHub and anyone is free to contribute to it, either for fun or other (non-malicious) projects. The server it is hosted on is at my home, so it is behind a normal (NAT Gateway). Contact Walle/Nicklas for more info. Use ./git for the link to the GitHub repo.'
     await ctx.send(Reply) 
 # PING # 
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
     """
-    Gör ett ping-test till en given IP-adress. Om ingen IP-adress anges,
-    används 8.8.8.8 som standard.
+    Performs a ping test to a given IP address. If no IP address is specified,
+    it defaults to 8.8.8.8.
     """
     try:
-        # Do the ping Command + a IP addr (If no IP is specified it will default to 8.8.8.8)
+        # Execute the ping command with a specified IP address (defaults to 8.8.8.8 if none is specified)
         result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
         
-        # Sends The output of Ping to the server.
-        await ctx.send(f"Ping resultat för {ip}:\n```\n{result.stdout}\n```")
+        # Sends the output of the ping command to the server
+        await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
     except subprocess.CalledProcessError as e:
-        # If somthing goes wrong:
+        # If something goes wrong
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
 # Get an RFC # 
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
     """
-    Hämtar och visar information om en RFC baserat på nummer.
+    Retrieves and displays information about an RFC based on the number.
     
-    :param rfc_number: RFC-nummer att hämta. Om inget anges, visas ett felmeddelande.
+    :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
     """
     if rfc_number is None:
-        await ctx.send("Fel: Ingen RFC-nummer angivet. Vänligen ange ett RFC-nummer efter kommandot.")
+        await ctx.send("Error: No RFC number provided. Please provide an RFC number after the command.")
         return
 
     try:
-        # Konvertera rfc_number till heltal
+        # Convert rfc_number to an integer
         rfc_number = int(rfc_number)
         result = _Bot_Modul.get_rfc(rfc_number)
     except ValueError:
-        # Hantera fallet där rfc_number inte kan konverteras till heltal
-        result = "Fel: Ogiltigt RFC-nummer. Vänligen ange ett giltigt heltal."
+        # Handle the case where rfc_number cannot be converted to an integer
+        result = "Error: Invalid RFC number. Please provide a valid integer."
 
     await ctx.send(result)
 
-# Variabel för att lagra aktuell fråga och rätt svar
+# Variable to store the current question and correct answer
 current_question = None
 correct_answer = None
 
-# Kommandot för att starta ett subnätspel
+# Command to start a subnet game
 @bot.command()
 async def subnet(ctx):
     global current_question, correct_answer
     
-    # Generera en ny fråga och rätt svar
+    # Generate a new question and correct answer
     current_question, correct_answer = _Subnet_Game.generate_subnet_question()
     
-    # Skicka frågan till användaren
-    await ctx.send(f"Subnätsfråga: {current_question}")
+    # Send the question to the user
+    await ctx.send(f"Subnet question: {current_question}")
 
-# Event för att kontrollera användarens svar
+# Event to check the user's answer
 @bot.event
 async def on_message(message):
     global current_question, correct_answer
     
-    # Kontrollera om användaren försöker svara på en subnätsfråga
+    # Check if the user is trying to answer a subnet question
     if current_question and message.author != bot.user:
         user_answer = message.content
         
-        # Kontrollera om svaret är korrekt
+        # Check if the answer is correct
         if _Subnet_Game.check_answer(user_answer, correct_answer):
-            await message.channel.send("Rätt svar! Bra jobbat!")
+            await message.channel.send("Correct answer! Well done!")
         else:
-            await message.channel.send(f"Fel svar. Rätt svar är: {correct_answer}")
+            await message.channel.send(f"Incorrect answer. The correct answer is: {correct_answer}")
         
-        # Nollställ frågan och svaret
+        # Reset the question and answer
         current_question = None
         correct_answer = None
     
-    # Tillåt andra kommandon att hanteras normalt
+    # Allow other commands to be processed normally
     await bot.process_commands(message)
-    #how to use the BGP_Setup Command 
+
+# How to use the BGP_Setup command 
 @bot.command()
 async def BGP(ctx):
-    Reply = 'When Using the ./BGP-Setup You need to input two variabels, like this: "./BGP-Setup [your IP-address] [your AS-Number]" You will get a reply whit the needed info when config is complete.'
+    Reply = 'When using the ./BGP_Setup command, you need to provide two variables, like this: "./BGP_Setup [your IP address] [your AS number]". You will receive a reply with the needed info when the configuration is complete.'
     await ctx.send(Reply)
 
-# Kommandot för att konfigurera BGP-peering
+# Command to configure BGP peering
 @bot.command()
 async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
-    await ctx.send("Startar BGP-konfiguration...")
+    await ctx.send("Starting BGP configuration...")
 
-    # Kör BGP-konfigurationen och hämta information
+    # Run BGP configuration and retrieve information
     gi0_ip, as_number = _Bot_Modul.configure_bgp_neighbor(neighbor_ip, neighbor_as)
     
-    # Kontrollera om något fel inträffade under konfigurationen
+    # Check if any error occurred during configuration
     if as_number is None:
-        await ctx.send(f"Fel inträffade: {gi0_ip}")
+        await ctx.send(f"An error occurred: {gi0_ip}")
     else:
-        await ctx.send(f"BGP-konfiguration klar. GigabitEthernet0/0 IP-adress: {gi0_ip}, AS-nummer: {as_number}")
+        await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
 
 
 ###########################################_Below this line_##########################################
-###########################################_Work In progress_##########################################
+###########################################_Work In Progress_##########################################
 
-# Rollnamn som ska tilldelas av boten
-ROLE_NAME = "YourRoleName"  # Ändra detta till din roll som du vill att boten ska tilldela
+# Role name to be assigned by the bot
+ROLE_NAME = "YourRoleName"  # Change this to the role you want the bot to assign
 
 @bot.command()
 async def addrole(ctx):
     """
-    Tilldelar en specifik roll till den användare som kör kommandot.
-    Använder ett inbäddat meddelande för att ge feedback.
+    Assigns a specific role to the user running the command.
+    Uses an embedded message to provide feedback.
     """
     role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
     
     if role is None:
-        await ctx.send(f"Roll '{ROLE_NAME}' kunde inte hittas på servern.")
+        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
         return
 
     if role in ctx.author.roles:
-        embed = discord.Embed(title="Roll tilldelad", description=f"Du har redan rollen **{ROLE_NAME}**.", color=discord.Color.orange())
+        embed = discord.Embed(title="Role Assigned", description=f"You already have the role **{ROLE_NAME}**.", color=discord.Color.orange())
     else:
         try:
             await ctx.author.add_roles(role)
-            embed = discord.Embed(title="Roll tilldelad", description=f"Rollen **{ROLE_NAME}** har tilldelats dig!", color=discord.Color.green())
+            embed = discord.Embed(title="Role Assigned", description=f"The role **{ROLE_NAME}** has been assigned to you!", color=discord.Color.green())
         except discord.Forbidden:
-            embed = discord.Embed(title="Fel", description="Jag har inte tillräckliga rättigheter för att tilldela denna roll.", color=discord.Color.red())
+            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
     
-    # Skicka ett inbäddat meddelande som svar
+    # Send an embedded message as a reply
     await ctx.send(embed=embed)
 
 @bot.command()
 async def removerole(ctx):
     """
-    Tar bort en specifik roll från den användare som kör kommandot.
-    Använder ett inbäddat meddelande för att ge feedback.
+    Removes a specific role from the user running the command.
+    Uses an embedded message to provide feedback.
     """
     role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
     
     if role is None:
-        await ctx.send(f"Roll '{ROLE_NAME}' kunde inte hittas på servern.")
+        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
         return
 
     if role not in ctx.author.roles:
-        embed = discord.Embed(title="Roll borttagen", description=f"Du har inte rollen **{ROLE_NAME}**.", color=discord.Color.orange())
+        embed = discord.Embed(title="Role Removed", description=f"You do not have the role **{ROLE_NAME}**.", color=discord.Color.orange())
     else:
         try:
             await ctx.author.remove_roles(role)
-            embed = discord.Embed(title="Roll borttagen", description=f"Rollen **{ROLE_NAME}** har tagits bort från dig.", color=discord.Color.green())
+            embed = discord.Embed(title="Role Removed", description=f"The role **{ROLE_NAME}** has been removed from you.", color=discord.Color.green())
         except discord.Forbidden:
-            embed = discord.Embed(title="Fel", description="Jag har inte tillräckliga rättigheter för att ta bort denna roll.", color=discord.Color.red())
+            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to remove this role.", color=discord.Color.red())
     
-    # Skicka ett inbäddat meddelande som svar
+    # Send an embedded message as a reply
     await ctx.send(embed=embed)
 
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
 
-# Command does a `git pull` reboots the bot (only the role "Bot-Master")
+# Command does a `git pull` and reboots the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")
 @commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
 async def reboot(ctx):
-    await ctx.send("Kör `git pull` och startar om boten...")
+    await ctx.send("Performing `git pull` and restarting the bot...")
 
-    # Executes "git pull" directory
+    # Execute "git pull" in the directory
     try:
         result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
-        await ctx.send(f"`git pull` utförd:\n```\n{result.stdout}\n```")
+        await ctx.send(f"`git pull` executed:\n```\n{result.stdout}\n```")
     except subprocess.CalledProcessError as e:
-        await ctx.send(f"Fel vid `git pull`:\n```\n{e.stderr}\n```")
+        await ctx.send(f"Error during `git pull`:\n```\n{e.stderr}\n```")
         return
 
-    # Saves current Python."exe" file 
+    # Save the current Python executable
     python = sys.executable
 
-    # Reboots the Python Script 
+    # Restart the Python script
     os.execl(python, python, *sys.argv)
 
-# Manages Errors if a none "Bot-Master" tries the command.
+# Manages errors if a non-"Bot-Master" tries the command.
 @reboot.error
 async def reboot_error(ctx, error):
     if isinstance(error, commands.MissingRole):
-        await ctx.send("Du har inte behörighet att använda detta kommando.")
+        await ctx.send("You do not have permission to use this command.")
 
 
-# Roll-ID:n för roller som ska tilldelas
+# Role IDs for roles to be assigned
 ROLE_EMOJI_MAP = {
-    "🟢": "Role1_ID",  # Grön emoji motsvarar roll 1
-    "🔵": "Role2_ID",  # Blå emoji motsvarar roll 2
-    "🔴": "Role3_ID",  # Röd emoji motsvarar roll 3
+    "🟢": "Role1_ID",  # Green emoji corresponds to role 1
+    "🔵": "Role2_ID",  # Blue emoji corresponds to role 2
+    "🔴": "Role3_ID",  # Red emoji corresponds to role 3
 }
 
-# Kommandot för att skapa ett inbäddat meddelande med reaktionsroller
+# Command to create an embedded message with reaction roles
 @bot.command()
-@commands.has_permissions(administrator=True)  # Endast administratörer kan köra detta kommando
+@commands.has_permissions(administrator=True)  # Only administrators can run this command
 async def setup_roles(ctx):
     """
-    Skapar ett inbäddat meddelande för rolltilldelning via reaktioner.
+    Creates an embedded message for role assignment via reactions.
     """
     embed = discord.Embed(
-        title="Välj din roll!",
-        description="Reagera med en emoji för att få motsvarande roll:\n\n"
-                    "🟢 - Grön Roll\n"
-                    "🔵 - Blå Roll\n"
-                    "🔴 - Röd Roll\n",
+        title="Choose Your Role!",
+        description="React with an emoji to receive the corresponding role:\n\n"
+                    "🟢 - Green Role\n"
+                    "🔵 - Blue Role\n"
+                    "🔴 - Red Role\n",
         color=discord.Color.blue()
     )
-    embed.set_footer(text="Klicka på en emoji för att få en roll tilldelad.")
+    embed.set_footer(text="Click on an emoji to get a role assigned.")
     
-    # Skicka det inbäddade meddelandet
+    # Send the embedded message
     message = await ctx.send(embed=embed)
     
-    # Lägg till reaktionerna (emoji) till meddelandet
+    # Add reactions (emojis) to the message
     for emoji in ROLE_EMOJI_MAP.keys():
         await message.add_reaction(emoji)
 
-# Event för att lyssna på reaktioner och tilldela roller
+# Event to listen for reactions and assign roles
 @bot.event
 async def on_raw_reaction_add(payload):
     """
-    Event som hanterar rolltilldelning när en användare reagerar på ett meddelande.
+    Event that handles role assignment when a user reacts to a message.
     """
-    if payload.message_id == MESSAGE_ID:  # Byt ut detta mot meddelande-ID för ditt inbäddade meddelande
+    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -293,17 +293,17 @@ async def on_raw_reaction_add(payload):
             if role and member:
                 await member.add_roles(role)
                 try:
-                    await member.send(f"Du har tilldelats rollen: {role.name}")
+                    await member.send(f"You have been assigned the role: {role.name}")
                 except discord.Forbidden:
-                    pass  # Ignorera om användaren har stängt av direktmeddelanden
+                    pass  # Ignore if the user has disabled direct messages
 
-# Event för att hantera borttagning av roller när en användare tar bort sin reaktion
+# Event to handle role removal when a user removes their reaction
 @bot.event
 async def on_raw_reaction_remove(payload):
     """
-    Event som hanterar borttagning av roller när en användare tar bort sin reaktion.
+    Event that handles role removal when a user removes their reaction.
     """
-    if payload.message_id == MESSAGE_ID:  # Byt ut detta mot meddelande-ID för ditt inbäddade meddelande
+    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -314,10 +314,9 @@ async def on_raw_reaction_remove(payload):
             if role and member:
                 await member.remove_roles(role)
                 try:
-                    await member.send(f"Rollen {role.name} har tagits bort från dig.")
+                    await member.send(f"The role {role.name} has been removed from you.")
                 except discord.Forbidden:
-                    pass  # Ignorera om användaren har stängt av direktmeddelanden
+                    pass  # Ignore if the user has disabled direct messages
 
-# Exe the bot using its token. 
+# Run the bot using its token. 
 bot.run(botConfig._Bot_Token())
-
