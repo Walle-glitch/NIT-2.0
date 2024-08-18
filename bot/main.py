@@ -188,15 +188,21 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
 async def test(ctx):
     test_commands = [
         ("version", None),
+        ("Reboot", None),
+        ("h", None),
         ("git", None),
         ("hello", None),
         ("about", None),
         ("ping", "8.8.8.8"),
         ("rfc", "791"),
         ("subnet", None),
-        ("network", None)
+        ("BGP-Setup", "1.1.1.1 65000"),
+        ("start_game", "subnet"),
+        ("stop_game", None),
+        ("start_game", "network"),
+        ("stop_game", None),
     ]
-
+    
     for command_name, arg in test_commands:
         command = bot.get_command(command_name)
         if command:
