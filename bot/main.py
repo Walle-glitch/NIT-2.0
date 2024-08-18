@@ -3,22 +3,23 @@ import discord
 import sys
 import subprocess
 import asyncio
-from discord.ext import commands, tasks
+from discord.ext import commands
 from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
-import _Bot_Modul # Module for various functions.
-import _Subnet_Game # Module for the Subnet game.
+import _Bot_Modul  # Module for various functions.
+import _Subnet_Game  # Module for the Subnet game.
 
 # Global version number variable
-verson_nr = "Current Version is 24/08/18.15"
+version_nr = "Current Version is 24/08/18.20"
 
 # Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
-# The following line ensures all commands in the server need to use "./" in front of the command
+
+# Initialize bot with command prefix "./"
 bot = commands.Bot(command_prefix="./", intents=intents)
 
-# The following roles have access to "Sudo commands"
+# Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
 
 # A verification event to check if the bot is alive
@@ -26,20 +27,11 @@ BOT_ADMIN_ROLE_NAME = "Bot-Master"
 async def on_ready():
     print(f'Logged in as {bot.user}')
 
-
 ###########################################_Below this line_##########################################
 #############################################_All users_##############################################
 ###########################################_can run the code_#########################################
 
-#
-#           Example for a Simple Command: 
-#@bot.command()
-#async def NAME_OF_THE_COMMAND(ctx):
-#    Reply = 'String Output' 
-#    await ctx.send(Reply)  # This sends the reply
-#
-
-    # The Help Command, 
+# Help Command
 @bot.command()
 async def h(ctx):
     """
@@ -47,7 +39,7 @@ async def h(ctx):
     """
     embed = discord.Embed(
         title="Available Commands",
-        description=f"Current version: {verson_nr}\n\nHere is a list of all available commands:",
+        description=f"Current version: {version_nr}\n\nHere is a list of all available commands:",
         color=discord.Color.blue()
     )
     
@@ -57,11 +49,15 @@ async def h(ctx):
         "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
         "Hello": "./hello - Say hello to the bot.",
         "About": "./about - Information about the bot and its purpose.",
-        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
+        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address. Defaults to 8.8.8.8 if no IP is provided.",
         "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "Subnet Game": "./subnet - Start a subnetting quiz game.",
-        "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
-        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)"
+        "Subnet Game": "./subnet - Start a subnetting quiz game. Use ./answer to submit your answer and ./stop_game to end the game.",
+        "Network Game": "./start_game [subnet|network] - Start a network quiz game. Choose between 'subnet' and 'network'.",
+        "BGP Setup": "./BGP_Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
+        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)",
+        "Add Role": "./addrole - Assign a specific role to the user. (Admin only)",
+        "Remove Role": "./removerole - Remove a specific role from the user. (Admin only)",
+        "Setup Roles": "./setup_roles - Create an embedded message for role assignment via reactions. (Admin only)"
     }
     
     for command, description in commands_list.items():
@@ -70,28 +66,51 @@ async def h(ctx):
     await ctx.send(embed=embed)
 
 
+@bot.command(name='start_game')
+async def start_game_command(ctx, chosen_game):
+    if chosen_game not in ['subnet', 'network']:
+        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
+        return
+    await _Subnet_Game.start_game(ctx, chosen_game)
 
-# Version Number # 
+@bot.command(name='stop_game')
+async def stop_game_command(ctx):
+    _Subnet_Game.reset_game()
+    await ctx.send("The game has been stopped.")
+
+@bot.command(name='answer')
+async def answer_command(ctx, *, user_answer):
+    if _Subnet_Game.check_answer(user_answer):
+        await ctx.send("Correct! Well done.")
+        _Subnet_Game.reset_game()
+    else:
+        await ctx.send("Incorrect. Try again.")
+
+# Version Command
 @bot.command()
 async def version(ctx):
-    Reply = version_nr
-    await ctx.send(Reply)
-# git #
+    await ctx.send(version_nr)
+
+# Git Command
 @bot.command()
 async def git(ctx):
-    Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
-    await ctx.send(Reply)
-# hello #
+    await ctx.send('https://github.com/Walle-glitch/NIT-2.0.git')
+
+# Hello Command
 @bot.command()
 async def hello(ctx):
-    Reply = 'Hello?'
-    await ctx.send(Reply)
-# About #
+    await ctx.send('Hello?')
+
+# About Command
 @bot.command()
 async def about(ctx):
-    Reply = 'The NIT-BOT is a fun bot here on our Discord. It is public on GitHub and anyone is free to contribute to it, either for fun or other (non-malicious) projects. The server it is hosted on is at my home, so it is behind a normal (NAT Gateway). Contact Walle/Nicklas for more info. Use ./git for the link to the GitHub repo.'
-    await ctx.send(Reply) 
-# PING # 
+    reply = (
+        "The NIT-BOT is a fun bot here on our Discord. It is public on GitHub and anyone is free to contribute to it, either for fun or other (non-malicious) projects. "
+        "The server it is hosted on is at my home, so it is behind a normal (NAT Gateway). Contact Walle/Nicklas for more info. Use ./git for the link to the GitHub repo."
+    )
+    await ctx.send(reply)
+
+# Ping Command
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
     """
@@ -107,7 +126,8 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     except subprocess.CalledProcessError as e:
         # If something goes wrong
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
-# Get an RFC # 
+
+# Get an RFC Command
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
     """
@@ -120,18 +140,12 @@ async def rfc(ctx, rfc_number: str = None):
         return
 
     try:
-        # Convert rfc_number to an integer
         rfc_number = int(rfc_number)
         result = _Bot_Modul.get_rfc(rfc_number)
     except ValueError:
-        # Handle the case where rfc_number cannot be converted to an integer
         result = "Error: Invalid RFC number. Please provide a valid integer."
 
     await ctx.send(result)
-
-# Variable to store the current question and correct answer
-current_question = None
-correct_answer = None
 
 # Command to start a subnet game
 @bot.command()
@@ -154,7 +168,7 @@ async def on_message(message):
         user_answer = message.content
         
         # Check if the answer is correct
-        if _Subnet_Game.check_answer(user_answer, correct_answer):
+        if _Subnet_Game.check_answer(user_answer):
             await message.channel.send("Correct answer! Well done!")
         else:
             await message.channel.send(f"Incorrect answer. The correct answer is: {correct_answer}")
@@ -166,11 +180,14 @@ async def on_message(message):
     # Allow other commands to be processed normally
     await bot.process_commands(message)
 
-# How to use the BGP_Setup command 
+# BGP Setup Command Explanation
 @bot.command()
 async def BGP(ctx):
-    Reply = 'When using the ./BGP_Setup command, you need to provide two variables, like this: "./BGP_Setup [your IP address] [your AS number]". You will receive a reply with the needed info when the configuration is complete.'
-    await ctx.send(Reply)
+    reply = (
+        'When using the ./BGP_Setup command, you need to provide two variables, like this: "./BGP_Setup [your IP address] [your AS number]". '
+        'You will receive a reply with the needed info when the configuration is complete.'
+    )
+    await ctx.send(reply)
 
 # Command to configure BGP peering
 @bot.command()
@@ -185,7 +202,6 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {gi0_ip}")
     else:
         await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
-
 
 ###########################################_Below this line_##########################################
 ###########################################_Work In Progress_##########################################
@@ -244,7 +260,7 @@ async def removerole(ctx):
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
 
-# Command does a `git pull` and reboots the bot (only for the role "Bot-Master")
+# Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")
 @commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
 async def reboot(ctx):
@@ -264,12 +280,11 @@ async def reboot(ctx):
     # Restart the Python script
     os.execl(python, python, *sys.argv)
 
-# Manages errors if a non-"Bot-Master" tries the command.
+# Manages errors if a non-"Bot-Master" tries the command
 @reboot.error
 async def reboot_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
-
 
 # Role IDs for roles to be assigned
 ROLE_EMOJI_MAP = {
@@ -344,5 +359,5 @@ async def on_raw_reaction_remove(payload):
                 except discord.Forbidden:
                     pass  # Ignore if the user has disabled direct messages
 
-# Run the bot using its token. 
+# Run the bot using its token
 bot.run(botConfig._Bot_Token())
