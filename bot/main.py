@@ -195,7 +195,7 @@ async def test(ctx):
         ("about", None),
         ("ping", "8.8.8.8"),
         ("rfc", "791"),
-        ("subnet", None),
+        ("subnet", "null"),
         ("BGP-Setup", "1.1.1.1 65000"),
         ("start_game", "subnet"),
         ("stop_game", None),
