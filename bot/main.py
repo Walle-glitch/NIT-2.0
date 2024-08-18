@@ -139,27 +139,6 @@ async def rfc(ctx, rfc_number: str = None):
 
     await ctx.send(result)
     
-# Games! 
-@bot.command(name='start_game')
-async def start_game_command(ctx, chosen_game):
-    if chosen_game not in ['subnet', 'network']:
-        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
-        return
-    await start_game(ctx, chosen_game)
-
-@bot.command(name='stop_game')
-async def stop_game_command(ctx):
-    reset_game()
-    await ctx.send("The game has been stopped.")
-
-@bot.command(name='answer')
-async def answer_command(ctx, *, user_answer):
-    if check_answer(user_answer):
-        await ctx.send("Correct! Well done.")
-        reset_game()
-    else:
-        await ctx.send("Incorrect. Try again.")
-
 # Command to start a subnet game
 
 @bot.command()
