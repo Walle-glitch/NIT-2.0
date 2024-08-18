@@ -10,7 +10,7 @@ import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-version_nr = "Current Version is 24/08/18.10"
+version_nr = "Current Version is 24/08/18.13"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -39,12 +39,36 @@ async def on_ready():
 #    await ctx.send(Reply)  # This sends the reply
 #
 
-    
-@bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
-# Help = h  #
+    # The Help Command, 
+@bot.command()
 async def h(ctx):
-    Reply = 'You can use the following: ./h , ./git , ./hello , ./about ./ping [and an IP if you wish] , ./rfc [number] , ./subnet'
-    await ctx.send(Reply)
+    """
+    Display a list of all available commands with descriptions.
+    """
+    embed = discord.Embed(
+        title="Available Commands",
+        description="Here is a list of all available commands:",
+        color=discord.Color.blue()
+    )
+    
+    commands_list = {
+        "Help": "./h - Display this help message.",
+        "Version": "./version - Show the current bot version.",
+        "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
+        "Hello": "./hello - Say hello to the bot.",
+        "About": "./about - Information about the bot and its purpose.",
+        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
+        "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
+        "Subnet Game": "./subnet - Start a subnetting quiz game.",
+        "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
+        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)"
+    }
+    
+    for command, description in commands_list.items():
+        embed.add_field(name=command, value=description, inline=False)
+    
+    await ctx.send(embed=embed)
+
 # Version Number # 
 @bot.command()
 async def version(ctx):
