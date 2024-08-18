@@ -42,69 +42,62 @@ def get_rfc(rfc_number):
 #############################################
 
 import paramiko
-import time
-import _Router_Conf  # Hämtar användarnamn och lösenord från denna modul
+import _Router_Conf
 
-def configure_bgp_neighbor(router_ip, bgp_neighbor_ip, bgp_as_number, neighbor_as_number):
-    """
-    Konfigurerar en BGP-nabo på en Cisco-router via SSH.
+# Funktion för att konfigurera BGP på en specifik router
+def configure_bgp_neighbor(ip_address, neighbor_ip, neighbor_as):
+    router_ip = _Router_Conf.ROUTER_IP
+    username = _Router_Conf.ROUTER_USERNAME
+    password = _Router_Conf.ROUTER_PASSWORD
     
-    :param router_ip: IP-adressen till Cisco-routern
-    :param bgp_neighbor_ip: IP-adressen till BGP-nabon
-    :param bgp_as_number: Det lokala AS-numret för BGP
-    :param neighbor_as_number: AS-numret för BGP-nabon
-    :return: Sträng med nödvändig information om BGP-konfigurationen
-    """
-    
-    username = _Router_Conf.SSH_USERNAME
-    password = _Router_Conf.SSH_PASSWORD
-    
-    # Skapa en SSH-klient
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    # Skapa SSH-klienten
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
     try:
-        # Anslut till routern via SSH
-        ssh_client.connect(hostname=router_ip, username=username, password=password)
+        # Anslut till routern
+        ssh.connect(router_ip, username=username, password=password)
         
-        # Starta en interaktiv session
-        remote_conn = ssh_client.invoke_shell()
+        # Öppna en shell-session
+        remote_conn = ssh.invoke_shell()
+
+        # Vänta lite så att sessionen initieras
+        remote_conn.recv(1000)
         
-        # Vänta lite för att få ett skal
-        time.sleep(1)
+        # Skicka kommandon till routern för att konfigurera BGP
+        commands = [
+            "enable",  # Anta att inget lösenord krävs för enable-läget
+            "configure terminal",
+            f"router bgp 64512",
+            f"neighbor {neighbor_ip} remote-as {neighbor_as}",
+            "exit",
+            "interface gi0/0",
+            "do show ip interface brief | include GigabitEthernet0/0",
+            "do show running-config | include router bgp"
+        ]
         
-        # Töm utgångsbuffer
-        output = remote_conn.recv(65535)
+        for cmd in commands:
+            remote_conn.send(cmd + "\n")
+            time.sleep(1)  # Vänta på att kommandot ska exekveras
+            output = remote_conn.recv(5000).decode("utf-8")
         
-        # Gå in i privilegierat läge
-        remote_conn.send("enable\n")
-        time.sleep(1)
-        remote_conn.send(password + "\n")
-        time.sleep(1)
+        # Extrahera information om IP-adress och befintligt AS-nummer
+        interface_output = output.splitlines()
+        gi0_ip = ""
+        as_number = ""
+        for line in interface_output:
+            if "GigabitEthernet0/0" in line:
+                gi0_ip = line.split()[1]  # Extrahera IP-adressen från rätt rad
+            if "router bgp" in line:
+                as_number = line.split()[2]  # Extrahera AS-numret från rätt rad
         
-        # Gå in i global konfigurationsläge
-        remote_conn.send("configure terminal\n")
-        time.sleep(1)
-        
-        # Konfigurera BGP
-        remote_conn.send(f"router bgp {bgp_as_number}\n")
-        time.sleep(1)
-        remote_conn.send(f"neighbor {bgp_neighbor_ip} remote-as {neighbor_as_number}\n")
-        time.sleep(1)
-        
-        # Slutför konfigurationen
-        remote_conn.send("end\n")
-        time.sleep(1)
-        
-        # Samla och returnera utgångsdata
-        output = remote_conn.recv(65535).decode('utf-8')
-        
-        # Stäng anslutningen
-        ssh_client.close()
-        
-        return f"BGP-peering har konfigurerats med nabon {bgp_neighbor_ip} i AS {neighbor_as_number}.\n\nUtgång:\n{output}"
-    
+        return gi0_ip, as_number
+
     except Exception as e:
-        return f"Ett fel inträffade: {str(e)}"
+        return str(e), None
+
+    finally:
+        # Stäng SSH-anslutningen
+        ssh.close()
 
 
