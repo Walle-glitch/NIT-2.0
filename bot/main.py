@@ -359,5 +359,63 @@ async def on_raw_reaction_remove(payload):
                 except discord.Forbidden:
                     pass  # Ignore if the user has disabled direct messages
 
+
+# Test command.
+
+@bot.command(name='test')
+@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Ensure only Bot-Master can run this command
+async def test(ctx):
+    """
+    Tests all commands and outputs their results.
+    """
+    responses = []
+    
+    # Define a list of commands to test
+    test_commands = [
+        './version', './git', './hello', './about',
+        './ping 8.8.8.8', './rfc 791', './subnet', './start_game subnet',
+        './start_game network', './BGP_Setup 192.168.1.1 65001', './addrole',
+        './removerole', './setup_roles'
+    ]
+    
+    # Function to execute commands
+    async def run_command(command):
+        """Simulate running a command and collect its response."""
+        try:
+            # Invoke command and collect response
+            ctx.message.content = command  # Mock the command message content
+            await bot.process_commands(ctx.message)  # Process the command
+            await asyncio.sleep(1)  # Wait a moment for the command to be processed
+        except Exception as e:
+            responses.append(f"Error with command `{command}`: {e}")
+
+    # Run each command and gather responses
+    for command in test_commands:
+        await run_command(command)
+        
+        # Special handling for games
+        if command.startswith('./start_game'):
+            # If a game was started, provide a correct answer to end it
+            responses.append(f"Testing game command `{command}`")
+            await asyncio.sleep(2)  # Simulate waiting for game to start
+            if command.endswith('subnet'):
+                await run_command('./answer 255.255.255.0')
+            elif command.endswith('network'):
+                await run_command('./answer 192.168.1.0/24')
+            # Stop game after testing
+            await run_command('./stop_game')
+    
+    # Send collected responses
+    response_text = "\n".join(responses)
+    await ctx.send(f"Testing complete:\n{response_text}")
+
+# Handle errors for the `./test` command
+@test.error
+async def test_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send("You do not have permission to use this command.")
+
+###########_All_Code_Above_This_Line_#################
+
 # Run the bot using its token
 bot.run(botConfig._Bot_Token())
