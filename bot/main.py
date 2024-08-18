@@ -7,9 +7,11 @@ from discord.ext import commands, tasks
 from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists Localy on the server, This Mod contains that info. 
 import _Bot_Modul # use this if you want to write functions. 
+import _Subnet_Game # Modul for the Subnet game. 
+
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-verson_nr = "Current Version is 24/08/18.1"
+verson_nr = "Current Version is 24/08/18.2"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -101,6 +103,43 @@ async def rfc(ctx, rfc_number: str = None):
         result = "Fel: Ogiltigt RFC-nummer. Vänligen ange ett giltigt heltal."
 
     await ctx.send(result)
+
+# Variabel för att lagra aktuell fråga och rätt svar
+current_question = None
+correct_answer = None
+
+# Kommandot för att starta ett subnätspel
+@bot.command()
+async def subnet(ctx):
+    global current_question, correct_answer
+    
+    # Generera en ny fråga och rätt svar
+    current_question, correct_answer = _Subnet_Game.generate_subnet_question()
+    
+    # Skicka frågan till användaren
+    await ctx.send(f"Subnätsfråga: {current_question}")
+
+# Event för att kontrollera användarens svar
+@bot.event
+async def on_message(message):
+    global current_question, correct_answer
+    
+    # Kontrollera om användaren försöker svara på en subnätsfråga
+    if current_question and message.author != bot.user:
+        user_answer = message.content
+        
+        # Kontrollera om svaret är korrekt
+        if _Subnet_Game.check_answer(user_answer, correct_answer):
+            await message.channel.send("Rätt svar! Bra jobbat!")
+        else:
+            await message.channel.send(f"Fel svar. Rätt svar är: {correct_answer}")
+        
+        # Nollställ frågan och svaret
+        current_question = None
+        correct_answer = None
+    
+    # Tillåt andra kommandon att hanteras normalt
+    await bot.process_commands(message)
 
 
 ###########################################_Below this line_##########################################
