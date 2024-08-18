@@ -51,6 +51,7 @@ async def h(ctx):
         "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
         "Subnet Game": "./subnet - Start a subnetting quiz game.",
         "Network Game": "./network - Start a network quiz game.",
+        "Network Games": "./start_game - Chose between Subnet and Network",
         "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
         "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)",
         "Test": "./test - Test all commands. (Admin only)"
@@ -137,8 +138,30 @@ async def rfc(ctx, rfc_number: str = None):
         result = "Error: Invalid RFC number. Please provide a valid integer."
 
     await ctx.send(result)
+    
+# Games! 
+@bot.command(name='start_game')
+async def start_game_command(ctx, chosen_game):
+    if chosen_game not in ['subnet', 'network']:
+        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
+        return
+    await start_game(ctx, chosen_game)
+
+@bot.command(name='stop_game')
+async def stop_game_command(ctx):
+    reset_game()
+    await ctx.send("The game has been stopped.")
+
+@bot.command(name='answer')
+async def answer_command(ctx, *, user_answer):
+    if check_answer(user_answer):
+        await ctx.send("Correct! Well done.")
+        reset_game()
+    else:
+        await ctx.send("Incorrect. Try again.")
 
 # Command to start a subnet game
+
 @bot.command()
 async def subnet(ctx):
     global current_question, correct_answer
