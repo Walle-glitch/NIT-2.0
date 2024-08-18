@@ -43,6 +43,7 @@ def get_rfc(rfc_number):
 
 import paramiko
 import _Router_Conf
+import time
 
 # Funktion för att konfigurera BGP på en specifik router
 def configure_bgp_neighbor(ip_address, neighbor_ip, neighbor_as):
@@ -81,11 +82,12 @@ commands = [
             "do show ip interface brief | include GigabitEthernet0/0",
             "do show running-config | include router bgp"
         ]
-        
+
+        output = ""
         for cmd in commands:
             remote_conn.send(cmd + "\n")
             time.sleep(1)  # Vänta på att kommandot ska exekveras
-            output = remote_conn.recv(5000).decode("utf-8")
+            output += remote_conn.recv(5000).decode("utf-8")
         
         # Extrahera information om IP-adress och befintligt AS-nummer
         interface_output = output.splitlines()
@@ -100,10 +102,11 @@ commands = [
         return gi0_ip, as_number
 
     except Exception as e:
+        # Hantera eventuella fel som kan uppstå
         return str(e), None
 
     finally:
-        # Stäng SSH-anslutningen
+        # Stäng SSH-anslutningen oavsett om det gick bra eller inte
         ssh.close()
 
 
