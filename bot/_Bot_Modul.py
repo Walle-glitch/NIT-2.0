@@ -1,9 +1,10 @@
-# Use this on for Fun Functions!
-
-######### GET AN RFC ######### 
 import requests
 from bs4 import BeautifulSoup
+import paramiko
+import _Router_Conf
+import time
 
+######### GET AN RFC ######### 
 def get_rfc(rfc_number):
     """
     Hämtar RFC från IETF:s datatracker baserat på RFC-nummer.
@@ -41,10 +42,6 @@ def get_rfc(rfc_number):
 
 #############################################
 
-import paramiko
-import _Router_Conf
-import time
-
 # Funktion för att konfigurera BGP på en specifik router
 def configure_bgp_neighbor(ip_address, neighbor_ip, neighbor_as):
     router_ip = _Router_Conf.ROUTER_IP
@@ -66,13 +63,12 @@ def configure_bgp_neighbor(ip_address, neighbor_ip, neighbor_as):
         remote_conn.recv(1000)
         
         # Skicka kommandon till routern för att konfigurera BGP
-commands = [
+        commands = [
             "enable",  # Anta att inget lösenord krävs för enable-läget
             "configure terminal",
             f"router bgp 64512",
             f"neighbor {neighbor_ip} remote-as {neighbor_as}",
             f"neighbor {neighbor_ip} ebgp-multihop 30",
-            f"neighbor {neighbor_ip} update-source GigabitEthernet0/0",
             f"neighbor {neighbor_ip} update-source GigabitEthernet0/0",
             f"address-family ipv4",
             f"neighbor {neighbor_ip} activate",
@@ -108,5 +104,3 @@ commands = [
     finally:
         # Stäng SSH-anslutningen oavsett om det gick bra eller inte
         ssh.close()
-
-
