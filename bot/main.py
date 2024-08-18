@@ -9,8 +9,8 @@ import botConfig  # Bot-token and Bot info exists locally on the server; this mo
 import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
 
-# Make sure to update this =) We use YY/MM/DD.VERSION-NR
-version_nr = "Current Version is 24/08/18.14"
+# Global version number variable
+verson_nr = "Current Version is 24/08/18.15"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -68,6 +68,7 @@ async def h(ctx):
         embed.add_field(name=command, value=description, inline=False)
     
     await ctx.send(embed=embed)
+
 
 
 # Version Number # 
