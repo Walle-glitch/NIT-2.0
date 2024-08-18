@@ -147,25 +147,17 @@ async def on_message(message):
 
 # Kommandot för att konfigurera BGP-peering
 @bot.command()
-async def BGP(ctx, bgp_neighbor_ip: str = "8.8.8.8", bgp_as_number: str = "65000", neighbor_as_number: str = "65001"):
-    """
-    Kör kommandot för att konfigurera en BGP-nabo via SSH på Cisco-routern.
-    
-    :param bgp_neighbor_ip: IP-adressen till BGP-nabon (default 8.8.8.8)
-    :param bgp_as_number: Ditt lokala AS-nummer (default 65000)
-    :param neighbor_as_number: AS-numret för din BGP-nabo (default 65001)
-    """
-    router_ip = "172.31.255.1"  # Cisco-routerns IP-adress
-    
-    await ctx.send(f"Försöker konfigurera BGP-peering med nabon {bgp_neighbor_ip}...")
-    
-    # Anropa funktionen för att konfigurera BGP
-    result = _Bot_Modul.configure_bgp_neighbor(router_ip, bgp_neighbor_ip, bgp_as_number, neighbor_as_number)
-    
-    # Skicka tillbaka resultatet till användaren
-    await ctx.send(result)
+async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
+    await ctx.send("Startar BGP-konfiguration...")
 
-
+    # Kör BGP-konfigurationen och hämta information
+    gi0_ip, as_number = _Bot_Modul.configure_bgp_neighbor(neighbor_ip, neighbor_as)
+    
+    # Kontrollera om något fel inträffade under konfigurationen
+    if as_number is None:
+        await ctx.send(f"Fel inträffade: {gi0_ip}")
+    else:
+        await ctx.send(f"BGP-konfiguration klar. GigabitEthernet0/0 IP-adress: {gi0_ip}, AS-nummer: {as_number}")
 
 
 ###########################################_Below this line_##########################################
