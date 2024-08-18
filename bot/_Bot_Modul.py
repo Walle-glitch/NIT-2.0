@@ -61,7 +61,7 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
         tn.write(password.encode('ascii') + b"\n")
 
         # Vänta på att prompten visas
-        tn.read_until(b">")
+#        tn.read_until(b">")
         
         # Skicka kommandon för att konfigurera BGP
         commands = [
