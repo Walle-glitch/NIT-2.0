@@ -44,7 +44,7 @@ async def on_ready():
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
 # Help = h  #
 async def h(ctx):
-    Reply = 'you can use the following: ./h , ./git , ./hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./version for the Bot version.  The role "Bot-Master" can reboot and initiate a "git pull" using ./Reboot'
+    Reply = 'you can use the following: ./h , ./git , ./hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./subnet'
     await ctx.send(Reply)
 # Version Number # 
 @bot.command()
