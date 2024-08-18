@@ -9,7 +9,7 @@ import botConfig  # Bot-token and Bot info exists Localy on the server, This Mod
 import _Bot_Modul # use this if you want to write functions. 
 
 # Make sure to update this =) We use YY/MM/DD.VERSION-NR
-verson_nr = "Current Version is 24/08/17.13"
+verson_nr = "Current Version is 24/08/18.1"
 
 # Setup for intents
 intents = discord.Intents.all()
@@ -42,7 +42,7 @@ async def on_ready():
 @bot.command()  # UPDATE THIS ONE WHEN YOU ADD A NEW FUNCTION
 # Help = h  #
 async def h(ctx):
-    Reply = 'you can use the following: ./h , ./git , ./Hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./Version for the Bot version.  The role "Bot-Master" can reboot and initiate a "git pull" using ./reboot'
+    Reply = 'you can use the following: ./h , ./git , ./hello , ./about ./ping [and a IP if you wish] , ./rfc [number] , ./version for the Bot version.  The role "Bot-Master" can reboot and initiate a "git pull" using ./Reboot'
     await ctx.send(Reply)
 # Version Number # 
 @bot.command()
