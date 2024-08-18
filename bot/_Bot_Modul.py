@@ -65,11 +65,17 @@ def configure_bgp_neighbor(ip_address, neighbor_ip, neighbor_as):
         remote_conn.recv(1000)
         
         # Skicka kommandon till routern för att konfigurera BGP
-        commands = [
+commands = [
             "enable",  # Anta att inget lösenord krävs för enable-läget
             "configure terminal",
             f"router bgp 64512",
             f"neighbor {neighbor_ip} remote-as {neighbor_as}",
+            f"neighbor {neighbor_ip} ebgp-multihop 30",
+            f"neighbor {neighbor_ip} update-source GigabitEthernet0/0",
+            f"neighbor {neighbor_ip} update-source GigabitEthernet0/0",
+            f"address-family ipv4",
+            f"neighbor {neighbor_ip} activate",
+            "exit-address-family",
             "exit",
             "interface gi0/0",
             "do show ip interface brief | include GigabitEthernet0/0",
