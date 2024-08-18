@@ -1,4 +1,5 @@
 import requests
+import telnetlib
 from bs4 import BeautifulSoup
 import paramiko
 import _Router_Conf
@@ -48,23 +49,23 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
     username = _Router_Conf.SSH_USERNAME
     password = _Router_Conf.SSH_PASSWORD
     
-    # Skapa SSH-klienten
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
     try:
-        # Anslut till routern
-        ssh.connect(router_ip, username=username, password=password)
-        
-        # Öppna en shell-session
-        remote_conn = ssh.invoke_shell()
+        # Anslut till routern via Telnet
+        tn = telnetlib.Telnet(router_ip)
 
-        # Vänta lite så att sessionen initieras
-        remote_conn.recv(1000)
+        # Logga in med användarnamn och lösenord
+        tn.read_until(b"Username: ")
+        tn.write(username.encode('ascii') + b"\n")
         
-        # Skicka kommandon till routern för att konfigurera BGP
+        tn.read_until(b"Password: ")
+        tn.write(password.encode('ascii') + b"\n")
+
+        # Vänta på att prompten visas
+        tn.read_until(b">")
+        
+        # Skicka kommandon för att konfigurera BGP
         commands = [
-            "enable",  # Anta att inget lösenord krävs för enable-läget
+            "enable",  # Förutsatt att ingen enable-lösenord behövs
             "configure terminal",
             f"router bgp 64512",
             f"neighbor {neighbor_ip} remote-as {neighbor_as}",
@@ -81,10 +82,10 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
 
         output = ""
         for cmd in commands:
-            remote_conn.send(cmd + "\n")
+            tn.write(cmd.encode('ascii') + b"\n")
             time.sleep(1)  # Vänta på att kommandot ska exekveras
-            output += remote_conn.recv(5000).decode("utf-8")
-        
+            output += tn.read_very_eager().decode('ascii')
+
         # Extrahera information om IP-adress och befintligt AS-nummer
         interface_output = output.splitlines()
         gi0_ip = ""
@@ -94,13 +95,14 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
                 gi0_ip = line.split()[1]  # Extrahera IP-adressen från rätt rad
             if "router bgp" in line:
                 as_number = line.split()[2]  # Extrahera AS-numret från rätt rad
-        
+
         return gi0_ip, as_number
 
     except Exception as e:
         # Hantera eventuella fel som kan uppstå
-        return str(e), None
+        return f"Fel inträffade: {str(e)}", None
 
     finally:
-        # Stäng SSH-anslutningen oavsett om det gick bra eller inte
-        ssh.close()
+        # Stäng Telnet-anslutningen
+        tn.write(b"exit\n")
+        tn.close()
