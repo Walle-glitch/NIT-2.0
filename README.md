@@ -29,28 +29,31 @@ Running the Bot
 Start the Bot
 
 Run the bot using:
-
-bash
-Copy code
 python3 main.py
+
 Interact with the Bot
 
 Once the bot is running, you can interact with it using the command prefix ./. For a list of available commands, use ./h.
 
 Commands
 Help: ./h
-Version: ./version
-Git Repository: ./git
-Hello: ./hello
-About: ./about
-Ping: ./ping [IP_ADDRESS]
-RFC: ./rfc [NUMBER]
-Subnet Game: ./subnet
-BGP Setup: ./BGP-Setup [IP_ADDRESS] [AS_NUMBER]
-Admin Commands:
-Reboot: ./Reboot (requires Bot-Master role)
-Contributing
-Contributions are welcome! Please submit pull requests or issues on the GitHub repository.
 
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+Version: ./version
+
+Git Repository: ./git
+
+Hello: ./hello
+
+About: ./about
+
+Ping: ./ping [IP_ADDRESS]
+
+RFC: ./rfc [NUMBER]
+
+Subnet Game: ./subnet
+
+BGP Setup: ./BGP-Setup [IP_ADDRESS] [AS_NUMBER]
+
+Admin Commands:
+
+Reboot: ./Reboot (requires Bot-Master role)
