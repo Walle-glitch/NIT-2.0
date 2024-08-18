@@ -1,0 +1,4 @@
+discord.py==2.4.0
+requests==2.31.0
+beautifulsoup4==4.12.2
+paramiko==2.11.0
