@@ -45,8 +45,8 @@ def get_rfc(rfc_number):
 # Funktion för att konfigurera BGP på en specifik router
 def configure_bgp_neighbor(neighbor_ip, neighbor_as):
     router_ip = _Router_Conf.ROUTER_IP
-    username = _Router_Conf.ROUTER_USERNAME
-    password = _Router_Conf.ROUTER_PASSWORD
+    username = _Router_Conf.SSH_USERNAME
+    password = _Router_Conf.SSH_PASSWORD
     
     # Skapa SSH-klienten
     ssh = paramiko.SSHClient()
