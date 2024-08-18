@@ -181,6 +181,161 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {gi0_ip}")
     else:
         await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
+###########################################_Below this line_##########################################
+###########################################_Work In Progress_##########################################
+
+# Role name to be assigned by the bot
+ROLE_NAME = "YourRoleName"  # Change this to the role you want the bot to assign
+
+@bot.command()
+async def addrole(ctx):
+    """
+    Assigns a specific role to the user running the command.
+    Uses an embedded message to provide feedback.
+    """
+    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
+    
+    if role is None:
+        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
+        return
+
+    if role in ctx.author.roles:
+        embed = discord.Embed(title="Role Assigned", description=f"You already have the role **{ROLE_NAME}**.", color=discord.Color.orange())
+    else:
+        try:
+            await ctx.author.add_roles(role)
+            embed = discord.Embed(title="Role Assigned", description=f"The role **{ROLE_NAME}** has been assigned to you!", color=discord.Color.green())
+        except discord.Forbidden:
+            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
+    
+    # Send an embedded message as a reply
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def removerole(ctx):
+    """
+    Removes a specific role from the user running the command.
+    Uses an embedded message to provide feedback.
+    """
+    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
+    
+    if role is None:
+        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
+        return
+
+    if role not in ctx.author.roles:
+        embed = discord.Embed(title="Role Removed", description=f"You do not have the role **{ROLE_NAME}**.", color=discord.Color.orange())
+    else:
+        try:
+            await ctx.author.remove_roles(role)
+            embed = discord.Embed(title="Role Removed", description=f"The role **{ROLE_NAME}** has been removed from you.", color=discord.Color.green())
+        except discord.Forbidden:
+            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to remove this role.", color=discord.Color.red())
+    
+    # Send an embedded message as a reply
+    await ctx.send(embed=embed)
+
+###########################################_Below this line_##########################################
+###########################################_Only Admin Code_##########################################
+
+# Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
+@bot.command(name="Reboot")
+@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
+async def reboot(ctx):
+    await ctx.send("Performing `git pull` and restarting the bot...")
+
+    # Execute "git pull" in the directory
+    try:
+        result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
+        await ctx.send(f"`git pull` executed:\n```\n{result.stdout}\n```")
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"Error during `git pull`:\n```\n{e.stderr}\n```")
+        return
+
+    # Save the current Python executable
+    python = sys.executable
+
+    # Restart the Python script
+    os.execl(python, python, *sys.argv)
+
+# Manages errors if a non-"Bot-Master" tries the command
+@reboot.error
+async def reboot_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send("You do not have permission to use this command.")
+
+# Role IDs for roles to be assigned
+ROLE_EMOJI_MAP = {
+    "🟢": "Role1_ID",  # Green emoji corresponds to role 1
+    "🔵": "Role2_ID",  # Blue emoji corresponds to role 2
+    "🔴": "Role3_ID",  # Red emoji corresponds to role 3
+}
+
+# Command to create an embedded message with reaction roles
+@bot.command()
+@commands.has_permissions(administrator=True)  # Only administrators can run this command
+async def setup_roles(ctx):
+    """
+    Creates an embedded message for role assignment via reactions.
+    """
+    embed = discord.Embed(
+        title="Choose Your Role!",
+        description="React with an emoji to receive the corresponding role:\n\n"
+                    "🟢 - Green Role\n"
+                    "🔵 - Blue Role\n"
+                    "🔴 - Red Role\n",
+        color=discord.Color.blue()
+    )
+    embed.set_footer(text="Click on an emoji to get a role assigned.")
+    
+    # Send the embedded message
+    message = await ctx.send(embed=embed)
+    
+    # Add reactions (emojis) to the message
+    for emoji in ROLE_EMOJI_MAP.keys():
+        await message.add_reaction(emoji)
+
+# Event to listen for reactions and assign roles
+@bot.event
+async def on_raw_reaction_add(payload):
+    """
+    Event that handles role assignment when a user reacts to a message.
+    """
+    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
+        guild = bot.get_guild(payload.guild_id)
+        role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
+        
+        if role_id:
+            role = guild.get_role(int(role_id))
+            member = guild.get_member(payload.user_id)
+            
+            if role and member:
+                await member.add_roles(role)
+                try:
+                    await member.send(f"You have been assigned the role: {role.name}")
+                except discord.Forbidden:
+                    pass  # Ignore if the user has disabled direct messages
+
+# Event to handle role removal when a user removes their reaction
+@bot.event
+async def on_raw_reaction_remove(payload):
+    """
+    Event that handles role removal when a user removes their reaction.
+    """
+    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
+        guild = bot.get_guild(payload.guild_id)
+        role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
+        
+        if role_id:
+            role = guild.get_role(int(role_id))
+            member = guild.get_member(payload.user_id)
+            
+            if role and member:
+                await member.remove_roles(role)
+                try:
+                    await member.send(f"The role {role.name} has been removed from you.")
+                except discord.Forbidden:
+                    pass  # Ignore if the user has disabled direct messages
 
 # Admin command to test all commands
 @bot.command()
@@ -228,54 +383,7 @@ async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
 
-# Role name to be assigned by the bot
-ROLE_NAME = "YourRoleName"  # Change this to the role you want the bot to assign
-
-@bot.command()
-async def addrole(ctx):
-    """
-    Assigns a specific role to the user running the command.
-    Uses an embedded message to provide feedback.
-    """
-    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
-    
-    if role is None:
-        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
-        return
-
-    if role in ctx.author.roles:
-        embed = discord.Embed(title="Role Assigned", description=f"You already have the role **{ROLE_NAME}**.", color=discord.Color.orange())
-    else:
-        try:
-            await ctx.author.add_roles(role)
-            embed = discord.Embed(title="Role Assigned", description=f"The role **{ROLE_NAME}** has been assigned to you!", color=discord.Color.green())
-        except discord.Forbidden:
-            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
-    
-    await ctx.send(embed=embed)
-
-@bot.command()
-async def removerole(ctx):
-    """
-    Removes a specific role from the user running the command.
-    Uses an embedded message to provide feedback.
-    """
-    role = discord.utils.get(ctx.guild.roles, name=ROLE_NAME)
-    
-    if role is None:
-        await ctx.send(f"Role '{ROLE_NAME}' could not be found on the server.")
-        return
-
-    if role not in ctx.author.roles:
-        embed = discord.Embed(title="Role Removed", description=f"You do not have the role **{ROLE_NAME}**.", color=discord.Color.orange())
-    else:
-        try:
-            await ctx.author.remove_roles(role)
-            embed = discord.Embed(title="Role Removed", description=f"The role **{ROLE_NAME}** has been removed from you.", color=discord.Color.green())
-        except discord.Forbidden:
-            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to remove this role.", color=discord.Color.red())
-    
-    await ctx.send(embed=embed)
+################_ALL_CODE_ABOVE_THIS_LINE_################
 
 # Run the bot using its token
 bot.run(botConfig._Bot_Token())
