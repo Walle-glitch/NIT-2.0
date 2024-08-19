@@ -28,7 +28,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/18.30"
+version_nr = "Current Version is 24/08/19.1"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -40,6 +40,7 @@ correct_answer = None
 ###########################################_All_User_Commands_##########################################
 
 #############################_Utilities_Commands_#############################
+
 # Help Command
 @bot.command()
 async def h(ctx):
@@ -92,19 +93,16 @@ async def about(ctx):
 
 
 #############################_User_Test_Commands_#############################
+
 # Hello
 @bot.command()
 async def hello(ctx):
     Reply = 'Hello?'
     await ctx.send(Reply)
 
-
-
-
 #############################_Game_Commands_#############################
 
 # Command to start a subnet game
-
 @bot.command()
 async def subnet(ctx):
     global current_question, correct_answer
@@ -133,6 +131,7 @@ async def on_message(message):
 
 
 #############################_Under Development_#############################
+
 # Game Command  Not Working Yet! 
 @bot.command()
 async def start_game(ctx, chosen_game):
@@ -153,6 +152,7 @@ async def answer_command(ctx, *, user_answer):
         reset_game()
     else:
         await ctx.send("Incorrect. Try again.")
+
 #############################_Network_Commands_#############################
 
 # Ping
@@ -208,7 +208,6 @@ async def rfc(ctx, rfc_number: str = None):
 
     await ctx.send(result)
     
-
 ###########################################_Below this line_###########################################
 ###########################################_Work In Progress_##########################################
 
@@ -332,7 +331,6 @@ async def test(ctx):
 async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
-
 
 ###########################################_Below this line_###########################################
 ###########################################_Work In Progress_##########################################
