@@ -1,3 +1,4 @@
+###########################################_Import_Modules_##########################################
 import os
 import discord
 import sys
@@ -9,14 +10,25 @@ import botConfig  # Bot-token and Bot info exists locally on the server; this mo
 import _Bot_Modul # Module for various functions.
 import _Subnet_Game # Module for the Subnet game.
 import _Games # Module for the games.
+import _Network_Tech_Game # Module for the Network Game.
 
-# Global version number variable
-version_nr = "Current Version is 24/08/18.30"
+
+###########################################_Bot_Set_Up_Stuff_##########################################
 
 # Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
 bot = commands.Bot(command_prefix="./", intents=intents)
+
+# A verification event to check if the bot is alive
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+
+###########################################_Global_Variables_##########################################
+
+# Global version number variable
+version_nr = "Current Version is 24/08/18.30"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -25,11 +37,9 @@ BOT_ADMIN_ROLE_NAME = "Bot-Master"
 current_question = None
 correct_answer = None
 
-# A verification event to check if the bot is alive
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
+###########################################_All_User_Commands_##########################################
 
+#############################_Utilities_Commands_#############################
 # Help Command
 @bot.command()
 async def h(ctx):
@@ -55,31 +65,11 @@ async def h(ctx):
         "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)",
         "Test": "./test - Test all commands. (Admin only)"
     }
-    
+
     for command, description in commands_list.items():
         embed.add_field(name=command, value=description, inline=False)
     
     await ctx.send(embed=embed)
-
-@bot.command()
-async def start_game(ctx, chosen_game):
-    if chosen_game not in ['subnet', 'network']:
-        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
-        return
-    await start_game(ctx, chosen_game)
-
-@bot.command()
-async def stop_game(ctx):
-    reset_game()
-    await ctx.send("The game has been stopped.")
-
-@bot.command(name='answer')
-async def answer_command(ctx, *, user_answer):
-    if check_answer(user_answer):
-        await ctx.send("Correct! Well done.")
-        reset_game()
-    else:
-        await ctx.send("Incorrect. Try again.")
 
 # Version Number
 @bot.command()
@@ -93,11 +83,6 @@ async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
     await ctx.send(Reply)
 
-# Hello
-@bot.command()
-async def hello(ctx):
-    Reply = 'Hello?'
-    await ctx.send(Reply)
 
 # About
 @bot.command()
@@ -105,39 +90,19 @@ async def about(ctx):
     Reply = 'The NIT-BOT is a fun bot here on our Discord. It is public on GitHub and anyone is free to contribute to it, either for fun or other (non-malicious) projects. The server it is hosted on is at my home, so it is behind a normal (NAT Gateway). Contact Walle/Nicklas for more info. Use ./git for the link to the GitHub repo.'
     await ctx.send(Reply)
 
-# Ping
+
+#############################_User_Test_Commands_#############################
+# Hello
 @bot.command()
-async def ping(ctx, ip: str = "8.8.8.8"):
-    """
-    Performs a ping test to a given IP address. If no IP address is specified,
-    it defaults to 8.8.8.8.
-    """
-    try:
-        result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
-        await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
-    except subprocess.CalledProcessError as e:
-        await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
+async def hello(ctx):
+    Reply = 'Hello?'
+    await ctx.send(Reply)
 
-# Get an RFC
-@bot.command()
-async def rfc(ctx, rfc_number: str = None):
-    """
-    Retrieves and displays information about an RFC based on the number.
-    
-    :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
-    """
-    if rfc_number is None:
-        await ctx.send("Error: No RFC number provided. Please provide an RFC number after the command.")
-        return
 
-    try:
-        rfc_number = int(rfc_number)
-        result = _Bot_Modul.get_rfc(rfc_number)
-    except ValueError:
-        result = "Error: Invalid RFC number. Please provide a valid integer."
 
-    await ctx.send(result)
-    
+
+#############################_Game_Commands_#############################
+
 # Command to start a subnet game
 
 @bot.command()
@@ -166,6 +131,44 @@ async def on_message(message):
     
     await bot.process_commands(message)
 
+
+#############################_Under Development_#############################
+# Game Command  Not Working Yet! 
+@bot.command()
+async def start_game(ctx, chosen_game):
+    if chosen_game not in ['subnet', 'network']:
+        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
+        return
+    await start_game(ctx, chosen_game)
+
+@bot.command()
+async def stop_game(ctx):
+    reset_game()
+    await ctx.send("The game has been stopped.")
+
+@bot.command(name='answer')
+async def answer_command(ctx, *, user_answer):
+    if check_answer(user_answer):
+        await ctx.send("Correct! Well done.")
+        reset_game()
+    else:
+        await ctx.send("Incorrect. Try again.")
+#############################_Network_Commands_#############################
+
+# Ping
+@bot.command()
+async def ping(ctx, ip: str = "8.8.8.8"):
+    """
+    Performs a ping test to a given IP address. If no IP address is specified,
+    it defaults to 8.8.8.8.
+    """
+    try:
+        result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
+        await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
+
+
 # BGP Setup Instructions
 @bot.command()
 async def BGP(ctx):
@@ -182,7 +185,31 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {gi0_ip}")
     else:
         await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
-###########################################_Below this line_##########################################
+
+#############################_Study_Commands_#############################
+
+# Get an RFC
+@bot.command()
+async def rfc(ctx, rfc_number: str = None):
+    """
+    Retrieves and displays information about an RFC based on the number.
+    
+    :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
+    """
+    if rfc_number is None:
+        await ctx.send("Error: No RFC number provided. Please provide an RFC number after the command.")
+        return
+
+    try:
+        rfc_number = int(rfc_number)
+        result = _Bot_Modul.get_rfc(rfc_number)
+    except ValueError:
+        result = "Error: Invalid RFC number. Please provide a valid integer."
+
+    await ctx.send(result)
+    
+
+###########################################_Below this line_###########################################
 ###########################################_Work In Progress_##########################################
 
 # Role name to be assigned by the bot
@@ -258,6 +285,58 @@ async def reboot(ctx):
 
     # Restart the Python script
     os.execl(python, python, *sys.argv)
+
+
+# Admin command to test all commands
+@bot.command()
+@commands.has_role(BOT_ADMIN_ROLE_NAME)
+async def test(ctx):
+    test_commands = [
+        ("version", None),
+        ("h", None),
+        ("git", None),
+        ("hello", None),
+        ("about", None),
+        ("ping", "8.8.8.8"),
+        ("rfc", "791"),
+        ("subnet", "null"),
+        ("BGP-Setup", "1.1.1.1 65000"),
+        ("start_game", "subnet"),
+        ("stop_game", None),
+        ("start_game", "network"),
+        ("stop_game", None),
+        ("Reboot", None),
+    ]
+    
+    for command_name, arg in test_commands:
+        command = bot.get_command(command_name)
+        if command:
+            try:
+                if arg:
+                    await command(ctx, arg)
+                else:
+                    await command(ctx)
+            except Exception as e:
+                await ctx.send(f"Error running command `{command_name}`: {e}")
+            
+            # If a game command was run, break after the first successful game answer
+            if command_name in ['subnet', 'network']:
+                global current_question, correct_answer
+                if current_question:
+                    await ctx.send("Game command test completed successfully. Stopping the game.")
+                    await bot.get_command('stop_game')(ctx)
+                    break
+
+# Error handling for test command
+@test.error
+async def test_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send("You do not have permission to use this command.")
+
+
+###########################################_Below this line_###########################################
+###########################################_Work In Progress_##########################################
+###############################################_Admin_#################################################
 
 # Manages errors if a non-"Bot-Master" tries the command
 @reboot.error
@@ -338,53 +417,14 @@ async def on_raw_reaction_remove(payload):
                 except discord.Forbidden:
                     pass  # Ignore if the user has disabled direct messages
 
-# Admin command to test all commands
-@bot.command()
-@commands.has_role(BOT_ADMIN_ROLE_NAME)
-async def test(ctx):
-    test_commands = [
-        ("version", None),
-        ("h", None),
-        ("git", None),
-        ("hello", None),
-        ("about", None),
-        ("ping", "8.8.8.8"),
-        ("rfc", "791"),
-        ("subnet", "null"),
-        ("BGP-Setup", "1.1.1.1 65000"),
-        ("start_game", "subnet"),
-        ("stop_game", None),
-        ("start_game", "network"),
-        ("stop_game", None),
-        ("Reboot", None),
-    ]
-    
-    for command_name, arg in test_commands:
-        command = bot.get_command(command_name)
-        if command:
-            try:
-                if arg:
-                    await command(ctx, arg)
-                else:
-                    await command(ctx)
-            except Exception as e:
-                await ctx.send(f"Error running command `{command_name}`: {e}")
-            
-            # If a game command was run, break after the first successful game answer
-            if command_name in ['subnet', 'network']:
-                global current_question, correct_answer
-                if current_question:
-                    await ctx.send("Game command test completed successfully. Stopping the game.")
-                    await bot.get_command('stop_game')(ctx)
-                    break
 
-# Error handling for test command
-@test.error
-async def test_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send("You do not have permission to use this command.")
-
-################_ALL_CODE_ABOVE_THIS_LINE_################
+###########################################_Don_Not_Add_###########################################
+##########################################_Anything_Below_#########################################
+############################################_Here_=)_##############################################
 
 # Run the bot using its token
 bot.run(botConfig._Bot_Token())
+
+#####################################################################################
+########################################_END_########################################
+#####################################################################################
