@@ -27,7 +27,7 @@ questions = [
         "question": "What is the main function of the ARP protocol?",
         "options": ["Translate domain names to IP addresses", "Resolve IP addresses to MAC addresses", "Encrypt data packets", "Establish TCP connections"],
         "correct_option_index": 1
-    }
+    },
     # CCNA / CCNP Questions
     {
         "question": "What does the acronym OSPF stand for?",
