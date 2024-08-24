@@ -1,4 +1,7 @@
+# This is Main.py The main File for the bot
+
 ###########################################_Import_Modules_##########################################
+
 import os
 import discord
 import sys
@@ -28,7 +31,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/19.1"
+version_nr = "Current Version is 24/08/24.1"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
