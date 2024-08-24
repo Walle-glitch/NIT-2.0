@@ -30,7 +30,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/24.1"
+version_nr = "Current Version is 24/08/24.2"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -91,6 +91,7 @@ async def git(ctx):
 @bot.command()
 async def about(ctx):
     Reply = (
+    '´´´\n'
     'The NIT-BOT is a fun bot here on our Discord.\n' 
     'It is public on GitHub and anyone is free to contribute to it,' 
     'either for fun or other (non-malicious) projects.\n' 
@@ -98,7 +99,8 @@ async def about(ctx):
     'so it is behind a normal (NAT Gateway).\n'
     '\n' 
     'Contact Walle/Nicklas for more info.'
-    'Use ./git for the link to the GitHub repo.'
+    'Use ./git for the link to the GitHub repo.\n'
+    '´´´'
     )
     await ctx.send(Reply)
 
