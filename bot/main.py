@@ -91,7 +91,6 @@ async def git(ctx):
 @bot.command()
 async def about(ctx):
     Reply = (
-    '´´´\n'
     'The NIT-BOT is a fun bot here on our Discord.\n' 
     'It is public on GitHub and anyone is free to contribute to it,' 
     'either for fun or other (non-malicious) projects.\n' 
@@ -100,7 +99,6 @@ async def about(ctx):
     '\n' 
     'Contact Walle/Nicklas for more info.'
     'Use ./git for the link to the GitHub repo.\n'
-    '´´´'
     )
     await ctx.send(Reply)
 
