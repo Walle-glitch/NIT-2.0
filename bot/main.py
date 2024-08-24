@@ -90,7 +90,16 @@ async def git(ctx):
 # About
 @bot.command()
 async def about(ctx):
-    Reply = 'The NIT-BOT is a fun bot here on our Discord. It is public on GitHub and anyone is free to contribute to it, either for fun or other (non-malicious) projects. The server it is hosted on is at my home, so it is behind a normal (NAT Gateway). Contact Walle/Nicklas for more info. Use ./git for the link to the GitHub repo.'
+    Reply = (
+    'The NIT-BOT is a fun bot here on our Discord.\n' 
+    'It is public on GitHub and anyone is free to contribute to it,' 
+    'either for fun or other (non-malicious) projects.\n' 
+    'The server it is hosted on is at my home,' 
+    'so it is behind a normal (NAT Gateway).\n'
+    '\n' 
+    'Contact Walle/Nicklas for more info.'
+    'Use ./git for the link to the GitHub repo.'
+    )
     await ctx.send(Reply)
 
 
@@ -179,7 +188,12 @@ async def ping(ctx, ip: str = "8.8.8.8"):
 # BGP Setup Instructions
 @bot.command()
 async def BGP(ctx):
-    Reply = 'When using the ./BGP_Setup command, you need to provide two variables, like this: "./BGP_Setup [your IP address] [your AS number]". You will receive a reply with the needed info when the configuration is complete.'
+    Reply = (
+        'When using the ./BGP_Setup command,\n' 
+        'you need to provide two variables,\n'
+        'like this: "./BGP_Setup [your IP address] [your AS number]".\n'
+        'You will receive a reply with the needed info when the configuration is complete.'
+        )
     await ctx.send(Reply)
 
 # Command to configure BGP peering
