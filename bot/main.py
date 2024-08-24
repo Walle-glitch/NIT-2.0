@@ -141,7 +141,7 @@ async def start_game(ctx, chosen_game):
     if chosen_game not in ['subnet', 'network']:
         await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
         return
-    await start_game(ctx, chosen_game)
+    await _Games.start_game(ctx, chosen_game)
 
 @bot.command()
 async def stop_game(ctx):
