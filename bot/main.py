@@ -152,32 +152,14 @@ async def on_message(message):
         return
 
     if message.content == '1':
-        await start_game(message.channel, 'subnet')
+        await _Games.start_game(message.channel, 'subnet')
     elif message.content == '2':
-        await start_game(message.channel, 'network')
+        await _Games.start_game(message.channel, 'network')
     else:
         await bot.process_commands(message)
+###
 
-@bot.command()
-async def start_game(ctx, chosen_game):
-    if chosen_game not in ['subnet', 'network']:
-        await ctx.send("Invalid game type. Choose 'subnet' or 'network'.")
-        return
-    await _Games.start_game(ctx, chosen_game)
-
-@bot.command()
-async def stop_game(ctx):
-    _Games.reset_game()
-    await ctx.send("The game has been stopped.")
-
-@bot.command(name='answer')
-async def answer_command(ctx, *, user_answer):
-    if  _Games.check_answer(user_answer):
-        await ctx.send("Correct! Well done.")
-        _Games.reset_game()
-    else:
-        await ctx.send("Incorrect. Try again.")
-
+###
 #############################_Network_Commands_#############################
 
 # Ping
