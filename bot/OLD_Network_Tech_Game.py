@@ -29,7 +29,6 @@ questions = [
         "options": ["Translate domain names to IP addresses", "Resolve IP addresses to MAC addresses", "Encrypt data packets", "Establish TCP connections"],
         "correct_option_index": 1
     },
-    # CCNA / CCNP Questions
     {
         "question": "What does the acronym OSPF stand for?",
         "options": ["Open Shortest Path First", "Open Source Path Finder", "Optimal Shortest Path Forwarding", "Open Source Protocol Framework"],

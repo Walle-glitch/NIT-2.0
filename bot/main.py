@@ -11,10 +11,9 @@ from discord.ext import commands, tasks
 from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 import _Bot_Modul # Module for various functions.
-import _Subnet_Game # Module for the Subnet game.
 import _Games # Module for the games.
-import _Network_Tech_Game # Module for the Network Game.
-
+#import _Network_Tech_Game # Module for the Network Game.
+#import _Subnet_Game # Module for the Subnet game.
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -110,7 +109,7 @@ async def hello(ctx):
 async def subnet(ctx):
     global current_question, correct_answer
     
-    current_question, correct_answer = _Subnet_Game.generate_subnet_question()
+    current_question, correct_answer = _Games.generate_subnet_question()
     await ctx.send(f"Subnet question: {current_question}")
 
 # Event to check the user's answer
@@ -121,9 +120,9 @@ async def on_message(message):
     if current_question and message.author != bot.user:
         user_answer = message.content
         
-        if _Subnet_Game.check_answer(user_answer, correct_answer):
+        if _Games.check_answer(user_answer, correct_answer):
             await message.channel.send("Correct answer! Well done!")
-            _Subnet_Game.reset_game()
+            _Games.reset_game()
         else:
             await message.channel.send(f"Incorrect answer. The correct answer is: {correct_answer}")
         
@@ -136,6 +135,29 @@ async def on_message(message):
 #############################_Under Development_#############################
 
 # Game Command  Not Working Yet! 
+
+@bot.command(name='spel')
+async def game_menu(ctx):
+    menu_message = (
+        "Welcome to the Game Menu! Please choose an option:\n"
+        "1. Subnet Game\n"
+        "2. Network Questions\n"
+        "Type `1` for Subnet Game or `2` for Network Questions."
+    )
+    await ctx.send(menu_message)
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if message.content == '1':
+        await start_game(message.channel, 'subnet')
+    elif message.content == '2':
+        await start_game(message.channel, 'network')
+    else:
+        await bot.process_commands(message)
+
 @bot.command()
 async def start_game(ctx, chosen_game):
     if chosen_game not in ['subnet', 'network']:
