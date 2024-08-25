@@ -42,10 +42,13 @@ correct_answer = None
 #############################_Utilities_Commands_#############################
 
 # Resours command 
-@bot.command(name="r")
+@bot.command(name="resuser")
 async def resuser_command(ctx):
-    await _Bot_Modul.send_resource_embed(ctx)
-
+    try:
+        await _Bot_Modul.send_resource_embed(ctx)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+        
 # Help Command
 @bot.command()
 async def h(ctx):
