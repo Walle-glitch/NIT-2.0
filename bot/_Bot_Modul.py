@@ -16,22 +16,21 @@ from discord.ext import commands
 ######### The resourses ############ 
 
 async def send_resource_embed(ctx):
+    # Skapa en lista för att hålla flera embeds
+    embeds = []
+
+    # Första embed
     embed = discord.Embed(
         title="Course Books and Resources",
         description="",
         color=discord.Color.blue()
     )
-
-    # <Big header>Course Books and Stuff<Big header>
-    embed.add_field(name="**Course Books and Stuff**", value="\u200b", inline=False)
     
-    # -Klickabel links, one per row-
+    embed.add_field(name="**Course Books and Stuff**", value="\u200b", inline=False)
     embed.add_field(name="[**linux (ogl) (Might Be old)**]", value="https://dl.remilia.se/os/", inline=False)
     embed.add_field(name="[**linux (ogl-tenta) (Might Be old)**]", value="https://www.studocu.com/sv/document/hogskolan-vast/operativsystem-med-gnulinux/ogl202-tentafragor-en-sammanfattning-fran-gamla-tenta-fragor-och-fragor-som-kan-uppkomma/10085924", inline=False)
     embed.add_field(name="[**python (most of it)**]", value="https://files.catbox.moe/tj6k7c.zip", inline=False)
     embed.add_field(name="[**ekonomi Kursen (Might Be old)**]", value="http://libgen.rs/book/index.php?md5=78A08A5D5329DF2BE639849653A0E199", inline=False)
-
-    # <Small header>CWNA-107 (Old version but still good):<Small header>
     embed.add_field(name="**CWNA-107 (Old version but still good):**", value="\u200b", inline=False)
     embed.add_field(name="[**epub**]", value="http://libgen.rs/book/index.php?md5=05F137E9D19D066C6E9E50F3E5C5B110", inline=False)
     embed.add_field(name="[**pdf**]", value="http://libgen.rs/book/index.php?md5=D80B9C3F3A0FDC642A955197C94BDEBB", inline=False)
@@ -44,82 +43,81 @@ async def send_resource_embed(ctx):
     embed.add_field(name="[**Wi-Fi Dump**]", value="https://docs.google.com/document/d/1BFMuQcGjwZxuaD9DJ0fco3xRuCCinvWuEWbFpCviMUM/edit", inline=False)
     embed.add_field(name="[**ENARSI för CCNP3**]", value="https://annas-archive.org/md5/45c415c2296f0f6709e5547e2d5d2c7e", inline=False)
 
-    # <Two empty rows>
-    embed.add_field(name="\u200b", value="\u200b", inline=False)
+    # Lägg till det första embed till listan
+    embeds.append(embed)
 
-    # <Big header>Bloogs and "fun stuff"<Big header>
-    embed.add_field(name="**Bloogs and \"fun stuff\"**", value="\u200b", inline=False)
+    # Andra embed för resten av informationen
+    embed2 = discord.Embed(
+        title="",
+        description="",
+        color=discord.Color.blue()
+    )
     
-    # -Klickabel links, one per row-
-    embed.add_field(name="[**Cloudflare Blog**]", value="https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/", inline=False)
-    embed.add_field(name="[**Study tips**]", value="https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/", inline=False)
-    embed.add_field(name="[**BEST cheat-sheets in the world**]", value="https://packetlife.net/library/cheat-sheets/", inline=False)
-
-    # <Two empty rows>
-    embed.add_field(name="\u200b", value="\u200b", inline=False)
-
-    # <Big header>YouTube resources<Big header>
-    embed.add_field(name="**YouTube resources**", value="\u200b", inline=False)
+    embed2.add_field(name="**Bloogs and \"fun stuff\"**", value="\u200b", inline=False)
+    embed2.add_field(name="[**Cloudflare Blog**]", value="https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/", inline=False)
+    embed2.add_field(name="[**Study tips**]", value="https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/", inline=False)
+    embed2.add_field(name="[**BEST cheat-sheets in the world**]", value="https://packetlife.net/library/cheat-sheets/", inline=False)
+    embed2.add_field(name="**YouTube resources**", value="\u200b", inline=False)
+    embed2.add_field(name="[**CCNA**]", value="https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB", inline=False)
+    embed2.add_field(name="[**Cybersäkerhet**]", value="https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY", inline=False)
+    embed2.add_field(name="[**Blandat inför GDA kursen och lite för Internettjänster**]", value="https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4", inline=False)
+    embed2.add_field(name="[**CCNA (Kompletteras bra med Jeremy)**]", value="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P", inline=False)
+    embed2.add_field(name="[**CCNA**]", value="https://www.youtube.com/playlist?list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF", inline=False)
     
-    # -Klickabel links, one per row-
-    embed.add_field(name="[**CCNA**]", value="https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB", inline=False)
-    embed.add_field(name="[**Cybersäkerhet**]", value="https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY", inline=False)
-    embed.add_field(name="[**Blandat inför GDA kursen och lite för Internettjänster**]", value="https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4", inline=False)
-    embed.add_field(name="[**CCNA (Kompletteras bra med Jeremy)**]", value="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P", inline=False)
-    embed.add_field(name="[**CCNA**]", value="https://www.youtube.com/playlist?list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF", inline=False)
+    embeds.append(embed2)
 
-    # <Two empty rows>
-    embed.add_field(name="\u200b", value="\u200b", inline=False)
-
-    # <Big header>Content creators on YouTube<Big header>
-    embed.add_field(name="**Content creators on YouTube**", value="\u200b", inline=False)
+    # Tredje embed för Content Creators och Downloads
+    embed3 = discord.Embed(
+        title="",
+        description="",
+        color=discord.Color.blue()
+    )
     
-    # -Klickabel links, one per row-
-    embed.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
-    embed.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
-    embed.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
-    embed.add_field(name="[**Art of Network Engineering**]", value="https://www.youtube.com/@artofneteng", inline=False)
-    embed.add_field(name="[**kevin Wallace**]", value="https://www.youtube.com/@kwallaceccie", inline=False)
-    embed.add_field(name="[**Keith Barker**]", value="https://www.youtube.com/@KeithBarker", inline=False)
-    embed.add_field(name="[**Chris Greer**]", value="https://www.youtube.com/@ChrisGreer", inline=False)
-    embed.add_field(name="[**David Bombal**]", value="https://www.youtube.com/@davidbombal", inline=False)
-    embed.add_field(name="[**Jeremy's IT Lab**]", value="https://www.youtube.com/@JeremysITLab", inline=False)
-    embed.add_field(name="[**Arthur Salmon**]", value="https://www.youtube.com/@arthursalmon3414", inline=False)
-    embed.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
-    embed.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
+    embed3.add_field(name="**Content creators on YouTube**", value="\u200b", inline=False)
+    embed3.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
+    embed3.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
+    embed3.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
+    embed3.add_field(name="[**Art of Network Engineering**]", value="https://www.youtube.com/@artofneteng", inline=False)
+    embed3.add_field(name="[**Keith Barker**]", value="https://www.youtube.com/@KeithBarker", inline=False)
+    embed3.add_field(name="[**Chris Greer**]", value="https://www.youtube.com/@ChrisGreer", inline=False)
+    embed3.add_field(name="[**David Bombal**]", value="https://www.youtube.com/@davidbombal", inline=False)
+    embed3.add_field(name="[**Jeremy's IT Lab**]", value="https://www.youtube.com/@JeremysITLab", inline=False)
+    embed3.add_field(name="[**Arthur Salmon**]", value="https://www.youtube.com/@arthursalmon3414", inline=False)
+    embed3.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
+    embed3.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
 
-    # <Two empty rows>
-    embed.add_field(name="\u200b", value="\u200b", inline=False)
-
-    # <Big header>Good Downloads<Big header>
-    embed.add_field(name="**Good Downloads**", value="\u200b", inline=False)
+    embed3.add_field(name="**Good Downloads**", value="\u200b", inline=False)
+    embed3.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
+    embed3.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
+    embed3.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
+    embed3.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
+    embed3.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
+    embed3.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
+    embed3.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
+    embed3.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
     
-    # -Klickabel links, one per row-
-    embed.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
-    embed.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
-    embed.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
-    embed.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
-    embed.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
-    embed.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
-    embed.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
-    embed.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
+    embeds.append(embed3)
 
-    # <Two empty rows>
-    embed.add_field(name="\u200b", value="\u200b", inline=False)
-
-    # <Big header>Get an account<Big header>
-    embed.add_field(name="**Get an account**", value="\u200b", inline=False)
+    # Fjärde embed för konton och avslutande meddelande
+    embed4 = discord.Embed(
+        title="",
+        description="",
+        color=discord.Color.blue()
+    )
     
-    # -Klickabel links, one per row-
-    embed.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
-    embed.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
-    embed.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
-    embed.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
+    embed4.add_field(name="**Get an account**", value="\u200b", inline=False)
+    embed4.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
+    embed4.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
+    embed4.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
+    embed4.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
 
-    # <Big header>AND!<Big header>
-    embed.add_field(name="**AND!**", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
+    embed4.add_field(name="**AND!**", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
 
-    await ctx.send(embed=embed)
+    embeds.append(embed4)
+
+    # Skicka alla embeds
+    for embed in embeds:
+        await ctx.send(embed=embed)
 
 ######### Create an Ticket ######### 
 
