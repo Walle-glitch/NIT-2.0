@@ -18,8 +18,6 @@ from discord.ext import commands
 
 ######### The resourses ############ 
 
-import discord
-
 async def send_resource_embed(ctx):
     embed = discord.Embed(
         title="Course Books and Resources",

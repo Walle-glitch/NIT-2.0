@@ -42,8 +42,8 @@ correct_answer = None
 #############################_Utilities_Commands_#############################
 
 # Resours command 
-@bot.command(name="r")
-async def resuser_command(ctx):
+@bot.command()
+async def r(ctx):
     await _Bot_Modul.send_resource_embed(ctx)
 
 # Help Command
