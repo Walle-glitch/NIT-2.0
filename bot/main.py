@@ -85,7 +85,6 @@ async def git(ctx):
     Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
     await ctx.send(Reply)
 
-
 # About
 @bot.command()
 async def about(ctx):
@@ -102,7 +101,6 @@ async def about(ctx):
     await ctx.send(Reply)
 
 # Ticket creation     
-
 @bot.command(name="ticket")
 async def create_ticket_command(ctx, *, channel_name=None):
     guild = ctx.guild
@@ -162,7 +160,6 @@ async def on_message(message):
 #############################_Under Development_#############################
 
 # Game Command  Not Working Yet! 
-
 @bot.command(name='spel')
 async def game_menu(ctx):
     menu_message = (
@@ -184,9 +181,7 @@ async def on_message(message):
         await _Games.start_game(message.channel, 'network')
     else:
         await bot.process_commands(message)
-###
 
-###
 #############################_Network_Commands_#############################
 
 # Ping
@@ -201,7 +196,6 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
     except subprocess.CalledProcessError as e:
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
-
 
 # BGP Setup Instructions
 @bot.command()
@@ -307,7 +301,7 @@ async def removerole(ctx):
 # Check if the user has the necessary roles
 def has_privileged_role(ctx):
     roles = [role.name for role in ctx.author.roles]
-    return "Privilage 15" in roles or "Privilage 10" in roles
+    return "Privilege 15" in roles or "Privilege 10" in roles
 
 # Comands for Kick a Member
 @bot.command(name="kick")
@@ -329,13 +323,6 @@ async def ban_command(ctx, user: discord.Member, *, reason=None):
 @commands.has_permissions(moderate_members=True)
 async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None):
     await _Bot_Modul.mute_user(ctx, user, duration, reason)
-
-
-
-
-
-
-
 
 # Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")
@@ -490,7 +477,6 @@ async def on_raw_reaction_remove(payload):
                     await member.send(f"The role {role.name} has been removed from you.")
                 except discord.Forbidden:
                     pass  # Ignore if the user has disabled direct messages
-
 
 ###########################################_Don_Not_Add_###########################################
 ##########################################_Anything_Below_#########################################
