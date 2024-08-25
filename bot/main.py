@@ -28,7 +28,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/25.6"
+version_nr = "Current Version is 24/08/25.22"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
