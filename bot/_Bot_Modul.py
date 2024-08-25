@@ -48,12 +48,11 @@ async def send_resource_embed(ctx):
 
     # Andra embed för resten av informationen
     embed2 = discord.Embed(
-        title="",
+        title="Bloogs and fun stuff",
         description="",
         color=discord.Color.blue()
     )
     
-    embed2.add_field(name="**Bloogs and \"fun stuff\"**", value="\u200b", inline=False)
     embed2.add_field(name="[**Cloudflare Blog**]", value="https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/", inline=False)
     embed2.add_field(name="[**Study tips**]", value="https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/", inline=False)
     embed2.add_field(name="[**BEST cheat-sheets in the world**]", value="https://packetlife.net/library/cheat-sheets/", inline=False)
@@ -68,12 +67,11 @@ async def send_resource_embed(ctx):
 
     # Tredje embed för Content Creators och Downloads
     embed3 = discord.Embed(
-        title="",
+        title="**Content creators on YouTube**",
         description="",
         color=discord.Color.blue()
     )
     
-    embed3.add_field(name="**Content creators on YouTube**", value="\u200b", inline=False)
     embed3.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
     embed3.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
     embed3.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
@@ -86,34 +84,51 @@ async def send_resource_embed(ctx):
     embed3.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
     embed3.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
 
-    embed3.add_field(name="**Good Downloads**", value="\u200b", inline=False)
-    embed3.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
-    embed3.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
-    embed3.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
-    embed3.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
-    embed3.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
-    embed3.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
-    embed3.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
-    embed3.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
-    
     embeds.append(embed3)
 
-    # Fjärde embed för konton och avslutande meddelande
+      # Fjärde embed för konton och avslutande meddelande
     embed4 = discord.Embed(
-        title="",
+        title="Good Downloads",
+        description="",
+        color=discord.Color.blue()
+    )
+   
+    embed4.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
+    embed4.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
+    embed4.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
+    embed4.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
+    embed4.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
+    embed4.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
+    embed4.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
+    embed4.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
+    
+    embeds.append(embed4)
+
+    # femte embed för konton och avslutande meddelande
+    embed5 = discord.Embed(
+        title="Get an account",
         description="",
         color=discord.Color.blue()
     )
     
-    embed4.add_field(name="**Get an account**", value="\u200b", inline=False)
-    embed4.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
-    embed4.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
-    embed4.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
-    embed4.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
+    embed5.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
+    embed5.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
+    embed5.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
+    embed5.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
 
-    embed4.add_field(name="**AND!**", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
 
-    embeds.append(embed4)
+    embeds.append(embed5)
+
+    # sista embed för konton och avslutande meddelande
+    embed6 = discord.Embed(
+        title="Last but still...",
+        description="",
+        color=discord.Color.blue()
+    )
+    
+    embed6.add_field(name="ASK!", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
+
+    embeds.append(embed6)
 
     # Skicka alla embeds
     for embed in embeds:
