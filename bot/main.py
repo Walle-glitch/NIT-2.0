@@ -42,11 +42,9 @@ correct_answer = None
 #############################_Utilities_Commands_#############################
 
 # Resours command 
-@bot.command()
-async def r(ctx):
-    Reply = "test"
-    await ctx.send(Reply)
-    #await _Bot_Modul.send_resource_embed(ctx)
+@bot.command(name="r")
+async def resuser_command(ctx):
+    await _Bot_Modul.send_resource_embed(ctx)
 
 # Help Command
 @bot.command()
