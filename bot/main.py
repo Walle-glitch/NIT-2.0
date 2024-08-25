@@ -28,7 +28,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/25.1"
+version_nr = "Current Version is 24/08/25.5"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -59,13 +59,20 @@ async def h(ctx):
         "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
         "Hello": "./hello - Say hello to the bot.",
         "About": "./about - Information about the bot and its purpose.",
-        "ticket": "./ticket - creates a new chanel to disscuss a speicif issue Use the comand ./close to close this chanel.",
+        "Ticket": "./ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
+        "Close": "./close - Close the current ticket channel.",
+        "Subnet Game": "./subnet - Start a subnet game.",
+        "Game Menu": "./spel - Choose between different games (Subnet and Network Questions).",
         "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
         "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "Network Games": "./start_game - Chose between Subnet and Network",
         "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
-        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Admin only)",
-        "Test": "./test - Test all commands. (Admin only)"
+        "Add Role": "./addrole - Assign a predefined role to the user.",
+        "Remove Role": "./removerole - Remove a predefined role from the user.",
+        "Kick": "./kick [username] - Kick a user from the server. (Privilege 10/15 only)",
+        "Ban": "./ban [username] - Ban a user from the server. (Privilege 10/15 only)",
+        "Mute": "./mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
+        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
+        "Test": "./test - Test all commands. (Bot-Admin only)"
     }
 
     for command, description in commands_list.items():
