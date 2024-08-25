@@ -421,6 +421,8 @@ async def on_raw_reaction_add(payload):
     """
     Event that handles role assignment when a user reacts to a message.
     """
+    MESSAGE_ID = 0
+
     if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
@@ -442,6 +444,8 @@ async def on_raw_reaction_remove(payload):
     """
     Event that handles role removal when a user removes their reaction.
     """
+    MESSAGE_ID = 0
+
     if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
