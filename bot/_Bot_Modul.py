@@ -15,14 +15,15 @@ import random
 ######### Create an Ticket ######### 
 
 # Function to create a new ticket
-async def create_ticket(guild, category_id, user):
+async def create_ticket(guild, category_id, user, channel_name=None):
     category = discord.utils.get(guild.categories, id=category_id)
     if not category:
         return None
 
-    # Generate a random 4-digit number for the ticket name
-    ticket_number = random.randint(1000, 9999)
-    channel_name = f"ticket-{ticket_number}"
+    # Use the provided channel name or generate a random 4-digit number
+    if not channel_name:
+        ticket_number = random.randint(1000, 9999)
+        channel_name = f"ticket-{ticket_number}"
 
     # Create the new channel in the specified category
     channel = await guild.create_text_channel(channel_name, category=category)
@@ -51,7 +52,9 @@ async def check_inactivity(channel):
 async def close_ticket(channel):
     await channel.delete()
 
-######### GET AN RFC ######### 
+
+################### GET AN RFC ###################
+
 def get_rfc(rfc_number):
     """
     Retrieves an RFC from the IETF data tracker based on RFC number.
@@ -87,7 +90,7 @@ def get_rfc(rfc_number):
         # Handle any HTTP errors
         return f"Error retrieving RFC: {e}"
 
-#############################################
+############### Create a BGP neighbor ###################
 
 # Function to configure BGP on a specific router
 def configure_bgp_neighbor(neighbor_ip, neighbor_as):
