@@ -30,7 +30,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/24.2"
+version_nr = "Current Version is 24/08/25.1"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -101,6 +101,26 @@ async def about(ctx):
     'Use ./git for the link to the GitHub repo.\n'
     )
     await ctx.send(Reply)
+
+# Ticket creation     
+
+@bot.command(name="ticket")
+async def create_ticket_command(ctx):
+    guild = ctx.guild
+    category_id = 1012026430470766816  # Replace with your actual category ID
+    channel = await _Bot_Modul.create_ticket(guild, category_id, ctx.author)
+    
+    if channel:
+        await ctx.send(f"Your ticket has been created: {channel.mention}")
+    else:
+        await ctx.send("Failed to create the ticket. Please contact an administrator.")
+
+@bot.command(name="close")
+async def close_ticket_command(ctx):
+    # Close the channel where the command is invoked
+    await _Bot_Modul.close_ticket(ctx.channel)
+    await ctx.send("This ticket has been closed.")
+
 
 
 #############################_User_Test_Commands_#############################

@@ -1,10 +1,55 @@
 # This is _Bot_Modul.py
+
+###########################################_Import_Modules_##########################################
+
 import requests
 import telnetlib
 from bs4 import BeautifulSoup
 import paramiko
 import _Router_Conf
 import time
+import discord
+import asyncio
+import random
+
+######### Create an Ticket ######### 
+
+# Function to create a new ticket
+async def create_ticket(guild, category_id, user):
+    category = discord.utils.get(guild.categories, id=category_id)
+    if not category:
+        return None
+
+    # Generate a random 4-digit number for the ticket name
+    ticket_number = random.randint(1000, 9999)
+    channel_name = f"ticket-{ticket_number}"
+
+    # Create the new channel in the specified category
+    channel = await guild.create_text_channel(channel_name, category=category)
+
+    # Add a message in the new ticket channel
+    await channel.send(f"Hello {user.mention}, thank you for creating a ticket. Please describe your issue.")
+
+    # Start the inactivity timer
+    asyncio.create_task(check_inactivity(channel))
+
+    return channel
+
+# Function to check inactivity and close the ticket after 2 days
+async def check_inactivity(channel):
+    def check_message(m):
+        return m.channel == channel
+
+    try:
+        # Wait for any message in the channel for 2 days (172800 seconds)
+        await channel.bot.wait_for('message', check=check_message, timeout=172800)
+    except asyncio.TimeoutError:
+        await channel.send("This ticket has been inactive for 2 days and will now be closed.")
+        await close_ticket(channel)
+
+# Function to close the ticket
+async def close_ticket(channel):
+    await channel.delete()
 
 ######### GET AN RFC ######### 
 def get_rfc(rfc_number):
