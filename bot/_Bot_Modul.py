@@ -13,9 +13,6 @@ import asyncio
 import random
 from discord.ext import commands
 
-
-
-
 ######### The resourses ############ 
 
 async def send_resource_embed(ctx):
@@ -102,7 +99,9 @@ async def send_resource_embed(ctx):
     embed.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
     embed.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
     embed.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
+    embed.add_field(name="[**Packet Capture & Analyzer**]", value="https://www.wireshark.org/", inline=False)
 
+    await ctx.send(embed=embed)
 
 ######### Create an Ticket ######### 
 
