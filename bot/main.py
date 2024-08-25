@@ -44,7 +44,9 @@ correct_answer = None
 # Resours command 
 @bot.command()
 async def r(ctx):
-    await _Bot_Modul.send_resource_embed(ctx)
+    Reply = "test"
+    await ctx.send(Reply)
+    #await _Bot_Modul.send_resource_embed(ctx)
 
 # Help Command
 @bot.command()
