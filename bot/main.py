@@ -42,7 +42,7 @@ correct_answer = None
 #############################_Utilities_Commands_#############################
 
 # Resours command 
-@bot.command(name="resuser")
+@bot.command(name="r")
 async def resuser_command(ctx):
     await _Bot_Modul.send_resource_embed(ctx)
 
