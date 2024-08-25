@@ -99,7 +99,25 @@ async def send_resource_embed(ctx):
     embed.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
     embed.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
     embed.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
-    embed.add_field(name="[**Packet Capture & Analyzer**]", value="https://www.wireshark.org/", inline=False)
+    embed.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
+    embed.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
+    embed.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
+    embed.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
+
+    # <Two empty rows>
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
+    # <Big header>Get an account<Big header>
+    embed.add_field(name="**Get an account**", value="\u200b", inline=False)
+    
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
+    embed.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
+    embed.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
+    embed.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
+
+    # <Big header>AND!<Big header>
+    embed.add_field(name="**AND!**", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
 
     await ctx.send(embed=embed)
 
