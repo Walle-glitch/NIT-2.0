@@ -15,6 +15,40 @@ from discord.ext import commands
 
 
 
+
+######### The resourses ############ 
+
+async def send_resource_embed(ctx):
+    embed = discord.Embed(
+        title="Course Books and Resources",
+        description="A collection of useful links for various courses and tools.",
+        color=discord.Color.blue()
+    )
+
+    embed.add_field(name="Linux (OGL)", value="[Might Be Old](https://dl.remilia.se/os/)", inline=False)
+    embed.add_field(name="Linux (OGL) - Exam Questions", value="[Might Be Old](https://www.studocu.com/sv/document/hogskolan-vast/operativsystem-med-gnulinux/ogl202-tentafragor-en-sammanfattning-fran-gamla-tenta-fragor-och-fragor-som-kan-uppkomma/10085924)", inline=False)
+    embed.add_field(name="Python", value="[Most of it](https://files.catbox.moe/tj6k7c.zip)", inline=False)
+    embed.add_field(name="Ekonomi Kursen", value="[Might Be Old](http://libgen.rs/book/index.php?md5=78A08A5D5329DF2BE639849653A0E199)", inline=False)
+    embed.add_field(name="CWNA-107", value="[EPUB](http://libgen.rs/book/index.php?md5=05F137E9D19D066C6E9E50F3E5C5B110) | [PDF](http://libgen.rs/book/index.php?md5=D80B9C3F3A0FDC642A955197C94BDEBB)", inline=False)
+    embed.add_field(name="Cisco Firewall", value="[Cisco Firewall](http://library.lol/main/0E0CCB79FF5E15785BCFEA8BF5559AC7)", inline=False)
+    embed.add_field(name="CCNP & Security Notes", value="[Google Docs](https://docs.google.com/document/d/1JAeWT1ovXITvOxSoUHjhk_sERsZlIZOrnKJYe5X6Y0M/edit)", inline=False)
+    embed.add_field(name="vSphere 6.7", value="[vSphere](http://libgen.rs/book/index.php?md5=77B976B18B7F5B218DC1324E27621F72)", inline=False)
+    embed.add_field(name="Upgrade/Repair PCs (22nd Edition)", value="[Upgrade/Repair PCs](http://libgen.rs/book/index.php?md5=9D0AE23F01B7D7E130EF88D62A01FAF6)", inline=False)
+    embed.add_field(name="CCNP2 PowerPoints", value="[PowerPoints](https://files.catbox.moe/6l0pep.zip)", inline=False)
+    embed.add_field(name="CCNP3 PowerPoints", value="[PowerPoints](https://files.catbox.moe/5utyd8.zip)", inline=False)
+    embed.add_field(name="Wi-Fi Dump", value="[Google Docs](https://docs.google.com/document/d/1BFMuQcGjwZxuaD9DJ0fco3xRuCCinvWuEWbFpCviMUM/edit)", inline=False)
+    embed.add_field(name="ENARSI for CCNP3", value="[ENARSI](https://annas-archive.org/md5/45c415c2296f0f6709e5547e2d5d2c7e)", inline=False)
+    embed.add_field(name="Blogs and Fun Stuff", value="[Cloudflare Blog](https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/)", inline=False)
+    embed.add_field(name="Study Tips", value="[FreeCodeCamp](https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/)", inline=False)
+    embed.add_field(name="Cheat Sheets", value="[PacketLife](https://packetlife.net/library/cheat-sheets/)", inline=False)
+    embed.add_field(name="YouTube Resources - CCNA", value="[Playlist](https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB)", inline=False)
+    embed.add_field(name="YouTube Resources - Cybersecurity", value="[Playlist](https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY)", inline=False)
+    embed.add_field(name="YouTube Resources - GDA & Internettjänster", value="[Playlist](https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4)", inline=False)
+    embed.add_field(name="Content Creators", value="[Indently](https://www.youtube.com/@Indently), [Ccieordie](https://www.youtube.com/@Ccieordie_arteq), [INE](https://www.youtube.com/@INEtraining), [Art of Network Engineering](https://www.youtube.com/@artofneteng)", inline=False)
+    embed.add_field(name="Good Downloads", value="(Note Taking) [Notepad++](https://notepad-plus-plus.org/), (Note Taking) [Obsidian](https://obsidian.md/), (IDE) [Visual Studio Code](https://code.visualstudio.com/), [Putty](https://www.putty.org/), (Flash Cards) [Anki](https://apps.ankiweb.net/), (Packet Capture & Analyzer) [Wireshark](https://www.wireshark.org/)", inline=False)
+    
+    await ctx.send(embed=embed)
+
 ######### Create an Ticket ######### 
 
 # Function to create a new ticket

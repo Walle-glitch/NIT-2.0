@@ -28,7 +28,7 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/25.5"
+version_nr = "Current Version is 24/08/25.6"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -40,6 +40,11 @@ correct_answer = None
 ###########################################_All_User_Commands_##########################################
 
 #############################_Utilities_Commands_#############################
+
+# Resours command 
+@bot.command(name="resuser")
+async def resuser_command(ctx):
+    await _Bot_Modul.send_resource_embed(ctx)
 
 # Help Command
 @bot.command()
@@ -54,6 +59,7 @@ async def h(ctx):
     )
     
     commands_list = {
+        "resuser": "./resuser - Display a list of good program resoursers.",
         "Help": "./h - Display this help message.",
         "Version": "./version - Show the current bot version.",
         "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
