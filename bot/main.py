@@ -59,7 +59,7 @@ async def h(ctx):
     )
     
     commands_list = {
-        "resuser": "./resuser - Display a list of good program resoursers.",
+        "resurser": "./r - Display a list of good program resoursers.",
         "Help": "./h - Display this help message.",
         "Version": "./version - Show the current bot version.",
         "Git Repository": "./git - Provide the link to the bot's GitHub repository.",

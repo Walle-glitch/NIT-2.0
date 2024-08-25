@@ -18,39 +18,93 @@ from discord.ext import commands
 
 ######### The resourses ############ 
 
+import discord
+
 async def send_resource_embed(ctx):
     embed = discord.Embed(
         title="Course Books and Resources",
-        description="A collection of useful links for various courses and tools.",
+        description="",
         color=discord.Color.blue()
     )
 
-    embed.add_field(name="Linux (OGL)", value="[Might Be Old](https://dl.remilia.se/os/)", inline=False)
-    embed.add_field(name="Linux (OGL) - Exam Questions", value="[Might Be Old](https://www.studocu.com/sv/document/hogskolan-vast/operativsystem-med-gnulinux/ogl202-tentafragor-en-sammanfattning-fran-gamla-tenta-fragor-och-fragor-som-kan-uppkomma/10085924)", inline=False)
-    embed.add_field(name="Python", value="[Most of it](https://files.catbox.moe/tj6k7c.zip)", inline=False)
-    embed.add_field(name="Ekonomi Kursen", value="[Might Be Old](http://libgen.rs/book/index.php?md5=78A08A5D5329DF2BE639849653A0E199)", inline=False)
-    embed.add_field(name="CWNA-107", value="[EPUB](http://libgen.rs/book/index.php?md5=05F137E9D19D066C6E9E50F3E5C5B110) | [PDF](http://libgen.rs/book/index.php?md5=D80B9C3F3A0FDC642A955197C94BDEBB)", inline=False)
-    embed.add_field(name="Cisco Firewall", value="[Cisco Firewall](http://library.lol/main/0E0CCB79FF5E15785BCFEA8BF5559AC7)", inline=False)
-    embed.add_field(name="CCNP & Security Notes", value="[Google Docs](https://docs.google.com/document/d/1JAeWT1ovXITvOxSoUHjhk_sERsZlIZOrnKJYe5X6Y0M/edit)", inline=False)
-    embed.add_field(name="vSphere 6.7", value="[vSphere](http://libgen.rs/book/index.php?md5=77B976B18B7F5B218DC1324E27621F72)", inline=False)
-    embed.add_field(name="Upgrade/Repair PCs (22nd Edition)", value="[Upgrade/Repair PCs](http://libgen.rs/book/index.php?md5=9D0AE23F01B7D7E130EF88D62A01FAF6)", inline=False)
-    embed.add_field(name="CCNP2 PowerPoints", value="[PowerPoints](https://files.catbox.moe/6l0pep.zip)", inline=False)
-    embed.add_field(name="CCNP3 PowerPoints", value="[PowerPoints](https://files.catbox.moe/5utyd8.zip)", inline=False)
-    embed.add_field(name="Wi-Fi Dump", value="[Google Docs](https://docs.google.com/document/d/1BFMuQcGjwZxuaD9DJ0fco3xRuCCinvWuEWbFpCviMUM/edit)", inline=False)
-    embed.add_field(name="ENARSI for CCNP3", value="[ENARSI](https://annas-archive.org/md5/45c415c2296f0f6709e5547e2d5d2c7e)", inline=False)
-    embed.add_field(name="Blogs and Fun Stuff", value="[Cloudflare Blog](https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/)", inline=False)
-    embed.add_field(name="Study Tips", value="[FreeCodeCamp](https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/)", inline=False)
-    embed.add_field(name="Cheat Sheets", value="[PacketLife](https://packetlife.net/library/cheat-sheets/)", inline=False)
-    embed.add_field(name="YouTube Resources - CCNA", value="[Playlist](https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB)", inline=False)
-    embed.add_field(name="YouTube Resources - Cybersecurity", value="[Playlist](https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY)", inline=False)
-    embed.add_field(name="YouTube Resources - GDA & Internettjänster", value="[Playlist](https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4)", inline=False)
-    embed.add_field(name="Content Creator", value="[Indently](https://www.youtube.com/@Indently)", inline=False)
-    embed.add_field(name="Content Creator", value="[Ccieordie](https://www.youtube.com/@Ccieordie_arteq)", inline=False)
-    embed.add_field(name="Content Creator", value="[INE](https://www.youtube.com/@INEtraining)", inline=False)
-    embed.add_field(name="Content Creator", value="[Art of Network Engineering](https://www.youtube.com/@artofneteng)", inline=False)    
-    embed.add_field(name="Good Downloads", value="(Note Taking) [Notepad++](https://notepad-plus-plus.org/), (Note Taking) [Obsidian](https://obsidian.md/), (IDE) [Visual Studio Code](https://code.visualstudio.com/), [Putty](https://www.putty.org/), (Flash Cards) [Anki](https://apps.ankiweb.net/), (Packet Capture & Analyzer) [Wireshark](https://www.wireshark.org/)", inline=False)
+    # <Big header>Course Books and Stuff<Big header>
+    embed.add_field(name="**Course Books and Stuff**", value="\u200b", inline=False)
     
-    await ctx.send(embed=embed)
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**linux (ogl) (Might Be old)**]", value="https://dl.remilia.se/os/", inline=False)
+    embed.add_field(name="[**linux (ogl-tenta) (Might Be old)**]", value="https://www.studocu.com/sv/document/hogskolan-vast/operativsystem-med-gnulinux/ogl202-tentafragor-en-sammanfattning-fran-gamla-tenta-fragor-och-fragor-som-kan-uppkomma/10085924", inline=False)
+    embed.add_field(name="[**python (most of it)**]", value="https://files.catbox.moe/tj6k7c.zip", inline=False)
+    embed.add_field(name="[**ekonomi Kursen (Might Be old)**]", value="http://libgen.rs/book/index.php?md5=78A08A5D5329DF2BE639849653A0E199", inline=False)
+
+    # <Small header>CWNA-107 (Old version but still good):<Small header>
+    embed.add_field(name="**CWNA-107 (Old version but still good):**", value="\u200b", inline=False)
+    embed.add_field(name="[**epub**]", value="http://libgen.rs/book/index.php?md5=05F137E9D19D066C6E9E50F3E5C5B110", inline=False)
+    embed.add_field(name="[**pdf**]", value="http://libgen.rs/book/index.php?md5=D80B9C3F3A0FDC642A955197C94BDEBB", inline=False)
+    embed.add_field(name="[**Cisco firewall**]", value="http://library.lol/main/0E0CCB79FF5E15785BCFEA8BF5559AC7", inline=False)
+    embed.add_field(name="[**Some Notes CCNP and SEC**]", value="https://docs.google.com/document/d/1JAeWT1ovXITvOxSoUHjhk_sERsZlIZOrnKJYe5X6Y0M/edit", inline=False)
+    embed.add_field(name="[**vSphere 6.7**]", value="http://libgen.rs/book/index.php?md5=77B976B18B7F5B218DC1324E27621F72", inline=False)
+    embed.add_field(name="[**uppgrade/repair pcs (22nd edition)**]", value="http://libgen.rs/book/index.php?md5=9D0AE23F01B7D7E130EF88D62A01FAF6", inline=False)
+    embed.add_field(name="[**ccnp2 nit20 powerpoints**]", value="https://files.catbox.moe/6l0pep.zip", inline=False)
+    embed.add_field(name="[**ccnp3 nit20 powerpoints**]", value="https://files.catbox.moe/5utyd8.zip", inline=False)
+    embed.add_field(name="[**Wi-Fi Dump**]", value="https://docs.google.com/document/d/1BFMuQcGjwZxuaD9DJ0fco3xRuCCinvWuEWbFpCviMUM/edit", inline=False)
+    embed.add_field(name="[**ENARSI för CCNP3**]", value="https://annas-archive.org/md5/45c415c2296f0f6709e5547e2d5d2c7e", inline=False)
+
+    # <Two empty rows>
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
+    # <Big header>Bloogs and "fun stuff"<Big header>
+    embed.add_field(name="**Bloogs and \"fun stuff\"**", value="\u200b", inline=False)
+    
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**Cloudflare Blog**]", value="https://blog.cloudflare.com/making-phishing-defense-seamless-cloudflare-yubico/", inline=False)
+    embed.add_field(name="[**Study tips**]", value="https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/", inline=False)
+    embed.add_field(name="[**BEST cheat-sheets in the world**]", value="https://packetlife.net/library/cheat-sheets/", inline=False)
+
+    # <Two empty rows>
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
+    # <Big header>YouTube resources<Big header>
+    embed.add_field(name="**YouTube resources**", value="\u200b", inline=False)
+    
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**CCNA**]", value="https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB", inline=False)
+    embed.add_field(name="[**Cybersäkerhet**]", value="https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY", inline=False)
+    embed.add_field(name="[**Blandat inför GDA kursen och lite för Internettjänster**]", value="https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4", inline=False)
+    embed.add_field(name="[**CCNA (Kompletteras bra med Jeremy)**]", value="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P", inline=False)
+    embed.add_field(name="[**CCNA**]", value="https://www.youtube.com/playlist?list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF", inline=False)
+
+    # <Two empty rows>
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
+    # <Big header>Content creators on YouTube<Big header>
+    embed.add_field(name="**Content creators on YouTube**", value="\u200b", inline=False)
+    
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
+    embed.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
+    embed.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
+    embed.add_field(name="[**Art of Network Engineering**]", value="https://www.youtube.com/@artofneteng", inline=False)
+    embed.add_field(name="[**kevin Wallace**]", value="https://www.youtube.com/@kwallaceccie", inline=False)
+    embed.add_field(name="[**Keith Barker**]", value="https://www.youtube.com/@KeithBarker", inline=False)
+    embed.add_field(name="[**Chris Greer**]", value="https://www.youtube.com/@ChrisGreer", inline=False)
+    embed.add_field(name="[**David Bombal**]", value="https://www.youtube.com/@davidbombal", inline=False)
+    embed.add_field(name="[**Jeremy's IT Lab**]", value="https://www.youtube.com/@JeremysITLab", inline=False)
+    embed.add_field(name="[**Arthur Salmon**]", value="https://www.youtube.com/@arthursalmon3414", inline=False)
+    embed.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
+    embed.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
+
+    # <Two empty rows>
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
+    # <Big header>Good Downloads<Big header>
+    embed.add_field(name="**Good Downloads**", value="\u200b", inline=False)
+    
+    # -Klickabel links, one per row-
+    embed.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
+    embed.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
+    embed.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
+    embed.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
+
 
 ######### Create an Ticket ######### 
 
