@@ -12,7 +12,7 @@ game_task = None
 
 async def start_game(ctx, chosen_game):
     global current_question, correct_answer, game_type, game_task
-
+    # while 
     if game_task and not game_task.done():
         await ctx.send("A game is already in progress. Please use `./stop_game` to stop it first.")
         return
@@ -85,9 +85,6 @@ def check_answer(user_answer, correct_answer):
     return user_answer.strip() == correct_answer
 
 ################_Network_Questions_###################
-# This is _Network_Tech_Game.py
-
-import random
 
 # List of questions, each with options and the index of the correct option
 questions = [
@@ -381,7 +378,7 @@ questions = [
 # Dictionary to keep track of scores for each user
 user_scores = {}
 
-def generate_question():
+def generate_network_question():
     """
     Generates a random network-related question with options.
     

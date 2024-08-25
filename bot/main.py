@@ -61,6 +61,7 @@ async def h(ctx):
         "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
         "Hello": "./hello - Say hello to the bot.",
         "About": "./about - Information about the bot and its purpose.",
+        "ticket": "./ticket - creates a new chanel to disscuss a speicif issue Use the comand ./close to close this chanel.",
         "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
         "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
         "Network Games": "./start_game - Chose between Subnet and Network",
