@@ -12,8 +12,6 @@ from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
-#import _Network_Tech_Game # Module for the Network Game.
-#import _Subnet_Game # Module for the Subnet game.
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -305,6 +303,39 @@ async def removerole(ctx):
 
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
+
+# Check if the user has the necessary roles
+def has_privileged_role(ctx):
+    roles = [role.name for role in ctx.author.roles]
+    return "Privilage 15" in roles or "Privilage 10" in roles
+
+# Comands for Kick a Member
+@bot.command(name="kick")
+@commands.check(has_privileged_role)
+@commands.has_permissions(kick_members=True)
+async def kick_command(ctx, user: discord.Member, *, reason=None):
+    await _Bot_Modul.kick_user(ctx, user, reason)
+
+# Comands for Ban a Member
+@bot.command(name="ban")
+@commands.check(has_privileged_role)
+@commands.has_permissions(ban_members=True)
+async def ban_command(ctx, user: discord.Member, *, reason=None):
+    await _Bot_Modul.ban_user(ctx, user, reason)
+
+# Comands for mute a Member
+@bot.command(name="mute")
+@commands.check(has_privileged_role)
+@commands.has_permissions(moderate_members=True)
+async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None):
+    await _Bot_Modul.mute_user(ctx, user, duration, reason)
+
+
+
+
+
+
+
 
 # Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")

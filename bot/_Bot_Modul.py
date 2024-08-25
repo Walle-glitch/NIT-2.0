@@ -11,6 +11,9 @@ import time
 import discord
 import asyncio
 import random
+from discord.ext import commands
+
+
 
 ######### Create an Ticket ######### 
 
@@ -155,3 +158,39 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
         # Close the Telnet connection
         tn.write(b"exit\n")
         tn.close()
+
+############### Moderation of Members ###################
+
+
+# Function to kick a user
+async def kick_user(ctx, user: discord.Member, reason=None):
+    await user.kick(reason=reason)
+    await report_action(ctx, user, "kick", reason)
+
+# Function to ban a user
+async def ban_user(ctx, user: discord.Member, reason=None):
+    await user.ban(reason=reason)
+    await report_action(ctx, user, "ban", reason)
+
+# Function to mute a user (timeout)
+async def mute_user(ctx, user: discord.Member, duration_in_hours: int, reason=None):
+    duration_in_seconds = duration_in_hours * 3600
+    await user.timeout(discord.utils.utcnow() + discord.timedelta(seconds=duration_in_seconds), reason=reason)
+    await report_action(ctx, user, "mute", reason, duration_in_hours)
+
+# Function to report the action to the specified report channel
+async def report_action(ctx, user: discord.Member, action: str, reason=None, duration=None):
+    report_channel_id = 1012447677880995920  # Replace with the actual channel ID for reports
+    report_channel = ctx.guild.get_channel(report_channel_id)
+
+    if not report_channel:
+        return
+
+    admin_name = ctx.author.name
+    user_name = user.name
+    if action == "mute":
+        report_message = f"**{admin_name}** muted **{user_name}** for {duration} hours. Reason: {reason}"
+    else:
+        report_message = f"**{admin_name}** {action}ed **{user_name}**. Reason: {reason}"
+    
+    await report_channel.send(report_message)
