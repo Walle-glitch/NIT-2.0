@@ -44,7 +44,10 @@ async def send_resource_embed(ctx):
     embed.add_field(name="YouTube Resources - CCNA", value="[Playlist](https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB)", inline=False)
     embed.add_field(name="YouTube Resources - Cybersecurity", value="[Playlist](https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY)", inline=False)
     embed.add_field(name="YouTube Resources - GDA & Internettjänster", value="[Playlist](https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4)", inline=False)
-    embed.add_field(name="Content Creators", value="[Indently](https://www.youtube.com/@Indently), [Ccieordie](https://www.youtube.com/@Ccieordie_arteq), [INE](https://www.youtube.com/@INEtraining), [Art of Network Engineering](https://www.youtube.com/@artofneteng)", inline=False)
+    embed.add_field(name="Content Creator", value="[Indently](https://www.youtube.com/@Indently)", inline=False)
+    embed.add_field(name="Content Creator", value="[Ccieordie](https://www.youtube.com/@Ccieordie_arteq)", inline=False)
+    embed.add_field(name="Content Creator", value="[INE](https://www.youtube.com/@INEtraining)", inline=False)
+    embed.add_field(name="Content Creator", value="[Art of Network Engineering](https://www.youtube.com/@artofneteng)", inline=False)    
     embed.add_field(name="Good Downloads", value="(Note Taking) [Notepad++](https://notepad-plus-plus.org/), (Note Taking) [Obsidian](https://obsidian.md/), (IDE) [Visual Studio Code](https://code.visualstudio.com/), [Putty](https://www.putty.org/), (Flash Cards) [Anki](https://apps.ankiweb.net/), (Packet Capture & Analyzer) [Wireshark](https://www.wireshark.org/)", inline=False)
     
     await ctx.send(embed=embed)
