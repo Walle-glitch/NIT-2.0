@@ -341,11 +341,17 @@ async def removerole(ctx):
 ###########################################_Below this line_##########################################
 ###########################################_Only Pasive Code_##########################################
 
-# CCIE Studdy Plan
+# CCIE Study Plan
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
 async def weekly_study_plan():
     await _Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
+
+# CCNP Study Plan
+# Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
+@tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
+async def weekly_study_plan():
+    await _Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
 
 # Kommando för att manuellt hämta och posta jobb
 @bot.command()
