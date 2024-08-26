@@ -14,12 +14,17 @@ import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 
+
+
+
+
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 # Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
-bot = commands.Bot(command_prefix="./", intents=intents)
+intents.reactions = True  # Aktivera reaktionshändelser
+bot = commands.Bot(command_prefix="/", intents=intents)
 
 # A verification event to check if the bot is alive
 @bot.event
@@ -66,26 +71,26 @@ async def h(ctx):
     )
     
     commands_list = {
-        "resurser": "./r - Display a list of good program resoursers.",
-        "Help": "./h - Display this help message.",
-        "Version": "./version - Show the current bot version.",
-        "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
-        "Hello": "./hello - Say hello to the bot.",
-        "About": "./about - Information about the bot and its purpose.",
-        "Ticket": "./ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
-        "Close": "./close - Close the current ticket channel.",
-        "Subnet Game": "./subnet - Start a subnet game.",
-        "Game Menu": "./spel - Choose between different games (Subnet and Network Questions).",
-        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
-        "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
-        "Add Role": "./addrole - Assign a predefined role to the user.",
-        "Remove Role": "./removerole - Remove a predefined role from the user.",
-        "Kick": "./kick [username] - Kick a user from the server. (Privilege 10/15 only)",
-        "Ban": "./ban [username] - Ban a user from the server. (Privilege 10/15 only)",
-        "Mute": "./mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
-        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
-        "Test": "./test - Test all commands. (Bot-Admin only)"
+        "resurser": "/r - Display a list of good program resoursers.",
+        "Help": "/h - Display this help message.",
+        "Version": "/version - Show the current bot version.",
+        "Git Repository": "/git - Provide the link to the bot's GitHub repository.",
+        "Hello": "/hello - Say hello to the bot.",
+        "About": "/about - Information about the bot and its purpose.",
+        "Ticket": "/ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
+        "Close": "/close - Close the current ticket channel.",
+        "Subnet Game": "/subnet - Start a subnet game.",
+        "Game Menu": "/spel - Choose between different games (Subnet and Network Questions).",
+        "Ping": "/ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
+        "RFC": "/rfc [NUMBER] - Retrieve information about the specified RFC number.",
+        "BGP Setup": "/BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
+        "Add Role": "/addrole - Assign a predefined role to the user.",
+        "Remove Role": "/removerole - Remove a predefined role from the user.",
+        "Kick": "/kick [username] - Kick a user from the server. (Privilege 10/15 only)",
+        "Ban": "/ban [username] - Ban a user from the server. (Privilege 10/15 only)",
+        "Mute": "/mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
+        "Reboot": "/Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
+        "Test": "/test - Test all commands. (Bot-Admin only)"
     }
 
     for command, description in commands_list.items():
@@ -327,6 +332,46 @@ async def removerole(ctx):
     
     # Send an embedded message as a reply
     await ctx.send(embed=embed)
+
+###########################################_Below this line_##########################################
+###########################################_Only Pasive Code_##########################################
+
+# Wellcome Message
+@bot.event
+async def on_member_join(member):
+    # Welcome new members
+    channel = discord.utils.get(member.guild.text_channels, name="skit-snack")
+    if channel:
+        await channel.send(f"Welcome to the server, {member.mention}!")
+
+# XP Levels. 
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    # Hantera XP och nivåsystem via _Bot_Modul
+    await _Bot_Modul.handle_xp(message)
+
+    # Fortsätt bearbeta andra kommandon
+    await bot.process_commands(message)
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    # Ge XP till författaren av meddelandet som fick en reaktion
+    await _Bot_Modul.handle_reaction_xp(reaction.message)
+
+# Kommando för att visa användarens nivå och XP
+@bot.command()
+async def level(ctx, member: discord.Member = None):
+    if member is None:
+        member = ctx.author
+    await _Bot_Modul.show_level(ctx, member)
+
 
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################

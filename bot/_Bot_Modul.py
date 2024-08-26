@@ -12,6 +12,8 @@ import discord
 import asyncio
 import random
 from discord.ext import commands
+import json
+import os
 
 ######### The resourses ############ 
 
@@ -318,3 +320,69 @@ async def report_action(ctx, user: discord.Member, action: str, reason=None, dur
         report_message = f"**{admin_name}** {action}ed **{user_name}**. Reason: {reason}"
     
     await report_channel.send(report_message)
+
+################################_XP_Handler_####################################
+
+XP_FILE = "xp_data.json"
+
+# Funktioner för att ladda och spara XP-data
+def load_xp_data():
+    if os.path.exists(XP_FILE):
+        with open(XP_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_xp_data(data):
+    with open(XP_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+# Ladda XP-data när modulen importeras
+xp_data = load_xp_data()
+
+# Hantera XP-systemet för inkommande meddelanden
+async def handle_xp(message):
+    user = message.author
+
+    # Om användaren inte finns i datan, skapa en ny post
+    if str(user.id) not in xp_data:
+        xp_data[str(user.id)] = {"xp": 0, "level": 1}
+
+    # Ge användaren en slumpmässig mängd XP och spara datan
+    xp_data[str(user.id)]["xp"] += random.randint(5, 15)
+    save_xp_data(xp_data)
+
+    # Kontrollera om användaren ska gå upp i nivå
+    await check_level_up(user, message.channel)
+
+# Hantera när en användare får en reaktion på sitt meddelande
+async def handle_reaction_xp(message):
+    user = message.author
+
+    # Om användaren inte finns i datan, skapa en ny post
+    if str(user.id) not in xp_data:
+        xp_data[str(user.id)] = {"xp": 0, "level": 1}
+
+    # Ge användaren 10 extra XP och spara datan
+    xp_data[str(user.id)]["xp"] += 10
+    save_xp_data(xp_data)
+
+    # Kontrollera om användaren ska gå upp i nivå
+    await check_level_up(user, message.channel)
+
+# Kontrollera om användaren har tillräckligt med XP för att gå upp i nivå
+async def check_level_up(user, channel):
+    user_data = xp_data.get(str(user.id), {})
+    xp_needed = 100 * user_data.get("level", 1)
+
+    if user_data["xp"] >= xp_needed:
+        user_data["level"] += 1
+        save_xp_data(xp_data)  # Spara data efter nivåuppgradering
+        await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
+
+# Visa en användares nivå och XP
+async def show_level(ctx, member):
+    user_data = xp_data.get(str(member.id))
+    if user_data:
+        await ctx.send(f"{member.mention} is at level {user_data['level']} with {user_data['xp']} XP.")
+    else:
+        await ctx.send(f"{member.mention} has no XP data yet.")
