@@ -13,6 +13,7 @@ import botConfig  # Bot-token and Bot info exists locally on the server; this mo
 import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
+import _Study_Plan
 
 ###########################################_Global_Variables_##########################################
 
@@ -30,6 +31,8 @@ correct_answer = None
 
 XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP 
 JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
+STUDY_CHANNEL_ID = 1194378001824088136  # Forum CCIE Studdy Matrix
+
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 # Setup for intents
@@ -44,6 +47,7 @@ async def on_ready():
     print(f'Logged in as {bot.user}')
     # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # OBS !!!! OSAKAR MYCKET SPAM !!!!
     # job_posting_loop.start()  # Startar bakgrundsloopen när boten är redo och Kollar efter Job Annonser 
+    weekly_study_plan.start()  # Startar den veckobaserade studieplanen när boten är redo
 
 ###########################################_All_User_Commands_##########################################
 
@@ -334,6 +338,12 @@ async def removerole(ctx):
 
 ###########################################_Below this line_##########################################
 ###########################################_Only Pasive Code_##########################################
+
+# CCIE Studdy Plan
+# Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
+@tasks.loop(weeks=1)
+async def weekly_study_plan():
+    await _Study_Plan.post_weekly_goal(bot, STUDY_CHANNEL_ID)
 
 # Kommando för att manuellt hämta och posta jobb
 @bot.command()
