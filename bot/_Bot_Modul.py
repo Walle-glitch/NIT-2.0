@@ -14,6 +14,7 @@ import random
 from discord.ext import commands
 import json
 import os
+import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 
 ######### The resourses ############ 
 
@@ -408,3 +409,64 @@ async def process_historical_data(bot, xp_update_channel_id):
                                 await handle_reaction_xp(message, xp_update_channel_id)
             except Exception as e:
                 print(f"Could not process channel {channel.name}: {str(e)}")
+
+
+# API URL och API-nyckel för Indeed
+INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
+INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()  # API-Key in botConfig file
+
+def fetch_jobs():
+    jobs = []
+    
+    # API-parametrar för Indeed
+    params = {
+        'publisher': INDEED_API_KEY,
+        'q': 'Nätverkstekniker',
+        'l': 'Sweden',
+        'sort': 'date',
+        'format': 'json',
+        'v': '2'
+    }
+    
+    try:
+        response = requests.get(INDEED_API_URL, params=params)
+        response.raise_for_status()  # Kasta ett undantag om statuskoden inte är 200
+        job_data = response.json()
+
+        # Exempel på hur jobbdata kan extraheras från API:et
+        for job in job_data.get('results', []):
+            jobs.append({
+                'title': job['jobtitle'],
+                'company': job['company'],
+                'location': job['formattedLocation'],
+                'url': job['url']
+            })
+
+    except Exception as e:
+        print(f"Error fetching jobs: {str(e)}")
+
+    return jobs
+
+# Posta jobb i en specifik kanal
+async def fetch_and_post_jobs(bot, job_channel_id):
+    jobs = fetch_jobs()
+    
+    if not jobs:
+        print("No jobs found.")
+        return
+    
+    channel = bot.get_channel(job_channel_id)
+    
+    if not channel:
+        print(f"Channel with ID {job_channel_id} not found.")
+        return
+    
+    # Skicka jobb till kanalen
+    for job in jobs:
+        embed = discord.Embed(
+            title=job['title'],
+            description=f"{job['company']} - {job['location']}",
+            url=job['url'],
+            color=discord.Color.blue()
+        )
+        await channel.send(embed=embed)

@@ -17,7 +17,7 @@ import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/26.20"
+version_nr = "Current Version is 24/08/26.21"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -28,9 +28,8 @@ MOD_ROLE_NAME = "Privilege 10"
 current_question = None
 correct_answer = None
 
-# Den specifika kanalen där XP-uppdateringar ska skickas
-XP_UPDATE_CHANNEL_ID = 1012067343452622949
-
+XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP 
+JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 # Setup for intents
@@ -43,9 +42,8 @@ bot = commands.Bot(command_prefix="./", intents=intents)
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
-    # När boten startar, bearbeta retroaktivt alla meddelanden och reaktioner
-    # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
-
+    # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # OBS !!!! OSAKAR MYCKET SPAM !!!!
+    # job_posting_loop.start()  # Startar bakgrundsloopen när boten är redo och Kollar efter Job Annonser 
 
 ###########################################_All_User_Commands_##########################################
 
@@ -337,6 +335,16 @@ async def removerole(ctx):
 ###########################################_Below this line_##########################################
 ###########################################_Only Pasive Code_##########################################
 
+# Kommando för att manuellt hämta och posta jobb
+@bot.command()
+async def post_jobs(ctx):
+    await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
+
+# Schemalagd loop för att hämta jobb varje dag (24 timmar)
+@tasks.loop(hours=24)
+async def job_posting_loop():
+    await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
+
 # Wellcome Message
 @bot.event
 async def on_member_join(member):
@@ -346,8 +354,6 @@ async def on_member_join(member):
         await channel.send(f"Welcome to the server, {member.mention}!")
 
 # XP Levels. 
-
-
 @bot.event
 async def on_message(message):
     if message.author.bot:
