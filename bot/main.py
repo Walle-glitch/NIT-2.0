@@ -31,7 +31,9 @@ correct_answer = None
 
 XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP 
 JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
-STUDY_CHANNEL_ID = 1194378001824088136  # Forum CCIE Studdy Matrix
+CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE-Studdy
+CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP-Studdy
+CCNA_STUDY_CHANNEL_ID = 1277675152234119231  # CCNA-Studdy
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -343,7 +345,7 @@ async def removerole(ctx):
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
 async def weekly_study_plan():
-    await _Study_Plan.post_weekly_goal(bot, STUDY_CHANNEL_ID)
+    await _Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
 
 # Kommando för att manuellt hämta och posta jobb
 @bot.command()
