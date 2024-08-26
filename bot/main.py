@@ -19,7 +19,7 @@ import _CCNP_Study_Plan
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/26.21"
+version_nr = "Current Version is 24/08/26.40"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
