@@ -28,10 +28,13 @@ async def on_ready():
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/25.22"
+version_nr = "Current Version is 24/08/26.1"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
+ADMIN_ROLE_NAME = "Privilege 15"
+MOD_ROLE_NAME = "Privilege 10"
+
 
 # Initialize global variables
 current_question = None
@@ -141,7 +144,10 @@ async def close_ticket_command(ctx):
 @bot.command()
 async def hello(ctx):
     Reply = 'Hello?'
-    await ctx.send(Reply)
+    try:
+        await ctx.send(Reply)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
 
 #############################_Game_Commands_#############################
 
@@ -324,21 +330,36 @@ def has_privileged_role(ctx):
 @commands.check(has_privileged_role)
 @commands.has_permissions(kick_members=True)
 async def kick_command(ctx, user: discord.Member, *, reason=None):
-    await _Bot_Modul.kick_user(ctx, user, reason)
+    try:
+        await _Bot_Modul.kick_user(ctx, user, reason)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+
 
 # Comands for Ban a Member
 @bot.command(name="ban")
 @commands.check(has_privileged_role)
 @commands.has_permissions(ban_members=True)
 async def ban_command(ctx, user: discord.Member, *, reason=None):
-    await _Bot_Modul.ban_user(ctx, user, reason)
+    try:
+        await _Bot_Modul.ban_user(ctx, user, reason)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+
 
 # Comands for mute a Member
 @bot.command(name="mute")
 @commands.check(has_privileged_role)
 @commands.has_permissions(moderate_members=True)
 async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None):
-    await _Bot_Modul.mute_user(ctx, user, duration, reason)
+    try:
+        await _Bot_Modul.mute_user(ctx, user, duration, reason)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+
 
 # Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")
