@@ -313,13 +313,17 @@ study_plan = {
     }
 }
 
-
 # Funktion för att hämta nuvarande vecka från fil
 def get_current_week():
     if os.path.exists(CURRENT_WEEK_FILE):
-        with open(CURRENT_WEEK_FILE, "r") as f:
-            data = json.load(f)
-            return data.get("current_week", 1)
+        try:
+            with open(CURRENT_WEEK_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("current_week", 1)
+        except json.JSONDecodeError:
+            # Hantera fallet där JSON-filen är tom eller skadad
+            print("JSON file is empty or invalid. Initializing to week 1.")
+            return 1
     return 1
 
 # Funktion för att spara nuvarande vecka till fil
