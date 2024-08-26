@@ -12,6 +12,7 @@ from urllib.request import urlopen
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
+import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -136,6 +137,16 @@ async def close_ticket_command(ctx):
     # Close the channel where the command is invoked
     await _Bot_Modul.close_ticket(ctx.channel)
     await ctx.send("This ticket has been closed.")
+
+#############################_Open_AI_Commands_#############################
+
+@bot.command(name="AI")
+async def ai_command(ctx, *, question=None):
+    if question is None:
+        await ctx.send("Ange en fråga efter kommandot: `./AI \"Fråga\"`")
+        return
+    
+    await _Open_AI.handle_ai_session(ctx, question)
 
 
 #############################_User_Test_Commands_#############################
