@@ -340,7 +340,7 @@ def save_xp_data(data):
 xp_data = load_xp_data()
 
 # Hantera XP-systemet för inkommande meddelanden
-async def handle_xp(message):
+async def handle_xp(message, xp_update_channel_id):
     user = message.author
 
     # Om användaren inte finns i datan, skapa en ny post
@@ -352,10 +352,10 @@ async def handle_xp(message):
     save_xp_data(xp_data)
 
     # Kontrollera om användaren ska gå upp i nivå
-    await check_level_up(user, message.channel)
+    await check_level_up(user, xp_update_channel_id)
 
 # Hantera när en användare får en reaktion på sitt meddelande
-async def handle_reaction_xp(message):
+async def handle_reaction_xp(message, xp_update_channel_id):
     user = message.author
 
     # Om användaren inte finns i datan, skapa en ny post
@@ -367,17 +367,21 @@ async def handle_reaction_xp(message):
     save_xp_data(xp_data)
 
     # Kontrollera om användaren ska gå upp i nivå
-    await check_level_up(user, message.channel)
+    await check_level_up(user, xp_update_channel_id)
 
 # Kontrollera om användaren har tillräckligt med XP för att gå upp i nivå
-async def check_level_up(user, channel):
+async def check_level_up(user, xp_update_channel_id):
     user_data = xp_data.get(str(user.id), {})
     xp_needed = 100 * user_data.get("level", 1)
 
     if user_data["xp"] >= xp_needed:
         user_data["level"] += 1
         save_xp_data(xp_data)  # Spara data efter nivåuppgradering
-        await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
+        
+        # Hämta kanalen och skicka uppdateringen där
+        channel = user.guild.get_channel(xp_update_channel_id)
+        if channel:
+            await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
 
 # Visa en användares nivå och XP
 async def show_level(ctx, member):
@@ -386,3 +390,21 @@ async def show_level(ctx, member):
         await ctx.send(f"{member.mention} is at level {user_data['level']} with {user_data['xp']} XP.")
     else:
         await ctx.send(f"{member.mention} has no XP data yet.")
+
+# Bearbeta alla historiska meddelanden och reaktioner när boten startar
+async def process_historical_data(bot, xp_update_channel_id):
+    for guild in bot.guilds:
+        for channel in guild.text_channels:
+            try:
+                # Hämta alla meddelanden i kanalen
+                async for message in channel.history(limit=None):
+                    await handle_xp(message, xp_update_channel_id)
+                    
+                    # Hämta alla reaktioner för varje meddelande
+                    for reaction in message.reactions:
+                        users = await reaction.users().flatten()
+                        for user in users:
+                            if user != message.author:  # Exkludera författaren själv från att reagera på sitt eget inlägg
+                                await handle_reaction_xp(message, xp_update_channel_id)
+            except Exception as e:
+                print(f"Could not process channel {channel.name}: {str(e)}")

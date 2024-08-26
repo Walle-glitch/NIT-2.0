@@ -15,9 +15,6 @@ import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 
 
-
-
-
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 # Setup for intents
@@ -41,10 +38,13 @@ BOT_ADMIN_ROLE_NAME = "Bot-Master"
 ADMIN_ROLE_NAME = "Privilege 15"
 MOD_ROLE_NAME = "Privilege 10"
 
-
 # Initialize global variables
 current_question = None
 correct_answer = None
+
+# Den specifika kanalen där XP-uppdateringar ska skickas
+XP_UPDATE_CHANNEL_ID = 1012067343452622949
+
 
 ###########################################_All_User_Commands_##########################################
 
@@ -345,9 +345,8 @@ async def on_member_join(member):
         await channel.send(f"Welcome to the server, {member.mention}!")
 
 # XP Levels. 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
+    # När boten startar, bearbeta retroaktivt alla meddelanden och reaktioner
+    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
 
 @bot.event
 async def on_message(message):
@@ -355,7 +354,7 @@ async def on_message(message):
         return
 
     # Hantera XP och nivåsystem via _Bot_Modul
-    await _Bot_Modul.handle_xp(message)
+    await _Bot_Modul.handle_xp(message, XP_UPDATE_CHANNEL_ID)
 
     # Fortsätt bearbeta andra kommandon
     await bot.process_commands(message)
@@ -363,7 +362,7 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
     # Ge XP till författaren av meddelandet som fick en reaktion
-    await _Bot_Modul.handle_reaction_xp(reaction.message)
+    await _Bot_Modul.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
 
 # Kommando för att visa användarens nivå och XP
 @bot.command()
@@ -391,8 +390,6 @@ async def kick_command(ctx, user: discord.Member, *, reason=None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-
-
 # Comands for Ban a Member
 @bot.command(name="ban")
 @commands.check(has_privileged_role)
@@ -403,8 +400,6 @@ async def ban_command(ctx, user: discord.Member, *, reason=None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-
-
 # Comands for mute a Member
 @bot.command(name="mute")
 @commands.check(has_privileged_role)
@@ -414,8 +409,6 @@ async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None)
         await _Bot_Modul.mute_user(ctx, user, duration, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-
-
 
 # Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
 @bot.command(name="Reboot")
@@ -437,6 +430,11 @@ async def reboot(ctx):
     # Restart the Python script
     os.execl(python, python, *sys.argv)
 
+# Manages errors if a non-"Bot-Master" tries the command
+@reboot.error
+async def reboot_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send("You do not have permission to use this command.")
 
 # Admin command to test all commands
 @bot.command()
@@ -488,11 +486,7 @@ async def test_error(ctx, error):
 ###########################################_Work In Progress_##########################################
 ###############################################_Admin_#################################################
 
-# Manages errors if a non-"Bot-Master" tries the command
-@reboot.error
-async def reboot_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send("You do not have permission to use this command.")
+
 
 # Role IDs for roles to be assigned
 ROLE_EMOJI_MAP = {
