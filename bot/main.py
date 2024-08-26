@@ -50,7 +50,8 @@ async def on_ready():
     print(f'Logged in as {bot.user}')
     # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # OBS !!!! OSAKAR MYCKET SPAM !!!!
     # job_posting_loop.start()  # Startar bakgrundsloopen när boten är redo och Kollar efter Job Annonser 
-    weekly_study_plan.start()  # Startar den veckobaserade studieplanen när boten är redo
+    weekly_study_plan_CCIE.start()  # Startar den veckobaserade studieplanen när boten är redo
+    weekly_study_plan_CCNP.start()  # Startar den veckobaserade studieplanen när boten är redo
 
 ###########################################_All_User_Commands_##########################################
 
@@ -345,13 +346,13 @@ async def removerole(ctx):
 # CCIE Study Plan
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
-async def weekly_study_plan():
+async def weekly_study_plan_CCIE():
     await _CCIE_Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
 
 # CCNP Study Plan
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
-async def weekly_study_plan():
+async def weekly_study_plan_CCNP():
     await _CCNP_Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
 
 # Kommando för att manuellt hämta och posta jobb

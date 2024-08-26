@@ -314,7 +314,7 @@ Study_Plan_CCIE = {
 }
 
 # Funktion för att hämta nuvarande vecka från fil
-def get_current_week():
+def get_current_week_CCIE():
     if os.path.exists(_Current_Week_CCIE):
         try:
             with open(_Current_Week_CCIE, "r") as f:
@@ -327,20 +327,20 @@ def get_current_week():
     return 1
 
 # Funktion för att spara nuvarande vecka till fil
-def save_current_week(week_number):
+def save_current_week_CCIE(week_number):
     with open(_Current_Week_CCIE, "w") as f:
         json.dump({"current_week": week_number}, f)
 
 # Funktion för att hämta veckans mål
-def get_weekly_goal(week_number):
+def get_weekly_goal_CCIE(week_number):
     return Study_Plan_CCIE.get(week_number, None)
 
 # Funktion för att posta veckans mål i en specifik kanal
-async def post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID):
+async def post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID):
     # Hämta nuvarande vecka
-    current_week = get_current_week()
+    current_week = get_current_week_CCIE()
 
-    goal = get_weekly_goal(current_week)
+    goal = get_weekly_goal_CCIE(current_week)
 
     if goal:
         channel = bot.get_channel(CCIE_STUDY_CHANNEL_ID)
@@ -361,6 +361,6 @@ async def post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID):
 
         # Öka veckan och spara
         current_week += 1
-        save_current_week(current_week)
+        save_current_week_CCIE(current_week)
     else:
         print("No study plan available for this week.")

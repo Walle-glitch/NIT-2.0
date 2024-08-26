@@ -256,7 +256,7 @@ Study_plan_CCNP = {
 }
 
 # Funktion för att hämta nuvarande vecka från fil
-def get_current_week():
+def get_current_week_CCNP():
     if os.path.exists(_Current_Week_CCNP):
         try:
             with open(_Current_Week_CCNP, "r") as f:
@@ -269,20 +269,20 @@ def get_current_week():
     return 1
 
 # Funktion för att spara nuvarande vecka till fil
-def save_current_week(week_number):
+def save_current_week_CCNP(week_number):
     with open(_Current_Week_CCNP, "w") as f:
         json.dump({"current_week": week_number}, f)
 
 # Funktion för att hämta veckans mål
-def get_weekly_goal(week_number):
+def get_weekly_goal_CCNP(week_number):
     return Study_plan_CCNP.get(week_number, None)
 
 # Funktion för att posta veckans mål i en specifik kanal
-async def post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID):
+async def post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID):
     # Hämta nuvarande vecka
-    current_week = get_current_week()
+    current_week = get_current_week_CCNP()
 
-    goal = get_weekly_goal(current_week)
+    goal = get_weekly_goal_CCNP(current_week)
 
     if goal:
         channel = bot.get_channel(CCNP_STUDY_CHANNEL_ID)
@@ -303,6 +303,6 @@ async def post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID):
 
         # Öka veckan och spara
         current_week += 1
-        save_current_week(current_week)
+        (_Current_Week_CCNP)
     else:
         print("No study plan available for this week.")
