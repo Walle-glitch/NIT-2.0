@@ -14,20 +14,6 @@ import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 
-
-###########################################_Bot_Set_Up_Stuff_##########################################
-
-# Setup for intents
-intents = discord.Intents.all()
-intents.message_content = True
-intents.reactions = True  # Aktivera reaktionshändelser
-bot = commands.Bot(command_prefix="./", intents=intents)
-
-# A verification event to check if the bot is alive
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
-
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
@@ -44,6 +30,21 @@ correct_answer = None
 
 # Den specifika kanalen där XP-uppdateringar ska skickas
 XP_UPDATE_CHANNEL_ID = 1012067343452622949
+
+###########################################_Bot_Set_Up_Stuff_##########################################
+
+# Setup for intents
+intents = discord.Intents.all()
+intents.message_content = True
+intents.reactions = True  # Aktivera reaktionshändelser
+bot = commands.Bot(command_prefix="./", intents=intents)
+
+# A verification event to check if the bot is alive
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+    # När boten startar, bearbeta retroaktivt alla meddelanden och reaktioner
+    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
 
 
 ###########################################_All_User_Commands_##########################################
@@ -345,8 +346,7 @@ async def on_member_join(member):
         await channel.send(f"Welcome to the server, {member.mention}!")
 
 # XP Levels. 
-    # När boten startar, bearbeta retroaktivt alla meddelanden och reaktioner
-    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+
 
 @bot.event
 async def on_message(message):
