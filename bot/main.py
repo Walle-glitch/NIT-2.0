@@ -44,7 +44,7 @@ bot = commands.Bot(command_prefix="./", intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user}')
     # När boten startar, bearbeta retroaktivt alla meddelanden och reaktioner
-    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+    # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
 
 
 ###########################################_All_User_Commands_##########################################
