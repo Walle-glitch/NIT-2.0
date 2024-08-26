@@ -24,7 +24,7 @@ import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 intents = discord.Intents.all()
 intents.message_content = True
 intents.reactions = True  # Aktivera reaktionshändelser
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = commands.Bot(command_prefix="./", intents=intents)
 
 # A verification event to check if the bot is alive
 @bot.event
