@@ -13,7 +13,8 @@ import botConfig  # Bot-token and Bot info exists locally on the server; this mo
 import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
-import _Study_Plan
+import _CCIE_Study_Plan
+import _CCNP_Study_Plan 
 
 ###########################################_Global_Variables_##########################################
 
@@ -345,13 +346,13 @@ async def removerole(ctx):
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
 async def weekly_study_plan():
-    await _Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
+    await _CCIE_Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
 
 # CCNP Study Plan
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
 @tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
 async def weekly_study_plan():
-    await _Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
+    await _CCNP_Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
 
 # Kommando för att manuellt hämta och posta jobb
 @bot.command()

@@ -4,10 +4,10 @@ import json
 import os
 
 # Fil för att lagra nuvarande vecka
-CURRENT_WEEK_FILE = "current_week.json"
+_Current_Week_CCIE = "current_week_CCIE.json"
 
 # Studieplanens innehåll
-study_plan = {
+Study_Plan_CCIE = {
     1: {
         'title': 'Week 1: Switched Campus - Switch Administration',
         'reading': [
@@ -315,9 +315,9 @@ study_plan = {
 
 # Funktion för att hämta nuvarande vecka från fil
 def get_current_week():
-    if os.path.exists(CURRENT_WEEK_FILE):
+    if os.path.exists(_Current_Week_CCIE):
         try:
-            with open(CURRENT_WEEK_FILE, "r") as f:
+            with open(_Current_Week_CCIE, "r") as f:
                 data = json.load(f)
                 return data.get("current_week", 1)
         except json.JSONDecodeError:
@@ -328,25 +328,25 @@ def get_current_week():
 
 # Funktion för att spara nuvarande vecka till fil
 def save_current_week(week_number):
-    with open(CURRENT_WEEK_FILE, "w") as f:
+    with open(_Current_Week_CCIE, "w") as f:
         json.dump({"current_week": week_number}, f)
 
 # Funktion för att hämta veckans mål
 def get_weekly_goal(week_number):
-    return study_plan.get(week_number, None)
+    return Study_Plan_CCIE.get(week_number, None)
 
 # Funktion för att posta veckans mål i en specifik kanal
-async def post_weekly_goal(bot, study_channel_id):
+async def post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID):
     # Hämta nuvarande vecka
     current_week = get_current_week()
 
     goal = get_weekly_goal(current_week)
 
     if goal:
-        channel = bot.get_channel(study_channel_id)
+        channel = bot.get_channel(CCIE_STUDY_CHANNEL_ID)
         
         if not channel:
-            print(f"Channel with ID {study_channel_id} not found.")
+            print(f"Channel with ID {CCIE_STUDY_CHANNEL_ID} not found.")
             return
 
         embed = discord.Embed(
