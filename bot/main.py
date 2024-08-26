@@ -341,7 +341,7 @@ async def removerole(ctx):
 
 # CCIE Studdy Plan
 # Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
-@tasks.loop(weeks=1)
+@tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
 async def weekly_study_plan():
     await _Study_Plan.post_weekly_goal(bot, STUDY_CHANNEL_ID)
 
