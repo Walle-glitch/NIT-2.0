@@ -303,6 +303,6 @@ async def post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID):
 
         # Öka veckan och spara
         current_week += 1
-        (_Current_Week_CCNP)
+        save_current_week_CCNP(current_week)
     else:
         print("No study plan available for this week.")
