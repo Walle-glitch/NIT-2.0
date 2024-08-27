@@ -283,14 +283,20 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
 ############################_Role_Assignment_############################
 
 # Schemalagd loop för att hämta roller en gång per dag
-@tasks.loop(hours=24)
+@tasks.loop(hours=1)
 async def update_roles():
-    await _Bot_Modul.fetch_and_save_roles(bot)
+    try:    
+        await _Bot_Modul.fetch_and_save_roles(bot)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
 
 # Kommando för att ge en användare en roll
 @bot.command()
 async def roll(ctx, *, role_name: str):
-    await _Bot_Modul.assign_role(ctx, role_name)
+    try:    
+        await _Bot_Modul.assign_role(ctx, role_name)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
 
 #############################_Study_Commands_#############################
 
@@ -425,12 +431,10 @@ async def level(ctx, member: discord.Member = None):
         member = ctx.author
     await _Bot_Modul.show_level(ctx, member)
 
-
 # Schemalagd loop för att kontrollera välkomstmeddelandet varje timme
 @tasks.loop(hours=1)
 async def check_welcome_message():
     await _Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
-
 
 ###########################################_Below this line_##########################################
 ###########################################_Only Admin Code_##########################################
