@@ -75,10 +75,10 @@ async def on_ready():
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     # Start scheduled tasks when the bot is ready
-    await weekly_study_plan_CCIE.start()  
-    await weekly_study_plan_CCNP.start()  
-    await update_roles.start()  
-    await check_welcome_message.start()  
+    weekly_study_plan_CCIE.start()  
+    weekly_study_plan_CCNP.start()  
+    update_roles.start()  
+    check_welcome_message.start()  
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 ###########################################_All_User_Commands_##########################################
