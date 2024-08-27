@@ -9,13 +9,16 @@ import subprocess
 import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
+import json
+
+# Bot specific Modules
+
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 import _Bot_Modul # Module for various functions.
 import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan 
-import json
 
 ###########################################_Global_Variables_##########################################
 
