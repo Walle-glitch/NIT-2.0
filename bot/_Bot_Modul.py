@@ -351,37 +351,35 @@ def save_xp_data(data):
 xp_data = load_xp_data()
 
 # Handle XP system for incoming messages
-async def handle_xp(message, xp_update_channel_id):
+async def handle_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
 
-    # If the user does not exist in the data, create a new entry
+    # If the user doesn't exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Grant the user a random amount of XP and save the data
+    # Give the user a random amount of XP and save the data
     xp_data[str(user.id)]["xp"] += random.randint(5, 15)
     save_xp_data(xp_data)
 
     # Check if the user should level up
-    await check_level_up(user, xp_update_channel_id)
+    await check_level_up(user, xp_update_channel_id, send_notifications)
 
-# Handle when a user receives a reaction to their message
-async def handle_reaction_xp(message, xp_update_channel_id):
+async def handle_reaction_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
 
-    # If the user does not exist in the data, create a new entry
+    # If the user doesn't exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Grant the user 10 extra XP and save the data
+    # Give the user 10 extra XP and save the data
     xp_data[str(user.id)]["xp"] += 10
     save_xp_data(xp_data)
 
     # Check if the user should level up
-    await check_level_up(user, xp_update_channel_id)
+    await check_level_up(user, xp_update_channel_id, send_notifications)
 
-# Check if the user has enough XP to level up
-async def check_level_up(user, xp_update_channel_id):
+async def check_level_up(user, xp_update_channel_id, send_notifications=True):
     user_data = xp_data.get(str(user.id), {})
     xp_needed = 100 * user_data.get("level", 1)
 
@@ -389,10 +387,11 @@ async def check_level_up(user, xp_update_channel_id):
         user_data["level"] += 1
         save_xp_data(xp_data)  # Save data after leveling up
         
-        # Get the channel and send the update there
-        channel = user.guild.get_channel(xp_update_channel_id)
-        if channel:
-            await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
+        # Only send a message if notifications are enabled
+        if send_notifications:
+            channel = user.guild.get_channel(xp_update_channel_id)
+            if channel:
+                await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
 
 # Display a user's level and XP
 async def show_level(ctx, member):
@@ -404,21 +403,27 @@ async def show_level(ctx, member):
 
 # Process all historical messages and reactions when the bot starts
 async def process_historical_data(bot, xp_update_channel_id):
+    # Temporarily disable notifications
+    send_notifications = False
+
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
                 # Fetch all messages in the channel
                 async for message in channel.history(limit=None):
-                    await handle_xp(message, xp_update_channel_id)
+                    await handle_xp(message, xp_update_channel_id, send_notifications)
                     
                     # Fetch all reactions for each message
                     for reaction in message.reactions:
                         users = await reaction.users().flatten()
                         for user in users:
                             if user != message.author:  # Exclude the author from reacting to their own post
-                                await handle_reaction_xp(message, xp_update_channel_id)
+                                await handle_reaction_xp(message, xp_update_channel_id, send_notifications)
             except Exception as e:
                 print(f"Could not process channel {channel.name}: {str(e)}")
+
+    # Re-enable notifications after processing historical data
+    send_notifications = True
 
 ########### Get Job Listings ###############
 

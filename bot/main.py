@@ -53,8 +53,10 @@ bot = commands.Bot(command_prefix="./", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user}')
-    await _Bot_Modul.process_historical_data(bot)  # Warning: This generates a lot of spam! #, XP_UPDATE_CHANNEL_ID
+    print(f'Logged in as {bot.user}') # Inaktivera meddelanden för historisk bearbetning
+    print("Processing historical data, notifications are disabled.")
+    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # Aktivera meddelanden efter bearbetningen
+    print("Finished processing historical data, notifications are now enabled.")
     weekly_study_plan_CCIE.start()  # Start the weekly study plan for CCIE when the bot is ready
     weekly_study_plan_CCNP.start()  # Start the weekly study plan for CCNP when the bot is ready
     update_roles.start()  # Start role update when the bot is ready
