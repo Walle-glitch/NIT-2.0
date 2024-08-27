@@ -331,11 +331,16 @@ async def report_action(ctx, user: discord.Member, action: str, reason=None, dur
 
 ################################_XP_Handler_####################################
 
-# Functions for loading and saving XP data
+# Updated function with error handling
 def load_xp_data():
     if os.path.exists(XP_FILE):
-        with open(XP_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(XP_FILE, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            # Handle the case where the JSON file is empty or invalid
+            print(f"Warning: {XP_FILE} is empty or contains invalid JSON. Initializing an empty XP data structure.")
+            return {}
     return {}
 
 def save_xp_data(data):
