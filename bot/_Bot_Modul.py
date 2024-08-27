@@ -26,6 +26,8 @@ XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
 # Roles that cannot be assigned using the ./roll command
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]
 
+log_to_channel = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
+
 ######### The Resources ############ 
 
 async def send_resource_embed(ctx):
@@ -403,24 +405,23 @@ async def show_level(ctx, member):
 
 # Process all historical messages and reactions when the bot starts
 async def process_historical_data(bot, xp_update_channel_id):
-    # Temporarily disable notifications
-    send_notifications = False
-
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
                 # Fetch all messages in the channel
                 async for message in channel.history(limit=None):
-                    await handle_xp(message, xp_update_channel_id, send_notifications)
+                    await handle_xp(message, xp_update_channel_id)
                     
                     # Fetch all reactions for each message
                     for reaction in message.reactions:
                         users = await reaction.users().flatten()
                         for user in users:
                             if user != message.author:  # Exclude the author from reacting to their own post
-                                await handle_reaction_xp(message, xp_update_channel_id, send_notifications)
+                                await handle_reaction_xp(message, xp_update_channel_id)
             except Exception as e:
-                print(f"Could not process channel {channel.name}: {str(e)}")
+                error_message = f"Could not process channel {channel.name}: {str(e)}"
+                print(error_message)  # Log to server
+                await log_to_channel(bot, error_message)  # Log to Discord channel
 
     # Re-enable notifications after processing historical data
     send_notifications = True
