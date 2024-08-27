@@ -15,10 +15,12 @@ from discord.ext import commands
 import json
 import os
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
+from discord.ui import Button, View
 
 ################  Global Refs ################
 
 ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
+WELCOME_MESSAGE_FILE = "welcome_message_id.json" # Fil där Välkommst meddelandet sparas
 
 # Roller som inte ska kunna tilldelas via kommandot ./roll
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]
@@ -542,3 +544,124 @@ async def assign_role(ctx, role_name=None):
         await ctx.send(f"The role '{role_name}' has been assigned to you.")
 
 ########################################################################################
+
+# Definiera roller och knapparnas utseende (text och färg)
+ROLE_BUTTONS = [
+    {"label": "NIT_24", "style": discord.ButtonStyle.green},
+    {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
+    {"label": "NIT_22", "style": discord.ButtonStyle.red},
+    {"label": "Annat start-år", "style": discord.ButtonStyle.gray},
+    {"label": "Påbyggnadsåret!", "style": discord.ButtonStyle.green},
+    {"label": "Kårfrälst", "style": discord.ButtonStyle.gray},
+]
+
+# Skapar eller laddar JSON-filen som lagrar meddelande-ID
+def get_welcome_message_id():
+    if os.path.exists(WELCOME_MESSAGE_FILE):
+        with open(WELCOME_MESSAGE_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("message_id", None)
+    return None
+
+def save_welcome_message_id(message_id):
+    with open(WELCOME_MESSAGE_FILE, "w") as f:
+        json.dump({"message_id": message_id}, f)
+
+# Hantera rolltilldelning när en knapp klickas
+class RoleButton(Button):
+    def __init__(self, label, style):
+        super().__init__(label=label, style=style)
+
+    async def callback(self, interaction: discord.Interaction):
+        role = discord.utils.get(interaction.guild.roles, name=self.label)
+        if role:
+            # Kolla om användaren redan har rollen
+            if role in interaction.user.roles:
+                await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
+            else:
+                await interaction.user.add_roles(role)
+                await interaction.response.send_message(f"The role {role.name} has been assigned to you.", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
+
+# Skapa en vy med knappar för roller
+def create_role_buttons_view():
+    view = View()
+    for button_info in ROLE_BUTTONS:
+        button = RoleButton(label=button_info["label"], style=button_info["style"])
+        view.add_item(button)
+    return view
+
+# Funktion för att skapa välkomstmeddelandet
+async def post_welcome_message(channel):
+    embed = discord.Embed(
+        title="Welcome to the HV - NIT + Påbyggnadsår",
+        description=(
+            "Hej!\n"
+            "Detta är NIT programmets Discord server! (Välkommen in i NIT kyrkan)\n"
+            "Vi har en unik årgångs kanal som man får tillgång till genom roller.\n\n"
+            "I kategorin PLUGG! har vi Kurssnack Kanaler där det är en för år 1, en för år 2, och en för år 3 (påbyggnadsåret). "
+            "Och ett forum för labb (Praktiska moment i programmet).\n"
+            "Så sitter ni i labbsalen eller med PT och svär över att ni inte får till det, "
+            "så kan ni skapa en tråd eller läsa om det finns något där som kan hjälpa er!\n\n"
+            "Vi vill även kunna behålla de nitare som gått vidare och börjat jobba. "
+            "De kanske har lite tips inför jobblivet, eller en vacker dag kanske söker de personal eller sommarjobbare. "
+            "#livet-efter-nit"
+        ),
+        color=discord.Color.blue()
+    )
+    
+    embed.add_field(
+        name="Servern är för dig",
+        value=(
+            "* Serverns drivs och ägs av studenter, för studenter på NIT-programmet och Påbyggnadsåret.\n"
+            "* Studenterna är den huvudsakliga målgruppen.\n"
+            "* Tänk på att servern är öppen, vem som helst kan hoppa in här (skriv inget olämpligt eller \"hemligt\").\n"
+            "* Servern blir bara så bra som vi gör den till.\n"
+            "* Bidra till ett trevligt klimat."
+        ),
+        inline=False
+    )
+    
+    embed.add_field(
+        name="Moderation",
+        value="Mods [Privilage 10] och Admins [Privilage 15] håller ett extra öga på denna Discord, "
+              "men i huvudsak anser vi att alla är vuxna och kan bete sig därefter!",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="Välkommen!",
+        value="Tryck på en knapp nedan för att sätta din årskurs och komma igång.\n\n"
+              "Välkommen!\n//Admins",
+        inline=False
+    )
+    
+    # Skicka det inbäddade meddelandet med knapparna
+    view = create_role_buttons_view()
+    message = await channel.send(embed=embed, view=view)
+    
+    # Spara meddelande-ID
+    save_welcome_message_id(message.id)
+
+# Funktion för att kontrollera och säkerställa att välkomstmeddelandet finns
+async def ensure_welcome_message(bot, channel_id):
+    channel = bot.get_channel(channel_id)
+    if not channel:
+        print(f"Channel with ID {channel_id} not found.")
+        return
+    
+    message_id = get_welcome_message_id()
+    
+    if message_id:
+        try:
+            # Försök att hämta det befintliga meddelandet
+            message = await channel.fetch_message(message_id)
+            return  # Meddelandet finns, inget mer behövs göra
+        except discord.NotFound:
+            pass  # Meddelandet hittades inte, vi postar om det
+    
+    # Skapa ett nytt välkomstmeddelande
+    await post_welcome_message(channel)
+
+    ########################################################################################

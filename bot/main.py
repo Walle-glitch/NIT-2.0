@@ -38,6 +38,7 @@ XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP
 JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
 CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE-Studdy
 CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP-Studdy
+WELCOME_CHANNEL_ID = 1012026430470766818  # FYI kanalen 
 #CCNA_STUDY_CHANNEL_ID = "MIssing""  # CCNA-Studdy
 ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roller som inte ska kunna tilldelas via reaktioner
@@ -50,9 +51,14 @@ intents.message_content = True
 intents.reactions = True  # Aktivera reaktionshändelser
 intents.guilds = True  # Behöver åtkomst till serverinformation, inklusive roller
 intents.members = True  # Behöver åtkomst till medlemmar för att tilldela roller
+intents.guilds = True
+intents.members = True
+
+# Command Prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
 # A verification event to check if the bot is alive
+# Running Cuntinius Programs 
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
@@ -61,6 +67,7 @@ async def on_ready():
     weekly_study_plan_CCIE.start()  # Startar den veckobaserade studieplanen när boten är redo
     weekly_study_plan_CCNP.start()  # Startar den veckobaserade studieplanen när boten är redo
     update_roles.start()  # Starta rollen uppdatering när boten är redo
+    check_welcome_message.start()  # Startar kontroll av välkomstmeddelandet
 
 ###########################################_All_User_Commands_##########################################
 
@@ -417,6 +424,12 @@ async def level(ctx, member: discord.Member = None):
     if member is None:
         member = ctx.author
     await _Bot_Modul.show_level(ctx, member)
+
+
+# Schemalagd loop för att kontrollera välkomstmeddelandet varje timme
+@tasks.loop(hours=1)
+async def check_welcome_message():
+    await _Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
 
 
 ###########################################_Below this line_##########################################
