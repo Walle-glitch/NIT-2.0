@@ -70,6 +70,7 @@ async def log_to_channel(bot, message):
 
 @bot.event
 async def on_ready():
+    print('Booting')
     await log_to_channel(bot, f'Logged in as {bot.user}')
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
@@ -80,6 +81,8 @@ async def on_ready():
     update_roles.start()  
     check_welcome_message.start()  
     log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
+    print('Finnish')
+
 
 ###########################################_All_User_Commands_##########################################
 
