@@ -498,12 +498,23 @@ async def fetch_and_save_roles(bot):
         print("Roles have been saved to roles.json")
 
 # Funktion för att ge en användare en roll baserat på rollnamnet
-async def assign_role(ctx, role_name):
+async def assign_role(ctx, role_name=None):
     # Kontrollera om rollen finns i den sparade JSON-filen
     await check_and_initialize_roles(ctx.bot)  # Kontrollera om filen behöver initialiseras
 
+    # Läs roller från JSON-filen
     with open(ROLE_JSON_FILE, "r") as f:
         roles_data = json.load(f)
+
+    # Om ingen roll specificeras, lista alla tillgängliga roller
+    if role_name is None:
+        available_roles = [role for role in roles_data if role not in EXCLUDED_ROLES]
+        if available_roles:
+            roles_list = "\n".join(available_roles)
+            await ctx.send(f"Available roles:\n{roles_list}")
+        else:
+            await ctx.send("No available roles to assign.")
+        return
 
     # Kontrollera om den begärda rollen finns
     if role_name not in roles_data:
