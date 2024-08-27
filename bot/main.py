@@ -15,6 +15,7 @@ import _Games # Module for the games.
 import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan 
+import json
 
 ###########################################_Global_Variables_##########################################
 
@@ -36,6 +37,7 @@ CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE-Studdy
 CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP-Studdy
 #CCNA_STUDY_CHANNEL_ID = "MIssing""  # CCNA-Studdy
 ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
+EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roller som inte ska kunna tilldelas via reaktioner
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -528,48 +530,60 @@ async def test_error(ctx, error):
 ###########################################_Work In Progress_##########################################
 ###############################################_Admin_#################################################
 
-
-
-# Role IDs for roles to be assigned
+# Emoji-map till roller (dynamisk baserat på roller i JSON-filen)
 ROLE_EMOJI_MAP = {
-    "🟢": "Role1_ID",  # Green emoji corresponds to role 1
-    "🔵": "Role2_ID",  # Blue emoji corresponds to role 2
-    "🔴": "Role3_ID",  # Red emoji corresponds to role 3
+    "🟢": None,  # Green emoji will correspond to a role
+    "🔵": None,  # Blue emoji will correspond to a role
+    "🔴": None,  # Red emoji will correspond to a role
 }
 
-# Command to create an embedded message with reaction roles
+# Funktion för att ladda roller från JSON-filen och mappa till emojis
+def load_roles_and_map_emojis():
+    if os.path.exists(ROLE_JSON_FILE):
+        with open(ROLE_JSON_FILE, "r") as f:
+            roles_data = json.load(f)
+
+        # Mappa roller till emojis, exkludera admin/moderatorroller
+        role_names = [role for role in roles_data if role not in EXCLUDED_ROLES]
+        for emoji, role_name in zip(ROLE_EMOJI_MAP.keys(), role_names):
+            ROLE_EMOJI_MAP[emoji] = roles_data[role_name]  # Mappa emoji till roll-ID
+
+# Funktion för att skapa ett inbäddat meddelande med reaktionsroller
 @bot.command()
-@commands.has_permissions(administrator=True)  # Only administrators can run this command
+@commands.has_permissions(administrator=True)  # Endast administratörer kan köra detta kommando
 async def setup_roles(ctx):
-    """
-    Creates an embedded message for role assignment via reactions.
-    """
+    load_roles_and_map_emojis()  # Ladda roller från JSON-filen och mappa dem till emojis
+
+    embed_description = "React with an emoji to receive the corresponding role:\n\n"
+    for emoji, role_id in ROLE_EMOJI_MAP.items():
+        if role_id:
+            role_name = discord.utils.get(ctx.guild.roles, id=role_id).name
+            embed_description += f"{emoji} - {role_name}\n"
+
     embed = discord.Embed(
         title="Choose Your Role!",
-        description="React with an emoji to receive the corresponding role:\n\n"
-                    "🟢 - Green Role\n"
-                    "🔵 - Blue Role\n"
-                    "🔴 - Red Role\n",
+        description=embed_description,
         color=discord.Color.blue()
     )
     embed.set_footer(text="Click on an emoji to get a role assigned.")
     
-    # Send the embedded message
+    # Skicka det inbäddade meddelandet
     message = await ctx.send(embed=embed)
     
-    # Add reactions (emojis) to the message
+    # Lägg till reaktioner (emojis) till meddelandet
     for emoji in ROLE_EMOJI_MAP.keys():
-        await message.add_reaction(emoji)
+        if ROLE_EMOJI_MAP[emoji]:  # Lägg endast till emojis som har en mappad roll
+            await message.add_reaction(emoji)
 
-# Event to listen for reactions and assign roles
+# Event för att hantera reaktionshändelser och tilldela roller
 @bot.event
 async def on_raw_reaction_add(payload):
     """
-    Event that handles role assignment when a user reacts to a message.
+    Event som hanterar rolltilldelning när en användare reagerar på ett meddelande.
     """
-    MESSAGE_ID = 0
+    MESSAGE_ID = 0  # Ersätt detta med meddelande-ID för ditt inbäddade meddelande
 
-    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
+    if payload.message_id == MESSAGE_ID:  # Kontrollera att det är rätt meddelande
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -582,17 +596,17 @@ async def on_raw_reaction_add(payload):
                 try:
                     await member.send(f"You have been assigned the role: {role.name}")
                 except discord.Forbidden:
-                    pass  # Ignore if the user has disabled direct messages
+                    pass  # Ignorera om användaren har inaktiverat direktmeddelanden
 
-# Event to handle role removal when a user removes their reaction
+# Event för att hantera borttagning av reaktioner och ta bort roller
 @bot.event
 async def on_raw_reaction_remove(payload):
     """
-    Event that handles role removal when a user removes their reaction.
+    Event som hanterar rollborttagning när en användare tar bort en reaktion.
     """
-    MESSAGE_ID = 0
+    MESSAGE_ID = 0  # Ersätt detta med meddelande-ID för ditt inbäddade meddelande
 
-    if payload.message_id == MESSAGE_ID:  # Replace this with the message ID of your embedded message
+    if payload.message_id == MESSAGE_ID:  # Kontrollera att det är rätt meddelande
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -605,7 +619,7 @@ async def on_raw_reaction_remove(payload):
                 try:
                     await member.send(f"The role {role.name} has been removed from you.")
                 except discord.Forbidden:
-                    pass  # Ignore if the user has disabled direct messages
+                    pass  # Ignorera om användaren har inaktiverat direktmeddelanden
 
 ###########################################_Don_Not_Add_###########################################
 ##########################################_Anything_Below_#########################################
