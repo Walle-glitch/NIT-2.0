@@ -16,6 +16,13 @@ import json
 import os
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 
+################  Global Refs ################
+
+ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
+
+# Roller som inte ska kunna tilldelas via kommandot ./roll
+EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]
+
 ######### The resourses ############ 
 
 async def send_resource_embed(ctx):
@@ -288,7 +295,6 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
 
 ############### Moderation of Members ###################
 
-
 # Function to kick a user
 async def kick_user(ctx, user: discord.Member, reason=None):
     await user.kick(reason=reason)
@@ -410,6 +416,7 @@ async def process_historical_data(bot, xp_update_channel_id):
             except Exception as e:
                 print(f"Could not process channel {channel.name}: {str(e)}")
 
+########### Get Job Listings ###############
 
 # API URL och API-nyckel för Indeed
 INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
@@ -470,3 +477,57 @@ async def fetch_and_post_jobs(bot, job_channel_id):
             color=discord.Color.blue()
         )
         await channel.send(embed=embed)
+
+################# Role Asigniments #################
+
+# Funktion för att kontrollera om JSON-filen finns och är giltig
+async def check_and_initialize_roles(bot):
+    if not os.path.exists(ROLE_JSON_FILE) or os.path.getsize(ROLE_JSON_FILE) == 0:
+        print("Role JSON file is missing or empty. Initializing...")
+        await fetch_and_save_roles(bot)  # Hämta och spara roller om filen saknas eller är tom
+
+# Funktion för att hämta alla roller från servern och spara dem i en JSON-fil
+async def fetch_and_save_roles(bot):
+    for guild in bot.guilds:
+        roles_data = {}
+        for role in guild.roles:
+            roles_data[role.name] = role.id  # Spara rollnamn och roll-ID
+        # Spara roller i en JSON-fil
+        with open(ROLE_JSON_FILE, "w") as f:
+            json.dump(roles_data, f, indent=4)
+        print("Roles have been saved to roles.json")
+
+# Funktion för att ge en användare en roll baserat på rollnamnet
+async def assign_role(ctx, role_name):
+    # Kontrollera om rollen finns i den sparade JSON-filen
+    await check_and_initialize_roles(ctx.bot)  # Kontrollera om filen behöver initialiseras
+
+    with open(ROLE_JSON_FILE, "r") as f:
+        roles_data = json.load(f)
+
+    # Kontrollera om den begärda rollen finns
+    if role_name not in roles_data:
+        await ctx.send(f"The role '{role_name}' does not exist.")
+        return
+
+    # Kontrollera om rollen är en av de exkluderade rollerna
+    if role_name in EXCLUDED_ROLES:
+        await ctx.send(f"You cannot assign the role '{role_name}'.")
+        return
+
+    # Hämta rollen från servern baserat på dess ID
+    role_id = roles_data[role_name]
+    role = discord.utils.get(ctx.guild.roles, id=role_id)
+
+    if not role:
+        await ctx.send(f"The role '{role_name}' could not be found on the server.")
+        return
+
+    # Tilldela rollen till användaren
+    if role in ctx.author.roles:
+        await ctx.send(f"You already have the role '{role_name}'.")
+    else:
+        await ctx.author.add_roles(role)
+        await ctx.send(f"The role '{role_name}' has been assigned to you.")
+
+########################################################################################

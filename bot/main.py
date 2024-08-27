@@ -19,7 +19,7 @@ import _CCNP_Study_Plan
 ###########################################_Global_Variables_##########################################
 
 # Global version number variable
-version_nr = "Current Version is 24/08/26.40"
+version_nr = "Current Version is 24/08/27.10"
 
 # The following roles have access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -34,7 +34,8 @@ XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP
 JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
 CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE-Studdy
 CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP-Studdy
-CCNA_STUDY_CHANNEL_ID = 1277675152234119231  # CCNA-Studdy
+#CCNA_STUDY_CHANNEL_ID = "MIssing""  # CCNA-Studdy
+ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -42,6 +43,8 @@ CCNA_STUDY_CHANNEL_ID = 1277675152234119231  # CCNA-Studdy
 intents = discord.Intents.all()
 intents.message_content = True
 intents.reactions = True  # Aktivera reaktionshändelser
+intents.guilds = True  # Behöver åtkomst till serverinformation, inklusive roller
+intents.members = True  # Behöver åtkomst till medlemmar för att tilldela roller
 bot = commands.Bot(command_prefix="./", intents=intents)
 
 # A verification event to check if the bot is alive
@@ -52,6 +55,7 @@ async def on_ready():
     # job_posting_loop.start()  # Startar bakgrundsloopen när boten är redo och Kollar efter Job Annonser 
     weekly_study_plan_CCIE.start()  # Startar den veckobaserade studieplanen när boten är redo
     weekly_study_plan_CCNP.start()  # Startar den veckobaserade studieplanen när boten är redo
+    update_roles.start()  # Starta rollen uppdatering när boten är redo
 
 ###########################################_All_User_Commands_##########################################
 
@@ -263,6 +267,18 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {gi0_ip}")
     else:
         await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
+
+############################_Role_Assignment_############################
+
+# Schemalagd loop för att hämta roller en gång per dag
+@tasks.loop(hours=24)
+async def update_roles():
+    await _Bot_Modul.fetch_and_save_roles(bot)
+
+# Kommando för att ge en användare en roll
+@bot.command()
+async def roll(ctx, *, role_name: str):
+    await _Bot_Modul.assign_role(ctx, role_name)
 
 #############################_Study_Commands_#############################
 
