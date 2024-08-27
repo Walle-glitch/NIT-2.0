@@ -288,7 +288,7 @@ async def update_roles():
     try:    
         await _Bot_Modul.fetch_and_save_roles(bot)
     except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
+        await  print(f"An error occurred: {str(e)}")
 
 # Kommando för att ge en användare en roll
 @bot.command()
