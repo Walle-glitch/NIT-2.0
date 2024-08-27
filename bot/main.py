@@ -79,7 +79,7 @@ async def on_ready():
     weekly_study_plan_CCNP.start()  
     update_roles.start()  
     check_welcome_message.start()  
-    await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
+    log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 ###########################################_All_User_Commands_##########################################
 
