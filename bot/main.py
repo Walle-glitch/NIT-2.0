@@ -93,45 +93,41 @@ async def resuser_command(ctx):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Help Command
+# Help Command 
+# Load the help commands from the JSON file
+def load_help_commands():
+    help_commands = "Json_Files/Help_Commands.json"
+    
+    if os.path.exists(help_commands):
+        with open(help_commands, "r") as file:
+            return json.load(file)
+    else:
+        print(f"Error: {help_commands} not found.")
+        return None
+
 @bot.command()
 async def h(ctx):
     """
     Display a list of all available commands with descriptions and the current bot version.
     """
-    embed = discord.Embed(
-        title="Available Commands",
-        description=f"Current version: {version_nr}\n\nHere is a list of all available commands:",
-        color=discord.Color.blue()
-    )
+    help_data = load_help_commands()
     
-    commands_list = {
-        "resurser": "./r - Display a list of useful resources.",
-        "Help": "./h - Display this help message.",
-        "Version": "./version - Show the current bot version.",
-        "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
-        "Hello": "./hello - Say hello to the bot.",
-        "About": "./about - Information about the bot and its purpose.",
-        "Ticket": "./ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
-        "Close": "./close - Close the current ticket channel.",
-        "Subnet Game": "./subnet - Start a subnet game.",
-        "Game Menu": "./spel - Choose between different games (Subnet and Network Questions).",
-        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
-        "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
-        "Add Role": "./addrole - Assign a predefined role to the user.",
-        "Remove Role": "./removerole - Remove a predefined role from the user.",
-        "Kick": "./kick [username] - Kick a user from the server. (Privilege 10/15 only)",
-        "Ban": "./ban [username] - Ban a user from the server. (Privilege 10/15 only)",
-        "Mute": "./mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
-        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
-        "Test": "./test - Test all commands. (Bot-Admin only)"
-    }
-
-    for command, description in commands_list.items():
-        embed.add_field(name=command, value=description, inline=False)
-    
-    await ctx.send(embed=embed)
+    if help_data:
+        version_nr = help_data.get("version", "Unknown Version")
+        commands_list = help_data.get("commands", {})
+        
+        embed = discord.Embed(
+            title="Available Commands",
+            description=f"Current version: {version_nr}\n\nHere is a list of all available commands:",
+            color=discord.Color.blue()
+        )
+        
+        for command, description in commands_list.items():
+            embed.add_field(name=command, value=description, inline=False)
+        
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send("Error loading help commands.")
 
 # Version Command
 @bot.command()
