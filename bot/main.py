@@ -52,7 +52,7 @@ intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
-
+# Command Prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
 ##################_BOT_BOOT_##################
