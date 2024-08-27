@@ -1,59 +1,43 @@
-Overview
-NIT-BOT is a versatile Discord bot designed for various network-related functionalities, including BGP configuration, subnet games, and more. This bot integrates with Discord to provide a range of commands for network management and educational purposes.
+# NIT-BOT
 
-Features
-BGP Configuration: Configure BGP neighbors on a router.
-Subnet Game: Engage in a subnetting quiz to test your networking knowledge.
-RFC Retrieval: Fetch and display information about RFCs.
-Role Management: Assign and remove roles using reactions.
-Bot Management: Admin commands for bot maintenance and updates.
+## Overview
+NIT-BOT is a versatile Discord bot designed for various network-related functionalities, including BGP configuration, subnet games, AI integration, study plans for CCIE and CCNP, and more. The bot integrates with Discord to provide a range of commands that facilitate network management, educational purposes, and fun activities.
 
-The bot requires specific configuration files and environment variables. You need to create and configure the following:
+## Features
 
-botConfig.py: Contains sensitive bot token and configuration details. Create this file with the following structure:
+### Networking & System Utilities
+- **BGP Configuration:** Configure BGP neighbors on a router with ease.
+- **Subnet Game:** Engage in a subnetting quiz to test and improve your networking knowledge.
+- **Ping Command:** Perform a network ping test to check connectivity.
+- **RFC Retrieval:** Fetch and display information about RFCs by specifying their number.
 
-python
+### AI Integration
+- **OpenAI Integration:** Ask questions to ChatGPT, and the bot will respond in a conversation-like session for up to five questions.
+
+### Study Plans
+- **CCIE & CCNP Study Plans:** The bot posts weekly study goals to specific channels based on the latest Cisco blueprint. These study plans help prepare for the CCIE and CCNP exams with lab suggestions and reading materials.
+
+### Role Management
+- **Dynamic Role Assignment:** Users can assign and remove roles using reactions or buttons, including dynamically generated role lists from the server.
+- **Welcome Message:** The bot ensures a persistent and interactive welcome message with role assignment options using buttons.
+
+### Job Listings
+- **Job Fetching:** The bot fetches job listings relevant to network engineers and posts them in a specified channel daily.
+
+### XP & Leveling System
+- **XP System:** Users earn XP for activity and reactions. The bot tracks user levels and announces level-ups in a specific channel.
+
+### Bot Management
+- **Admin Commands:** Admin-level commands allow bot maintenance, including rebooting and moderation functions (kick, ban, mute users).
+
+## Configuration
+
+To get the bot running, you need to configure certain files and environment variables. The required configuration files include:
+
+### `botConfig.py`
+This file contains sensitive bot token and configuration details. Create this file with the following structure:
+
+```python
 _Bot_Token = 'YOUR_BOT_TOKEN_HERE'
-_Router_Conf.py: Contains router configuration details. Create this file with the following structure:
-
-python
-ROUTER_IP = 'ROUTER_IP_ADDRESS'
-SSH_USERNAME = 'YOUR_SSH_USERNAME'
-SSH_PASSWORD = 'YOUR_SSH_PASSWORD'
-Additional Server Configuration: Ensure the server where the bot runs has the following:
-
-Python 3.7+ installed.
-Required Python packages as listed in requirements.txt.
-Network accessibility to the router for BGP configuration if applicable.
-Running the Bot
-Start the Bot
-
-Run the bot using:
-python3 main.py
-
-Interact with the Bot
-
-Once the bot is running, you can interact with it using the command prefix ./. For a list of available commands, use ./h.
-
-Commands
-Help: ./h
-
-Version: ./version
-
-Git Repository: ./git
-
-Hello: ./hello
-
-About: ./about
-
-Ping: ./ping [IP_ADDRESS]
-
-RFC: ./rfc [NUMBER]
-
-Subnet Game: ./subnet
-
-BGP Setup: ./BGP-Setup [IP_ADDRESS] [AS_NUMBER]
-
-Admin Commands:
-
-Reboot: ./Reboot (requires Bot-Master role)
+_Open_AI_Token = 'YOUR_OPENAI_API_KEY'
+_YOUR_INDEED_API_KEY = 'YOUR_INDEED_API_KEY'

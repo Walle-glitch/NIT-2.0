@@ -1,4 +1,4 @@
-# This is Main.py The main File for the bot
+# This is Main.py, the main file for the bot
 
 ###########################################_Import_Modules_##########################################
 
@@ -12,20 +12,18 @@ from urllib.request import urlopen
 import json
 
 # Bot specific Modules
-
-import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
-import _Bot_Modul # Module for various functions.
-import _Games # Module for the games.
-import _Open_AI  # Importera modulen som hanterar OpenAI API-anrop
-import _CCIE_Study_Plan
-import _CCNP_Study_Plan 
+import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
+import _Bot_Modul  # Module for various functions.
+import _Games  # Module for games.
+import _Open_AI  # Module for handling OpenAI API requests.
+import _CCIE_Study_Plan  # CCIE study plan module.
+import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-# Global version number variable
-version_nr = "Current Version is 24/08/27.10"
+version_nr = "Current Version is 24/08/27.100"  # Global version number variable
 
-# The following roles have access to "Sudo commands"
+# Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
 ADMIN_ROLE_NAME = "Privilege 15"
 MOD_ROLE_NAME = "Privilege 10"
@@ -34,46 +32,39 @@ MOD_ROLE_NAME = "Privilege 10"
 current_question = None
 correct_answer = None
 
-XP_UPDATE_CHANNEL_ID = 1012067343452622949 # Level-UP 
-JOB_CHANNEL_ID = 1012235998308094032  # Externa Flöden
-CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE-Studdy
-CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP-Studdy
-WELCOME_CHANNEL_ID = 1012026430470766818  # FYI kanalen 
-#CCNA_STUDY_CHANNEL_ID = "MIssing""  # CCNA-Studdy
-ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
-EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roller som inte ska kunna tilldelas via reaktioner
+# Channel IDs
+XP_UPDATE_CHANNEL_ID = 1012067343452622949  # Channel for level-up notifications
+JOB_CHANNEL_ID = 1012235998308094032  # External job postings
+CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE study channel
+CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
+WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
+ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
+EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]  # Roles that cannot be assigned via reactions
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
-# Setup for intents
 intents = discord.Intents.all()
 intents.message_content = True
-intents.reactions = True  # Aktivera reaktionshändelser
-intents.guilds = True  # Behöver åtkomst till serverinformation, inklusive roller
-intents.members = True  # Behöver åtkomst till medlemmar för att tilldela roller
-intents.guilds = True
-intents.members = True
+intents.reactions = True  # Enable reaction events
+intents.guilds = True  # Access to server information, including roles
+intents.members = True  # Access to members for role assignment
 
-# Command Prefix
 bot = commands.Bot(command_prefix="./", intents=intents)
 
-# A verification event to check if the bot is alive
-# Running Cuntinius Programs 
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
-    # await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # OBS !!!! OSAKAR MYCKET SPAM !!!!
-    # job_posting_loop.start()  # Startar bakgrundsloopen när boten är redo och Kollar efter Job Annonser 
-    weekly_study_plan_CCIE.start()  # Startar den veckobaserade studieplanen när boten är redo
-    weekly_study_plan_CCNP.start()  # Startar den veckobaserade studieplanen när boten är redo
-    update_roles.start()  # Starta rollen uppdatering när boten är redo
-    check_welcome_message.start()  # Startar kontroll av välkomstmeddelandet
+    await _Bot_Modul.process_historical_data(bot)  # Warning: This generates a lot of spam! #, XP_UPDATE_CHANNEL_ID
+    weekly_study_plan_CCIE.start()  # Start the weekly study plan for CCIE when the bot is ready
+    weekly_study_plan_CCNP.start()  # Start the weekly study plan for CCNP when the bot is ready
+    update_roles.start()  # Start role update when the bot is ready
+    check_welcome_message.start()  # Start checking for the welcome message
 
 ###########################################_All_User_Commands_##########################################
 
 #############################_Utilities_Commands_#############################
 
-# Resours command 
+# Resource command
 @bot.command(name="r")
 async def resuser_command(ctx):
     try:
@@ -94,26 +85,26 @@ async def h(ctx):
     )
     
     commands_list = {
-        "resurser": "/r - Display a list of good program resoursers.",
-        "Help": "/h - Display this help message.",
-        "Version": "/version - Show the current bot version.",
-        "Git Repository": "/git - Provide the link to the bot's GitHub repository.",
-        "Hello": "/hello - Say hello to the bot.",
-        "About": "/about - Information about the bot and its purpose.",
-        "Ticket": "/ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
-        "Close": "/close - Close the current ticket channel.",
-        "Subnet Game": "/subnet - Start a subnet game.",
-        "Game Menu": "/spel - Choose between different games (Subnet and Network Questions).",
-        "Ping": "/ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
-        "RFC": "/rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "BGP Setup": "/BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
-        "Add Role": "/addrole - Assign a predefined role to the user.",
-        "Remove Role": "/removerole - Remove a predefined role from the user.",
-        "Kick": "/kick [username] - Kick a user from the server. (Privilege 10/15 only)",
-        "Ban": "/ban [username] - Ban a user from the server. (Privilege 10/15 only)",
-        "Mute": "/mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
-        "Reboot": "/Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
-        "Test": "/test - Test all commands. (Bot-Admin only)"
+        "resurser": "./r - Display a list of useful resources.",
+        "Help": "./h - Display this help message.",
+        "Version": "./version - Show the current bot version.",
+        "Git Repository": "./git - Provide the link to the bot's GitHub repository.",
+        "Hello": "./hello - Say hello to the bot.",
+        "About": "./about - Information about the bot and its purpose.",
+        "Ticket": "./ticket [name] - Create a new channel for discussing a specific issue. Use ./close to close this channel.",
+        "Close": "./close - Close the current ticket channel.",
+        "Subnet Game": "./subnet - Start a subnet game.",
+        "Game Menu": "./spel - Choose between different games (Subnet and Network Questions).",
+        "Ping": "./ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
+        "RFC": "./rfc [NUMBER] - Retrieve information about the specified RFC number.",
+        "BGP Setup": "./BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
+        "Add Role": "./addrole - Assign a predefined role to the user.",
+        "Remove Role": "./removerole - Remove a predefined role from the user.",
+        "Kick": "./kick [username] - Kick a user from the server. (Privilege 10/15 only)",
+        "Ban": "./ban [username] - Ban a user from the server. (Privilege 10/15 only)",
+        "Mute": "./mute [hours] [username] - Mute a user for a specified number of hours. (Privilege 10/15 only)",
+        "Reboot": "./Reboot - Perform a git pull and restart the bot. (Bot-Admin only)",
+        "Test": "./test - Test all commands. (Bot-Admin only)"
     }
 
     for command, description in commands_list.items():
@@ -121,22 +112,20 @@ async def h(ctx):
     
     await ctx.send(embed=embed)
 
-# Version Number
+# Version Command
 @bot.command()
 async def version(ctx):
-    Reply = version_nr
-    await ctx.send(Reply)
+    await ctx.send(version_nr)
 
-# Git Repository
+# Git Repository Command
 @bot.command()
 async def git(ctx):
-    Reply = 'https://github.com/Walle-glitch/NIT-2.0.git'
-    await ctx.send(Reply)
+    await ctx.send('https://github.com/Walle-glitch/NIT-2.0.git')
 
-# About
+# About Command
 @bot.command()
 async def about(ctx):
-    Reply = (
+    reply = (
     'The NIT-BOT is a fun bot here on our Discord.\n' 
     'It is public on GitHub and anyone is free to contribute to it,' 
     'either for fun or other (non-malicious) projects.\n' 
@@ -146,7 +135,7 @@ async def about(ctx):
     'Contact Walle/Nicklas for more info.'
     'Use ./git for the link to the GitHub repo.\n'
     )
-    await ctx.send(Reply)
+    await ctx.send(reply)
 
 # Ticket creation     
 @bot.command(name="ticket")
@@ -162,7 +151,6 @@ async def create_ticket_command(ctx, *, channel_name=None):
 
 @bot.command(name="close")
 async def close_ticket_command(ctx):
-    # Close the channel where the command is invoked
     await _Bot_Modul.close_ticket(ctx.channel)
     await ctx.send("This ticket has been closed.")
 
@@ -171,7 +159,7 @@ async def close_ticket_command(ctx):
 @bot.command(name="AI")
 async def ai_command(ctx, *, question=None):
     if question is None:
-        await ctx.send("Ange en fråga efter kommandot: `./AI \"Fråga\"`")
+        await ctx.send("Please provide a question after the command: `./AI \"Question\"`")
         return
     
     await _Open_AI.handle_ai_session(ctx, question)
@@ -179,18 +167,13 @@ async def ai_command(ctx, *, question=None):
 
 #############################_User_Test_Commands_#############################
 
-# Hello
+# Hello Command
 @bot.command()
 async def hello(ctx):
-    Reply = 'Hello?'
-    try:
-        await ctx.send(Reply)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
+    await ctx.send('Hello!')
 
 #############################_Game_Commands_#############################
 
-# Command to start a subnet game
 @bot.command()
 async def subnet(ctx):
     global current_question, correct_answer
@@ -198,7 +181,6 @@ async def subnet(ctx):
     current_question, correct_answer = _Games.generate_subnet_question()
     await ctx.send(f"Subnet question: {current_question}")
 
-# Event to check the user's answer
 @bot.event
 async def on_message(message):
     global current_question, correct_answer
@@ -218,34 +200,8 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-#############################_Under Development_#############################
-
-# Game Command  Not Working Yet! 
-@bot.command(name='spel')
-async def game_menu(ctx):
-    menu_message = (
-        "Welcome to the Game Menu! Please choose an option:\n"
-        "1. Subnet Game\n"
-        "2. Network Questions\n"
-        "Type `1` for Subnet Game or `2` for Network Questions."
-    )
-    await ctx.send(menu_message)
-
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-
-    if message.content == '1':
-        await _Games.start_game(message.channel, 'subnet')
-    elif message.content == '2':
-        await _Games.start_game(message.channel, 'network')
-    else:
-        await bot.process_commands(message)
-
 #############################_Network_Commands_#############################
 
-# Ping
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
     """
@@ -258,18 +214,16 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     except subprocess.CalledProcessError as e:
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
 
-# BGP Setup Instructions
 @bot.command()
 async def BGP(ctx):
-    Reply = (
+    reply = (
         'When using the ./BGP_Setup command,\n' 
         'you need to provide two variables,\n'
         'like this: "./BGP_Setup [your IP address] [your AS number]".\n'
         'You will receive a reply with the needed info when the configuration is complete.'
-        )
-    await ctx.send(Reply)
+    )
+    await ctx.send(reply)
 
-# Command to configure BGP peering
 @bot.command()
 async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
     await ctx.send("Starting BGP configuration...")
@@ -282,15 +236,13 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
 
 ############################_Role_Assignment_############################
 
-# Schemalagd loop för att hämta roller en gång per dag
 @tasks.loop(hours=1)
 async def update_roles():
     try:    
         await _Bot_Modul.fetch_and_save_roles(bot)
     except Exception as e:
-        await  print(f"An error occurred: {str(e)}")
+        await print(f"An error occurred: {str(e)}")
 
-# Kommando för att ge en användare en roll
 @bot.command()
 async def roll(ctx, *, role_name: str):
     try:    
@@ -300,7 +252,6 @@ async def roll(ctx, *, role_name: str):
 
 #############################_Study_Commands_#############################
 
-# Get an RFC
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
     """
@@ -319,12 +270,11 @@ async def rfc(ctx, rfc_number: str = None):
         result = "Error: Invalid RFC number. Please provide a valid integer."
 
     await ctx.send(result)
-    
+
 ###########################################_Below this line_###########################################
-###########################################_Work In Progress_##########################################
 
 # Role name to be assigned by the bot
-ROLE_NAME = "YourRoleName"  # Change this to the role you want the bot to assign
+ROLE_NAME = "YourRoleName"
 
 @bot.command()
 async def addrole(ctx):
@@ -347,7 +297,6 @@ async def addrole(ctx):
         except discord.Forbidden:
             embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
     
-    # Send an embedded message as a reply
     await ctx.send(embed=embed)
 
 @bot.command()
@@ -371,80 +320,66 @@ async def removerole(ctx):
         except discord.Forbidden:
             embed = discord.Embed(title="Error", description="I do not have sufficient permissions to remove this role.", color=discord.Color.red())
     
-    # Send an embedded message as a reply
     await ctx.send(embed=embed)
 
-###########################################_Below this line_##########################################
-###########################################_Only Pasive Code_##########################################
+###########################################_Study_Plan_Loops_###########################################
 
-# CCIE Study Plan
-# Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
-@tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
+@tasks.loop(hours=168)  # CCIE study plan loop (weekly)
 async def weekly_study_plan_CCIE():
     await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
 
-# CCNP Study Plan
-# Schemalagd loop för att posta veckans studieplan varje vecka (7 dagar)
-@tasks.loop(hours=168)  # 168 timmar motsvarar en vecka
+@tasks.loop(hours=168)  # CCNP study plan loop (weekly)
 async def weekly_study_plan_CCNP():
     await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
 
-# Kommando för att manuellt hämta och posta jobb
+# Command to manually fetch and post jobs
 @bot.command()
 async def post_jobs(ctx):
     await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
 
-# Schemalagd loop för att hämta jobb varje dag (24 timmar)
-@tasks.loop(hours=24)
+@tasks.loop(hours=24)  # Job posting loop (daily)
 async def job_posting_loop():
     await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
 
-# Wellcome Message
+# Welcome Message
 @bot.event
 async def on_member_join(member):
-    # Welcome new members
-    channel = discord.utils.get(member.guild.text_channels, name="skit-snack")
+    channel = discord.utils.get(member.guild.text_channels, name="welcome")
     if channel:
         await channel.send(f"Welcome to the server, {member.mention}!")
 
-# XP Levels. 
+# XP Levels Handling
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
 
-    # Hantera XP och nivåsystem via _Bot_Modul
     await _Bot_Modul.handle_xp(message, XP_UPDATE_CHANNEL_ID)
-
-    # Fortsätt bearbeta andra kommandon
     await bot.process_commands(message)
 
 @bot.event
 async def on_reaction_add(reaction, user):
-    # Ge XP till författaren av meddelandet som fick en reaktion
     await _Bot_Modul.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
 
-# Kommando för att visa användarens nivå och XP
+# Command to show user's level and XP
 @bot.command()
 async def level(ctx, member: discord.Member = None):
     if member is None:
         member = ctx.author
     await _Bot_Modul.show_level(ctx, member)
 
-# Schemalagd loop för att kontrollera välkomstmeddelandet varje timme
+# Loop to check welcome message every hour
 @tasks.loop(hours=1)
 async def check_welcome_message():
     await _Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
 
-###########################################_Below this line_##########################################
-###########################################_Only Admin Code_##########################################
+###########################################_Admin_Commands_###########################################
 
-# Check if the user has the necessary roles
 def has_privileged_role(ctx):
     roles = [role.name for role in ctx.author.roles]
     return "Privilege 15" in roles or "Privilege 10" in roles
 
-# Comands for Kick a Member
+# Kick Command
 @bot.command(name="kick")
 @commands.check(has_privileged_role)
 @commands.has_permissions(kick_members=True)
@@ -454,7 +389,7 @@ async def kick_command(ctx, user: discord.Member, *, reason=None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Comands for Ban a Member
+# Ban Command
 @bot.command(name="ban")
 @commands.check(has_privileged_role)
 @commands.has_permissions(ban_members=True)
@@ -464,7 +399,7 @@ async def ban_command(ctx, user: discord.Member, *, reason=None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Comands for mute a Member
+# Mute Command
 @bot.command(name="mute")
 @commands.check(has_privileged_role)
 @commands.has_permissions(moderate_members=True)
@@ -474,13 +409,11 @@ async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Command to perform a `git pull` and reboot the bot (only for the role "Bot-Master")
+# Reboot Command
 @bot.command(name="Reboot")
-@commands.has_role(BOT_ADMIN_ROLE_NAME)  # Verify that the user has the correct role
+@commands.has_role(BOT_ADMIN_ROLE_NAME)
 async def reboot(ctx):
     await ctx.send("Performing `git pull` and restarting the bot...")
-
-    # Execute "git pull" in the directory
     try:
         result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
         await ctx.send(f"`git pull` executed:\n```\n{result.stdout}\n```")
@@ -488,13 +421,10 @@ async def reboot(ctx):
         await ctx.send(f"Error during `git pull`:\n```\n{e.stderr}\n```")
         return
 
-    # Save the current Python executable
     python = sys.executable
-
-    # Restart the Python script
     os.execl(python, python, *sys.argv)
 
-# Manages errors if a non-"Bot-Master" tries the command
+# Handle errors for the Reboot command
 @reboot.error
 async def reboot_error(ctx, error):
     if isinstance(error, commands.MissingRole):
@@ -532,7 +462,6 @@ async def test(ctx):
             except Exception as e:
                 await ctx.send(f"Error running command `{command_name}`: {e}")
             
-            # If a game command was run, break after the first successful game answer
             if command_name in ['subnet', 'network']:
                 global current_question, correct_answer
                 if current_question:
@@ -540,7 +469,6 @@ async def test(ctx):
                     await bot.get_command('stop_game')(ctx)
                     break
 
-# Error handling for test command
 @test.error
 async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
@@ -548,31 +476,25 @@ async def test_error(ctx, error):
 
 ###########################################_Below this line_###########################################
 ###########################################_Work In Progress_##########################################
-###############################################_Admin_#################################################
 
-# Emoji-map till roller (dynamisk baserat på roller i JSON-filen)
 ROLE_EMOJI_MAP = {
     "🟢": None,  # Green emoji will correspond to a role
     "🔵": None,  # Blue emoji will correspond to a role
     "🔴": None,  # Red emoji will correspond to a role
 }
 
-# Funktion för att ladda roller från JSON-filen och mappa till emojis
 def load_roles_and_map_emojis():
     if os.path.exists(ROLE_JSON_FILE):
         with open(ROLE_JSON_FILE, "r") as f:
             roles_data = json.load(f)
-
-        # Mappa roller till emojis, exkludera admin/moderatorroller
         role_names = [role for role in roles_data if role not in EXCLUDED_ROLES]
         for emoji, role_name in zip(ROLE_EMOJI_MAP.keys(), role_names):
-            ROLE_EMOJI_MAP[emoji] = roles_data[role_name]  # Mappa emoji till roll-ID
+            ROLE_EMOJI_MAP[emoji] = roles_data[role_name]
 
-# Funktion för att skapa ett inbäddat meddelande med reaktionsroller
 @bot.command()
-@commands.has_permissions(administrator=True)  # Endast administratörer kan köra detta kommando
+@commands.has_permissions(administrator=True)
 async def setup_roles(ctx):
-    load_roles_and_map_emojis()  # Ladda roller från JSON-filen och mappa dem till emojis
+    load_roles_and_map_emojis()
 
     embed_description = "React with an emoji to receive the corresponding role:\n\n"
     for emoji, role_id in ROLE_EMOJI_MAP.items():
@@ -587,23 +509,15 @@ async def setup_roles(ctx):
     )
     embed.set_footer(text="Click on an emoji to get a role assigned.")
     
-    # Skicka det inbäddade meddelandet
     message = await ctx.send(embed=embed)
-    
-    # Lägg till reaktioner (emojis) till meddelandet
     for emoji in ROLE_EMOJI_MAP.keys():
-        if ROLE_EMOJI_MAP[emoji]:  # Lägg endast till emojis som har en mappad roll
+        if ROLE_EMOJI_MAP[emoji]:
             await message.add_reaction(emoji)
 
-# Event för att hantera reaktionshändelser och tilldela roller
 @bot.event
 async def on_raw_reaction_add(payload):
-    """
-    Event som hanterar rolltilldelning när en användare reagerar på ett meddelande.
-    """
-    MESSAGE_ID = 0  # Ersätt detta med meddelande-ID för ditt inbäddade meddelande
-
-    if payload.message_id == MESSAGE_ID:  # Kontrollera att det är rätt meddelande
+    MESSAGE_ID = 0
+    if payload.message_id == MESSAGE_ID:
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -616,17 +530,12 @@ async def on_raw_reaction_add(payload):
                 try:
                     await member.send(f"You have been assigned the role: {role.name}")
                 except discord.Forbidden:
-                    pass  # Ignorera om användaren har inaktiverat direktmeddelanden
+                    pass
 
-# Event för att hantera borttagning av reaktioner och ta bort roller
 @bot.event
 async def on_raw_reaction_remove(payload):
-    """
-    Event som hanterar rollborttagning när en användare tar bort en reaktion.
-    """
-    MESSAGE_ID = 0  # Ersätt detta med meddelande-ID för ditt inbäddade meddelande
-
-    if payload.message_id == MESSAGE_ID:  # Kontrollera att det är rätt meddelande
+    MESSAGE_ID = 0
+    if payload.message_id == MESSAGE_ID:
         guild = bot.get_guild(payload.guild_id)
         role_id = ROLE_EMOJI_MAP.get(str(payload.emoji))
         
@@ -639,15 +548,7 @@ async def on_raw_reaction_remove(payload):
                 try:
                     await member.send(f"The role {role.name} has been removed from you.")
                 except discord.Forbidden:
-                    pass  # Ignorera om användaren har inaktiverat direktmeddelanden
+                    pass
 
-###########################################_Don_Not_Add_###########################################
-##########################################_Anything_Below_#########################################
-############################################_Here_=)_##############################################
-
-# Run the bot using its token
+###########################################_Run_Bot_###########################################
 bot.run(botConfig._Bot_Token())
-
-#####################################################################################
-########################################_END_########################################
-#####################################################################################

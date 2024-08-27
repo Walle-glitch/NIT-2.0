@@ -19,19 +19,20 @@ from discord.ui import Button, View
 
 ################  Global Refs ################
 
-ROLE_JSON_FILE = "roles.json"  # Fil där roller sparas
-WELCOME_MESSAGE_FILE = "welcome_message_id.json" # Fil där Välkommst meddelandet sparas
+ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are saved
+WELCOME_MESSAGE_FILE = "Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
+XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
 
-# Roller som inte ska kunna tilldelas via kommandot ./roll
+# Roles that cannot be assigned using the ./roll command
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]
 
-######### The resourses ############ 
+######### The Resources ############ 
 
 async def send_resource_embed(ctx):
-    # Skapa en lista för att hålla flera embeds
+    # Create a list to hold multiple embeds
     embeds = []
 
-    # Första embed
+    # First embed
     embed = discord.Embed(
         title="Course Books and Resources",
         description="",
@@ -54,12 +55,11 @@ async def send_resource_embed(ctx):
     embed.add_field(name="[**Wi-Fi Dump**]", value="https://docs.google.com/document/d/1BFMuQcGjwZxuaD9DJ0fco3xRuCCinvWuEWbFpCviMUM/edit", inline=False)
     embed.add_field(name="[**ENARSI för CCNP3**]", value="https://annas-archive.org/md5/45c415c2296f0f6709e5547e2d5d2c7e", inline=False)
 
-    # Lägg till det första embed till listan
     embeds.append(embed)
 
-    # Andra embed för resten av informationen
+    # Second embed for additional information
     embed2 = discord.Embed(
-        title="Bloogs and fun stuff",
+        title="Blogs and Fun Stuff",
         description="",
         color=discord.Color.blue()
     )
@@ -68,90 +68,92 @@ async def send_resource_embed(ctx):
     embed2.add_field(name="[**Study tips**]", value="https://www-freecodecamp-org.cdn.ampproject.org/c/s/www.freecodecamp.org/news/supercharged-studying-with-python-anki-chatgpt/amp/", inline=False)
     embed2.add_field(name="[**BEST cheat-sheets in the world**]", value="https://packetlife.net/library/cheat-sheets/", inline=False)
     
-    embed7 = discord.Embed(
-        title="YouTube resources",
-        description="",
-        color=discord.Color.blue()
-    )
-    
-    embed7.add_field(name="[**CCNA**]", value="https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB", inline=False)
-    embed7.add_field(name="[**Cybersäkerhet**]", value="https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY", inline=False)
-    embed7.add_field(name="[**Blandat inför GDA kursen och lite för Internettjänster**]", value="https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4", inline=False)
-    embed7.add_field(name="[**CCNA (Kompletteras bra med Jeremy)**]", value="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P", inline=False)
-    embed7.add_field(name="[**CCNA**]", value="https://www.youtube.com/playlist?list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF", inline=False)
-    
-    embeds.append(embed7)
+    embeds.append(embed2)
 
-    # Tredje embed för Content Creators och Downloads
+    # Third embed for YouTube resources
     embed3 = discord.Embed(
-        title="**Content creators on YouTube**",
+        title="YouTube Resources",
         description="",
         color=discord.Color.blue()
     )
     
-    embed3.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
-    embed3.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
-    embed3.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
-    embed3.add_field(name="[**Art of Network Engineering**]", value="https://www.youtube.com/@artofneteng", inline=False)
-    embed3.add_field(name="[**Keith Barker**]", value="https://www.youtube.com/@KeithBarker", inline=False)
-    embed3.add_field(name="[**Chris Greer**]", value="https://www.youtube.com/@ChrisGreer", inline=False)
-    embed3.add_field(name="[**David Bombal**]", value="https://www.youtube.com/@davidbombal", inline=False)
-    embed3.add_field(name="[**Jeremy's IT Lab**]", value="https://www.youtube.com/@JeremysITLab", inline=False)
-    embed3.add_field(name="[**Arthur Salmon**]", value="https://www.youtube.com/@arthursalmon3414", inline=False)
-    embed3.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
-    embed3.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
-
+    embed3.add_field(name="[**CCNA**]", value="https://youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ&si=Z_ApQ1TJtE1EJqhB", inline=False)
+    embed3.add_field(name="[**Cybersecurity**]", value="https://www.youtube.com/watch?v=IQZXqUggR8w&list=PL1U-z6tCj5WBwy4WoMS3jSi7WE4AGOUcY", inline=False)
+    embed3.add_field(name="[**Mixed Resources for GDA course and Internet services**]", value="https://www.youtube.com/watch?v=bYjQakUxeVY&list=PLdz-iDPGfMEJWW0JdbWwP0bCkBnJGP5q4", inline=False)
+    embed3.add_field(name="[**CCNA (Complements well with Jeremy)**]", value="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P", inline=False)
+    embed3.add_field(name="[**CCNA**]", value="https://www.youtube.com/playlist?list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF", inline=False)
+    
     embeds.append(embed3)
 
-      # Fjärde embed för konton och avslutande meddelande
+    # Fourth embed for content creators and downloads
     embed4 = discord.Embed(
+        title="**Content Creators on YouTube**",
+        description="",
+        color=discord.Color.blue()
+    )
+    
+    embed4.add_field(name="[**Indently**]", value="https://www.youtube.com/@Indently", inline=False)
+    embed4.add_field(name="[**Ccieordie**]", value="https://www.youtube.com/@Ccieordie_arteq", inline=False)
+    embed4.add_field(name="[**INE**]", value="https://www.youtube.com/@INEtraining", inline=False)
+    embed4.add_field(name="[**Art of Network Engineering**]", value="https://www.youtube.com/@artofneteng", inline=False)
+    embed4.add_field(name="[**Keith Barker**]", value="https://www.youtube.com/@KeithBarker", inline=False)
+    embed4.add_field(name="[**Chris Greer**]", value="https://www.youtube.com/@ChrisGreer", inline=False)
+    embed4.add_field(name="[**David Bombal**]", value="https://www.youtube.com/@davidbombal", inline=False)
+    embed4.add_field(name="[**Jeremy's IT Lab**]", value="https://www.youtube.com/@JeremysITLab", inline=False)
+    embed4.add_field(name="[**Arthur Salmon**]", value="https://www.youtube.com/@arthursalmon3414", inline=False)
+    embed4.add_field(name="[**PowerCert Animated Videos**]", value="https://www.youtube.com/@PowerCertAnimatedVideos", inline=False)
+    embed4.add_field(name="[**NetworkChuck**]", value="https://www.youtube.com/@NetworkChuck", inline=False)
+
+    embeds.append(embed4)
+
+    # Fifth embed for downloads
+    embed5 = discord.Embed(
         title="Good Downloads",
         description="",
         color=discord.Color.blue()
     )
    
-    embed4.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
-    embed4.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
-    embed4.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
-    embed4.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
-    embed4.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
-    embed4.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
-    embed4.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
-    embed4.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
+    embed5.add_field(name="[**(note taking) Notepad++**]", value="https://notepad-plus-plus.org/", inline=False)
+    embed5.add_field(name="[**(note taking) Obsidian**]", value="https://obsidian.md/", inline=False)
+    embed5.add_field(name="[**(Programming/ IDE) Visual Studio Code**]", value="https://code.visualstudio.com/", inline=False)
+    embed5.add_field(name="[**(Your best friend) Putty**]", value="https://www.putty.org/", inline=False)
+    embed5.add_field(name="[**(Flash Cards) Anki**]", value="https://apps.ankiweb.net/", inline=False)
+    embed5.add_field(name="[**(Packet Capture & Analyzer) Wireshark**]", value="https://www.wireshark.org/", inline=False)
+    embed5.add_field(name="[**(GNS3)**]", value="https://gns3.teachable.com/courses/", inline=False)
+    embed5.add_field(name="[**(Eve-ng)**]", value="https://www.eve-ng.net/", inline=False)
     
-    embeds.append(embed4)
+    embeds.append(embed5)
 
-    # femte embed för konton och avslutande meddelande
-    embed5 = discord.Embed(
+    # Sixth embed for account creation
+    embed6 = discord.Embed(
         title="Get an account",
         description="",
         color=discord.Color.blue()
     )
     
-    embed5.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
-    embed5.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
-    embed5.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
-    embed5.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
+    embed6.add_field(name="[**GitHub**]", value="https://github.com/", inline=False)
+    embed6.add_field(name="[**Credly**]", value="https://www.credly.com/", inline=False)
+    embed6.add_field(name="[**LinkedIn**]", value="https://www.linkedin.com/", inline=False)
+    embed6.add_field(name="[**Postman Student Program**]", value="https://www.postman.com/student-program/student-expert/", inline=False)
 
+    embeds.append(embed6)
 
-    embeds.append(embed5)
-
-    # sista embed för konton och avslutande meddelande
-    embed6 = discord.Embed(
+    # Seventh and final embed for a final message
+    embed7 = discord.Embed(
         title="Last but still...",
         description="",
         color=discord.Color.blue()
     )
     
-    embed6.add_field(name="ASK!", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
+    embed7.add_field(name="ASK!", value="You can always ask if someone has something more ;) (Some stuff isn't given away for free, so to say)", inline=False)
 
-    embeds.append(embed6)
+    embeds.append(embed7)
 
-    # Skicka alla embeds
+    # Send all embeds
     for embed in embeds:
         await ctx.send(embed=embed)
 
-######### Create an Ticket ######### 
+######### Create a Ticket ######### 
 
 # Function to create a new ticket
 async def create_ticket(guild, category_id, user, channel_name=None):
@@ -226,7 +228,6 @@ def get_rfc(rfc_number):
         return f"{title}\nLink: {url}"
     
     except requests.RequestException as e:
-        # Handle any HTTP errors
         return f"Error retrieving RFC: {e}"
 
 ############### Create a BGP neighbor ###################
@@ -249,7 +250,6 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
         tn.write(password.encode('ascii') + b"\n")
 
         # Wait for the prompt
-#        tn.read_until(b">")
         
         # Send commands to configure BGP
         commands = [
@@ -287,7 +287,6 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
         return gi0_ip, as_number
 
     except Exception as e:
-        # Handle any errors that might occur
         return f"An error occurred: {str(e)}", None
 
     finally:
@@ -332,9 +331,7 @@ async def report_action(ctx, user: discord.Member, action: str, reason=None, dur
 
 ################################_XP_Handler_####################################
 
-XP_FILE = "xp_data.json"
-
-# Funktioner för att ladda och spara XP-data
+# Functions for loading and saving XP data
 def load_xp_data():
     if os.path.exists(XP_FILE):
         with open(XP_FILE, "r") as f:
@@ -345,54 +342,54 @@ def save_xp_data(data):
     with open(XP_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
-# Ladda XP-data när modulen importeras
+# Load XP data when the module is imported
 xp_data = load_xp_data()
 
-# Hantera XP-systemet för inkommande meddelanden
+# Handle XP system for incoming messages
 async def handle_xp(message, xp_update_channel_id):
     user = message.author
 
-    # Om användaren inte finns i datan, skapa en ny post
+    # If the user does not exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Ge användaren en slumpmässig mängd XP och spara datan
+    # Grant the user a random amount of XP and save the data
     xp_data[str(user.id)]["xp"] += random.randint(5, 15)
     save_xp_data(xp_data)
 
-    # Kontrollera om användaren ska gå upp i nivå
+    # Check if the user should level up
     await check_level_up(user, xp_update_channel_id)
 
-# Hantera när en användare får en reaktion på sitt meddelande
+# Handle when a user receives a reaction to their message
 async def handle_reaction_xp(message, xp_update_channel_id):
     user = message.author
 
-    # Om användaren inte finns i datan, skapa en ny post
+    # If the user does not exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Ge användaren 10 extra XP och spara datan
+    # Grant the user 10 extra XP and save the data
     xp_data[str(user.id)]["xp"] += 10
     save_xp_data(xp_data)
 
-    # Kontrollera om användaren ska gå upp i nivå
+    # Check if the user should level up
     await check_level_up(user, xp_update_channel_id)
 
-# Kontrollera om användaren har tillräckligt med XP för att gå upp i nivå
+# Check if the user has enough XP to level up
 async def check_level_up(user, xp_update_channel_id):
     user_data = xp_data.get(str(user.id), {})
     xp_needed = 100 * user_data.get("level", 1)
 
     if user_data["xp"] >= xp_needed:
         user_data["level"] += 1
-        save_xp_data(xp_data)  # Spara data efter nivåuppgradering
+        save_xp_data(xp_data)  # Save data after leveling up
         
-        # Hämta kanalen och skicka uppdateringen där
+        # Get the channel and send the update there
         channel = user.guild.get_channel(xp_update_channel_id)
         if channel:
             await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
 
-# Visa en användares nivå och XP
+# Display a user's level and XP
 async def show_level(ctx, member):
     user_data = xp_data.get(str(member.id))
     if user_data:
@@ -400,37 +397,37 @@ async def show_level(ctx, member):
     else:
         await ctx.send(f"{member.mention} has no XP data yet.")
 
-# Bearbeta alla historiska meddelanden och reaktioner när boten startar
+# Process all historical messages and reactions when the bot starts
 async def process_historical_data(bot, xp_update_channel_id):
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
-                # Hämta alla meddelanden i kanalen
+                # Fetch all messages in the channel
                 async for message in channel.history(limit=None):
                     await handle_xp(message, xp_update_channel_id)
                     
-                    # Hämta alla reaktioner för varje meddelande
+                    # Fetch all reactions for each message
                     for reaction in message.reactions:
                         users = await reaction.users().flatten()
                         for user in users:
-                            if user != message.author:  # Exkludera författaren själv från att reagera på sitt eget inlägg
+                            if user != message.author:  # Exclude the author from reacting to their own post
                                 await handle_reaction_xp(message, xp_update_channel_id)
             except Exception as e:
                 print(f"Could not process channel {channel.name}: {str(e)}")
 
 ########### Get Job Listings ###############
 
-# API URL och API-nyckel för Indeed
+# API URL and API key for Indeed
 INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
-INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()  # API-Key in botConfig file
+INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()  # API key stored in botConfig file
 
 def fetch_jobs():
     jobs = []
     
-    # API-parametrar för Indeed
+    # API parameters for Indeed
     params = {
         'publisher': INDEED_API_KEY,
-        'q': 'Nätverkstekniker',
+        'q': 'Network Technician',
         'l': 'Sweden',
         'sort': 'date',
         'format': 'json',
@@ -439,10 +436,10 @@ def fetch_jobs():
     
     try:
         response = requests.get(INDEED_API_URL, params=params)
-        response.raise_for_status()  # Kasta ett undantag om statuskoden inte är 200
+        response.raise_for_status()  # Throw an exception if status code is not 200
         job_data = response.json()
 
-        # Exempel på hur jobbdata kan extraheras från API:et
+        # Example of extracting job data from the API
         for job in job_data.get('results', []):
             jobs.append({
                 'title': job['jobtitle'],
@@ -456,7 +453,7 @@ def fetch_jobs():
 
     return jobs
 
-# Posta jobb i en specifik kanal
+# Post jobs to a specific channel
 async def fetch_and_post_jobs(bot, job_channel_id):
     jobs = fetch_jobs()
     
@@ -470,7 +467,7 @@ async def fetch_and_post_jobs(bot, job_channel_id):
         print(f"Channel with ID {job_channel_id} not found.")
         return
     
-    # Skicka jobb till kanalen
+    # Send jobs to the channel
     for job in jobs:
         embed = discord.Embed(
             title=job['title'],
@@ -480,35 +477,35 @@ async def fetch_and_post_jobs(bot, job_channel_id):
         )
         await channel.send(embed=embed)
 
-################# Role Asigniments #################
+################# Role Assignments #################
 
-# Funktion för att kontrollera om JSON-filen finns och är giltig
+# Function to check if the JSON file exists and is valid
 async def check_and_initialize_roles(bot):
     if not os.path.exists(ROLE_JSON_FILE) or os.path.getsize(ROLE_JSON_FILE) == 0:
         print("Role JSON file is missing or empty. Initializing...")
-        await fetch_and_save_roles(bot)  # Hämta och spara roller om filen saknas eller är tom
+        await fetch_and_save_roles(bot)  # Fetch and save roles if the file is missing or empty
 
-# Funktion för att hämta alla roller från servern och spara dem i en JSON-fil
+# Function to fetch all roles from the server and save them in a JSON file
 async def fetch_and_save_roles(bot):
     for guild in bot.guilds:
         roles_data = {}
         for role in guild.roles:
-            roles_data[role.name] = role.id  # Spara rollnamn och roll-ID
-        # Spara roller i en JSON-fil
+            roles_data[role.name] = role.id  # Save role names and role IDs
+        # Save roles to a JSON file
         with open(ROLE_JSON_FILE, "w") as f:
             json.dump(roles_data, f, indent=4)
         print("Roles have been saved to roles.json")
 
-# Funktion för att ge en användare en roll baserat på rollnamnet
+# Function to assign a user a role based on the role name
 async def assign_role(ctx, role_name=None):
-    # Kontrollera om rollen finns i den sparade JSON-filen
-    await check_and_initialize_roles(ctx.bot)  # Kontrollera om filen behöver initialiseras
+    # Check if the role exists in the saved JSON file
+    await check_and_initialize_roles(ctx.bot)  # Check if the file needs to be initialized
 
-    # Läs roller från JSON-filen
+    # Read roles from the JSON file
     with open(ROLE_JSON_FILE, "r") as f:
         roles_data = json.load(f)
 
-    # Om ingen roll specificeras, lista alla tillgängliga roller
+    # If no role is specified, list all available roles
     if role_name is None:
         available_roles = [role for role in roles_data if role not in EXCLUDED_ROLES]
         if available_roles:
@@ -518,17 +515,17 @@ async def assign_role(ctx, role_name=None):
             await ctx.send("No available roles to assign.")
         return
 
-    # Kontrollera om den begärda rollen finns
+    # Check if the requested role exists
     if role_name not in roles_data:
         await ctx.send(f"The role '{role_name}' does not exist.")
         return
 
-    # Kontrollera om rollen är en av de exkluderade rollerna
+    # Check if the role is one of the excluded roles
     if role_name in EXCLUDED_ROLES:
         await ctx.send(f"You cannot assign the role '{role_name}'.")
         return
 
-    # Hämta rollen från servern baserat på dess ID
+    # Fetch the role from the server based on its ID
     role_id = roles_data[role_name]
     role = discord.utils.get(ctx.guild.roles, id=role_id)
 
@@ -536,7 +533,7 @@ async def assign_role(ctx, role_name=None):
         await ctx.send(f"The role '{role_name}' could not be found on the server.")
         return
 
-    # Tilldela rollen till användaren
+    # Assign the role to the user
     if role in ctx.author.roles:
         await ctx.send(f"You already have the role '{role_name}'.")
     else:
@@ -545,17 +542,17 @@ async def assign_role(ctx, role_name=None):
 
 ########################################################################################
 
-# Definiera roller och knapparnas utseende (text och färg)
+# Define roles and the appearance of the buttons (text and color)
 ROLE_BUTTONS = [
     {"label": "NIT_24", "style": discord.ButtonStyle.green},
     {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
     {"label": "NIT_22", "style": discord.ButtonStyle.red},
-    {"label": "Annat start-år", "style": discord.ButtonStyle.gray},
-    {"label": "Påbyggnadsåret!", "style": discord.ButtonStyle.green},
-    {"label": "Kårfrälst", "style": discord.ButtonStyle.gray},
+    {"label": "Other Start Year", "style": discord.ButtonStyle.gray},
+    {"label": "The Additional Year!", "style": discord.ButtonStyle.green},
+    {"label": "Union Member", "style": discord.ButtonStyle.gray},
 ]
 
-# Skapar eller laddar JSON-filen som lagrar meddelande-ID
+# Create or load the JSON file that stores the message ID
 def get_welcome_message_id():
     if os.path.exists(WELCOME_MESSAGE_FILE):
         with open(WELCOME_MESSAGE_FILE, "r") as f:
@@ -567,7 +564,7 @@ def save_welcome_message_id(message_id):
     with open(WELCOME_MESSAGE_FILE, "w") as f:
         json.dump({"message_id": message_id}, f)
 
-# Hantera rolltilldelning när en knapp klickas
+# Handle role assignment when a button is clicked
 class RoleButton(Button):
     def __init__(self, label, style):
         super().__init__(label=label, style=style)
@@ -575,7 +572,7 @@ class RoleButton(Button):
     async def callback(self, interaction: discord.Interaction):
         role = discord.utils.get(interaction.guild.roles, name=self.label)
         if role:
-            # Kolla om användaren redan har rollen
+            # Check if the user already has the role
             if role in interaction.user.roles:
                 await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
             else:
@@ -584,7 +581,7 @@ class RoleButton(Button):
         else:
             await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
 
-# Skapa en vy med knappar för roller
+# Create a view with buttons for roles
 def create_role_buttons_view():
     view = View()
     for button_info in ROLE_BUTTONS:
@@ -592,59 +589,59 @@ def create_role_buttons_view():
         view.add_item(button)
     return view
 
-# Funktion för att skapa välkomstmeddelandet
+# Function to create the welcome message
 async def post_welcome_message(channel):
     embed = discord.Embed(
-        title="Welcome to the HV - NIT + Påbyggnadsår",
+        title="Welcome to the HV - NIT + The Additional Year",
         description=(
-            "Hej!\n"
-            "Detta är NIT programmets Discord server! (Välkommen in i NIT kyrkan)\n"
-            "Vi har en unik årgångs kanal som man får tillgång till genom roller.\n\n"
-            "I kategorin PLUGG! har vi Kurssnack Kanaler där det är en för år 1, en för år 2, och en för år 3 (påbyggnadsåret). "
-            "Och ett forum för labb (Praktiska moment i programmet).\n"
-            "Så sitter ni i labbsalen eller med PT och svär över att ni inte får till det, "
-            "så kan ni skapa en tråd eller läsa om det finns något där som kan hjälpa er!\n\n"
-            "Vi vill även kunna behålla de nitare som gått vidare och börjat jobba. "
-            "De kanske har lite tips inför jobblivet, eller en vacker dag kanske söker de personal eller sommarjobbare. "
-            "#livet-efter-nit"
+            "Hello!\n"
+            "This is the NIT program's Discord server! (Welcome to the NIT Church)\n"
+            "We have a unique year channel that you can access through roles.\n\n"
+            "In the PLUGG category, we have Course Chat Channels for Year 1, Year 2, and Year 3 (The Additional Year). "
+            "And a forum for labs (Practical moments in the program).\n"
+            "So, if you are in the lab or with PT and struggling, "
+            "you can create a thread or read to see if there is something that can help you!\n\n"
+            "We also want to keep the NIT alumni who have moved on and started working. "
+            "They may have some tips for working life or may one day be looking for staff or summer workers. "
+            "#life-after-nit"
         ),
         color=discord.Color.blue()
     )
     
     embed.add_field(
-        name="Servern är för dig",
+        name="The Server is for You",
         value=(
-            "* Serverns drivs och ägs av studenter, för studenter på NIT-programmet och Påbyggnadsåret.\n"
-            "* Studenterna är den huvudsakliga målgruppen.\n"
-            "* Tänk på att servern är öppen, vem som helst kan hoppa in här (skriv inget olämpligt eller \"hemligt\").\n"
-            "* Servern blir bara så bra som vi gör den till.\n"
-            "* Bidra till ett trevligt klimat."
+            "* The server is run and owned by students, for students in the NIT program and The Additional Year.\n"
+            "* Students are the primary audience.\n"
+            "* Remember that the server is open; anyone can join (do not write anything inappropriate or \"secret\").\n"
+            "* The server will only be as good as we make it.\n"
+            "* Contribute to a positive environment."
         ),
         inline=False
     )
     
     embed.add_field(
         name="Moderation",
-        value="Mods [Privilage 10] och Admins [Privilage 15] håller ett extra öga på denna Discord, "
-              "men i huvudsak anser vi att alla är vuxna och kan bete sig därefter!",
+        value="Mods [Privilege 10] and Admins [Privilege 15] keep an extra eye on this Discord, "
+              "but we mainly believe that everyone is an adult and can behave accordingly!",
         inline=False
     )
     
     embed.add_field(
-        name="Välkommen!",
-        value="Tryck på en knapp nedan för att sätta din årskurs och komma igång.\n\n"
-              "Välkommen!\n//Admins",
+        name="Welcome!",
+        value="Click a button below to set your year and get started.\n\n"
+              "Welcome!\n//Admins",
         inline=False
     )
     
-    # Skicka det inbäddade meddelandet med knapparna
+    # Send the embedded message with buttons
     view = create_role_buttons_view()
     message = await channel.send(embed=embed, view=view)
     
-    # Spara meddelande-ID
+    # Save the message ID
     save_welcome_message_id(message.id)
 
-# Funktion för att kontrollera och säkerställa att välkomstmeddelandet finns
+# Function to check and ensure that the welcome message exists
 async def ensure_welcome_message(bot, channel_id):
     channel = bot.get_channel(channel_id)
     if not channel:
@@ -655,13 +652,13 @@ async def ensure_welcome_message(bot, channel_id):
     
     if message_id:
         try:
-            # Försök att hämta det befintliga meddelandet
+            # Attempt to fetch the existing message
             message = await channel.fetch_message(message_id)
-            return  # Meddelandet finns, inget mer behövs göra
+            return  # The message exists; nothing more needs to be done
         except discord.NotFound:
-            pass  # Meddelandet hittades inte, vi postar om det
+            pass  # The message was not found, so we will post it again
     
-    # Skapa ett nytt välkomstmeddelande
+    # Create a new welcome message
     await post_welcome_message(channel)
 
-    ########################################################################################
+########################################################################################
