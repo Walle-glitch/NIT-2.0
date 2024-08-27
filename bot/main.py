@@ -38,9 +38,11 @@ JOB_CHANNEL_ID = 1012235998308094032  # External job postings
 CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE study channel
 CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
 WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
+LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
+
+# File Managment 
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]  # Roles that cannot be assigned via reactions
-LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -69,7 +71,7 @@ async def log_to_channel(bot, message):
 @bot.event
 async def on_ready():
     await log_to_channel(bot, f'Logged in as {bot.user}')
-    await log_to_channel(bot, "Processing historical data, notifications are disabled.") # Disable notifications for historical data processing
+    await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     # Start scheduled tasks when the bot is ready
