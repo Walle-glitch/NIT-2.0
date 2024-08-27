@@ -40,6 +40,7 @@ CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
 WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]  # Roles that cannot be assigned via reactions
+LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -49,18 +50,34 @@ intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
+
 bot = commands.Bot(command_prefix="./", intents=intents)
+
+##################_BOT_BOOT_##################
+
+# Create a function that sends messages to both server logs and a Discord channel
+async def log_to_channel(bot, message):
+    print(message)  # Print to server logs
+
+    # Fetch the Discord channel
+    log_channel = bot.get_channel(LOG_CHANNEL_ID)
+    if log_channel:
+        await log_channel.send(message)  # Send the message to the Discord channel
+    else:
+        print("Log channel not found")
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user}') # Inaktivera meddelanden för historisk bearbetning
-    print("Processing historical data, notifications are disabled.")
-    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID) # Aktivera meddelanden efter bearbetningen
-    print("Finished processing historical data, notifications are now enabled.")
-    weekly_study_plan_CCIE.start()  # Start the weekly study plan for CCIE when the bot is ready
-    weekly_study_plan_CCNP.start()  # Start the weekly study plan for CCNP when the bot is ready
-    update_roles.start()  # Start role update when the bot is ready
-    check_welcome_message.start()  # Start checking for the welcome message
+    await log_to_channel(bot, f'Logged in as {bot.user}')
+    await log_to_channel(bot, "Processing historical data, notifications are disabled.") # Disable notifications for historical data processing
+    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+    await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
+    # Start scheduled tasks when the bot is ready
+    await weekly_study_plan_CCIE.start()  
+    await weekly_study_plan_CCNP.start()  
+    await update_roles.start()  
+    await check_welcome_message.start()  
+    await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 ###########################################_All_User_Commands_##########################################
 
