@@ -21,7 +21,7 @@ import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/08/27.200"  # Global version number variable
+version_nr = "Current Version is 24/08/28.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
