@@ -400,10 +400,6 @@ async def weekly_study_plan_CCNP():
     except Exception as e:
         await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
 
-
-
-
-
 # Command to manually fetch and post jobs
 @bot.command()
 async def post_jobs(ctx):

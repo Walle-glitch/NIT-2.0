@@ -22,11 +22,21 @@ from discord.ui import Button, View
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are saved
 WELCOME_MESSAGE_FILE = "Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
 XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
+EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the ./roll command
 
-# Roles that cannot be assigned using the ./roll command
-EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"]
+log_to_channel_id = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
+Admin_Channel_id = 1012447677880995920 # Admin Channel ID.  
 
-log_to_channel = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
+######### Utility Functions for Logging #########
+
+async def log_to_channel(bot, message):
+    """
+    Sends a message to the logging channel and prints to the server logs.
+    """
+    print(message)  # Print to server logs
+    channel = bot.get_channel(log_to_channel_id)
+    if channel:
+        await channel.send(message)
 
 ######### The Resources ############ 
 
@@ -298,25 +308,36 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
 
 ############### Moderation of Members ###################
 
-# Function to kick a user
 async def kick_user(ctx, user: discord.Member, reason=None):
-    await user.kick(reason=reason)
-    await report_action(ctx, user, "kick", reason)
+    try:
+        await user.kick(reason=reason)
+        await report_action(ctx, user, "kick", reason)
+    except discord.Forbidden:
+        await ctx.send("I do not have permission to kick this user.")
+    except Exception as e:
+        await ctx.send(f"An error occurred while kicking the user: {str(e)}")
 
-# Function to ban a user
 async def ban_user(ctx, user: discord.Member, reason=None):
-    await user.ban(reason=reason)
-    await report_action(ctx, user, "ban", reason)
+    try:
+        await user.ban(reason=reason)
+        await report_action(ctx, user, "ban", reason)
+    except discord.Forbidden:
+        await ctx.send("I do not have permission to ban this user.")
+    except Exception as e:
+        await ctx.send(f"An error occurred while banning the user: {str(e)}")
 
-# Function to mute a user (timeout)
 async def mute_user(ctx, user: discord.Member, duration_in_hours: int, reason=None):
-    duration_in_seconds = duration_in_hours * 3600
-    await user.timeout(discord.utils.utcnow() + discord.timedelta(seconds=duration_in_seconds), reason=reason)
-    await report_action(ctx, user, "mute", reason, duration_in_hours)
+    try:
+        duration_in_seconds = duration_in_hours * 3600
+        await user.timeout(discord.utils.utcnow() + discord.timedelta(seconds=duration_in_seconds), reason=reason)
+        await report_action(ctx, user, "mute", reason, duration_in_hours)
+    except discord.Forbidden:
+        await ctx.send("I do not have permission to mute this user.")
+    except Exception as e:
+        await ctx.send(f"An error occurred while muting the user: {str(e)}")
 
-# Function to report the action to the specified report channel
 async def report_action(ctx, user: discord.Member, action: str, reason=None, duration=None):
-    report_channel_id = 1012447677880995920  # Replace with the actual channel ID for reports
+    report_channel_id = Admin_Channel_id  # Replace with the actual channel ID for reports
     report_channel = ctx.guild.get_channel(report_channel_id)
 
     if not report_channel:
@@ -328,19 +349,18 @@ async def report_action(ctx, user: discord.Member, action: str, reason=None, dur
         report_message = f"**{admin_name}** muted **{user_name}** for {duration} hours. Reason: {reason}"
     else:
         report_message = f"**{admin_name}** {action}ed **{user_name}**. Reason: {reason}"
-    
+
     await report_channel.send(report_message)
 
 ################################_XP_Handler_####################################
 
-# Updated function with error handling
+
 def load_xp_data():
     if os.path.exists(XP_FILE):
         try:
             with open(XP_FILE, "r") as f:
                 return json.load(f)
         except json.JSONDecodeError:
-            # Handle the case where the JSON file is empty or invalid
             print(f"Warning: {XP_FILE} is empty or contains invalid JSON. Initializing an empty XP data structure.")
             return {}
     return {}
@@ -352,33 +372,26 @@ def save_xp_data(data):
 # Load XP data when the module is imported
 xp_data = load_xp_data()
 
-# Handle XP system for incoming messages
 async def handle_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
 
-    # If the user doesn't exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Give the user a random amount of XP and save the data
     xp_data[str(user.id)]["xp"] += random.randint(5, 15)
     save_xp_data(xp_data)
 
-    # Check if the user should level up
     await check_level_up(user, xp_update_channel_id, send_notifications)
 
 async def handle_reaction_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
 
-    # If the user doesn't exist in the data, create a new entry
     if str(user.id) not in xp_data:
         xp_data[str(user.id)] = {"xp": 0, "level": 1}
 
-    # Give the user 10 extra XP and save the data
     xp_data[str(user.id)]["xp"] += 10
     save_xp_data(xp_data)
 
-    # Check if the user should level up
     await check_level_up(user, xp_update_channel_id, send_notifications)
 
 async def check_level_up(user, xp_update_channel_id, send_notifications=True):
@@ -387,15 +400,13 @@ async def check_level_up(user, xp_update_channel_id, send_notifications=True):
 
     if user_data["xp"] >= xp_needed:
         user_data["level"] += 1
-        save_xp_data(xp_data)  # Save data after leveling up
-        
-        # Only send a message if notifications are enabled
+        save_xp_data(xp_data)
+
         if send_notifications:
             channel = user.guild.get_channel(xp_update_channel_id)
             if channel:
                 await channel.send(f"{user.mention} has leveled up to level {user_data['level']}!")
 
-# Display a user's level and XP
 async def show_level(ctx, member):
     user_data = xp_data.get(str(member.id))
     if user_data:
@@ -403,39 +414,30 @@ async def show_level(ctx, member):
     else:
         await ctx.send(f"{member.mention} has no XP data yet.")
 
-# Process all historical messages and reactions when the bot starts
 async def process_historical_data(bot, xp_update_channel_id):
+    print("Processing historical data... Notifications are disabled.")
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
-                # Fetch all messages in the channel
                 async for message in channel.history(limit=None):
-                    await handle_xp(message, xp_update_channel_id)
-                    
-                    # Fetch all reactions for each message
+                    await handle_xp(message, xp_update_channel_id, send_notifications=False)
                     for reaction in message.reactions:
                         users = await reaction.users().flatten()
                         for user in users:
-                            if user != message.author:  # Exclude the author from reacting to their own post
-                                await handle_reaction_xp(message, xp_update_channel_id)
+                            if user != message.author:
+                                await handle_reaction_xp(message, xp_update_channel_id, send_notifications=False)
             except Exception as e:
-                error_message = f"Could not process channel {channel.name}: {str(e)}"
-                print(error_message)  # Log to server
-                await log_to_channel(bot, error_message)  # Log to Discord channel
+                print(f"Could not process channel {channel.name}: {str(e)}")
 
-    # Re-enable notifications after processing historical data
-    send_notifications = True
-
+    print("Finished processing historical data.")
 ########### Get Job Listings ###############
 
 # API URL and API key for Indeed
 INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
-INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()  # API key stored in botConfig file
+INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()
 
 def fetch_jobs():
     jobs = []
-    
-    # API parameters for Indeed
     params = {
         'publisher': INDEED_API_KEY,
         'q': 'Network Technician',
@@ -444,13 +446,11 @@ def fetch_jobs():
         'format': 'json',
         'v': '2'
     }
-    
     try:
         response = requests.get(INDEED_API_URL, params=params)
-        response.raise_for_status()  # Throw an exception if status code is not 200
+        response.raise_for_status()
         job_data = response.json()
 
-        # Example of extracting job data from the API
         for job in job_data.get('results', []):
             jobs.append({
                 'title': job['jobtitle'],
@@ -458,27 +458,24 @@ def fetch_jobs():
                 'location': job['formattedLocation'],
                 'url': job['url']
             })
-
     except Exception as e:
         print(f"Error fetching jobs: {str(e)}")
 
     return jobs
 
-# Post jobs to a specific channel
 async def fetch_and_post_jobs(bot, job_channel_id):
     jobs = fetch_jobs()
-    
+
     if not jobs:
         print("No jobs found.")
         return
-    
+
     channel = bot.get_channel(job_channel_id)
-    
+
     if not channel:
         print(f"Channel with ID {job_channel_id} not found.")
         return
-    
-    # Send jobs to the channel
+
     for job in jobs:
         embed = discord.Embed(
             title=job['title'],
@@ -490,33 +487,26 @@ async def fetch_and_post_jobs(bot, job_channel_id):
 
 ################# Role Assignments #################
 
-# Function to check if the JSON file exists and is valid
 async def check_and_initialize_roles(bot):
     if not os.path.exists(ROLE_JSON_FILE) or os.path.getsize(ROLE_JSON_FILE) == 0:
         print("Role JSON file is missing or empty. Initializing...")
-        await fetch_and_save_roles(bot)  # Fetch and save roles if the file is missing or empty
+        await fetch_and_save_roles(bot)
 
-# Function to fetch all roles from the server and save them in a JSON file
 async def fetch_and_save_roles(bot):
     for guild in bot.guilds:
         roles_data = {}
         for role in guild.roles:
-            roles_data[role.name] = role.id  # Save role names and role IDs
-        # Save roles to a JSON file
+            roles_data[role.name] = role.id
         with open(ROLE_JSON_FILE, "w") as f:
             json.dump(roles_data, f, indent=4)
         print("Roles have been saved to roles.json")
 
-# Function to assign a user a role based on the role name
 async def assign_role(ctx, role_name=None):
-    # Check if the role exists in the saved JSON file
-    await check_and_initialize_roles(ctx.bot)  # Check if the file needs to be initialized
+    await check_and_initialize_roles(ctx.bot)
 
-    # Read roles from the JSON file
     with open(ROLE_JSON_FILE, "r") as f:
         roles_data = json.load(f)
 
-    # If no role is specified, list all available roles
     if role_name is None:
         available_roles = [role for role in roles_data if role not in EXCLUDED_ROLES]
         if available_roles:
@@ -526,17 +516,14 @@ async def assign_role(ctx, role_name=None):
             await ctx.send("No available roles to assign.")
         return
 
-    # Check if the requested role exists
     if role_name not in roles_data:
         await ctx.send(f"The role '{role_name}' does not exist.")
         return
 
-    # Check if the role is one of the excluded roles
     if role_name in EXCLUDED_ROLES:
         await ctx.send(f"You cannot assign the role '{role_name}'.")
         return
 
-    # Fetch the role from the server based on its ID
     role_id = roles_data[role_name]
     role = discord.utils.get(ctx.guild.roles, id=role_id)
 
@@ -544,7 +531,6 @@ async def assign_role(ctx, role_name=None):
         await ctx.send(f"The role '{role_name}' could not be found on the server.")
         return
 
-    # Assign the role to the user
     if role in ctx.author.roles:
         await ctx.send(f"You already have the role '{role_name}'.")
     else:
@@ -553,7 +539,6 @@ async def assign_role(ctx, role_name=None):
 
 ########################################################################################
 
-# Define roles and the appearance of the buttons (text and color)
 ROLE_BUTTONS = [
     {"label": "NIT_24", "style": discord.ButtonStyle.green},
     {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
@@ -563,7 +548,6 @@ ROLE_BUTTONS = [
     {"label": "Union Member", "style": discord.ButtonStyle.gray},
 ]
 
-# Create or load the JSON file that stores the message ID
 def get_welcome_message_id():
     if os.path.exists(WELCOME_MESSAGE_FILE):
         with open(WELCOME_MESSAGE_FILE, "r") as f:
@@ -575,7 +559,6 @@ def save_welcome_message_id(message_id):
     with open(WELCOME_MESSAGE_FILE, "w") as f:
         json.dump({"message_id": message_id}, f)
 
-# Handle role assignment when a button is clicked
 class RoleButton(Button):
     def __init__(self, label, style):
         super().__init__(label=label, style=style)
@@ -583,7 +566,6 @@ class RoleButton(Button):
     async def callback(self, interaction: discord.Interaction):
         role = discord.utils.get(interaction.guild.roles, name=self.label)
         if role:
-            # Check if the user already has the role
             if role in interaction.user.roles:
                 await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
             else:
@@ -592,7 +574,6 @@ class RoleButton(Button):
         else:
             await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
 
-# Create a view with buttons for roles
 def create_role_buttons_view():
     view = View()
     for button_info in ROLE_BUTTONS:
@@ -600,7 +581,6 @@ def create_role_buttons_view():
         view.add_item(button)
     return view
 
-# Function to create the welcome message
 async def post_welcome_message(channel):
     embed = discord.Embed(
         title="Welcome to the HV - NIT + The Additional Year",
@@ -645,14 +625,10 @@ async def post_welcome_message(channel):
         inline=False
     )
     
-    # Send the embedded message with buttons
     view = create_role_buttons_view()
     message = await channel.send(embed=embed, view=view)
-    
-    # Save the message ID
     save_welcome_message_id(message.id)
 
-# Function to check and ensure that the welcome message exists
 async def ensure_welcome_message(bot, channel_id):
     channel = bot.get_channel(channel_id)
     if not channel:
@@ -663,13 +639,11 @@ async def ensure_welcome_message(bot, channel_id):
     
     if message_id:
         try:
-            # Attempt to fetch the existing message
             message = await channel.fetch_message(message_id)
-            return  # The message exists; nothing more needs to be done
+            return
         except discord.NotFound:
-            pass  # The message was not found, so we will post it again
+            pass
     
-    # Create a new welcome message
     await post_welcome_message(channel)
 
 ########################################################################################
