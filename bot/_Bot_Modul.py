@@ -354,7 +354,6 @@ async def report_action(ctx, user: discord.Member, action: str, reason=None, dur
 
 ################################_XP_Handler_####################################
 
-
 def load_xp_data():
     if os.path.exists(XP_FILE):
         try:
@@ -369,37 +368,49 @@ def save_xp_data(data):
     with open(XP_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
-# Load XP data when the module is imported
 xp_data = load_xp_data()
+
+def xp_needed_for_level(level):
+    if level < 11:
+        return 100
+    elif level < 101:
+        return 1000
+    else:
+        return 2500
 
 async def handle_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
+    user_id = str(user.id)
 
-    if str(user.id) not in xp_data:
-        xp_data[str(user.id)] = {"xp": 0, "level": 1}
+    if user_id not in xp_data:
+        xp_data[user_id] = {"xp": 0, "level": 1}
 
-    xp_data[str(user.id)]["xp"] += random.randint(5, 15)
+    xp_data[user_id]["xp"] += random.randint(5, 15)
     save_xp_data(xp_data)
 
     await check_level_up(user, xp_update_channel_id, send_notifications)
 
 async def handle_reaction_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
+    user_id = str(user.id)
 
-    if str(user.id) not in xp_data:
-        xp_data[str(user.id)] = {"xp": 0, "level": 1}
+    if user_id not in xp_data:
+        xp_data[user_id] = {"xp": 0, "level": 1}
 
-    xp_data[str(user.id)]["xp"] += 10
+    xp_data[user_id]["xp"] += 10
     save_xp_data(xp_data)
 
     await check_level_up(user, xp_update_channel_id, send_notifications)
 
 async def check_level_up(user, xp_update_channel_id, send_notifications=True):
-    user_data = xp_data.get(str(user.id), {})
-    xp_needed = 100 * user_data.get("level", 1)
+    user_id = str(user.id)
+    user_data = xp_data.get(user_id, {})
+    current_level = user_data.get("level", 1)
+    xp_needed = xp_needed_for_level(current_level)
 
     if user_data["xp"] >= xp_needed:
         user_data["level"] += 1
+        user_data["xp"] -= xp_needed  # Remove XP needed for level up
         save_xp_data(xp_data)
 
         if send_notifications:
@@ -416,6 +427,9 @@ async def show_level(ctx, member):
 
 async def process_historical_data(bot, xp_update_channel_id):
     print("Processing historical data... Notifications are disabled.")
+    xp_data.clear()  # Clear existing XP data when processing historical data
+    save_xp_data(xp_data)
+
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
@@ -430,6 +444,7 @@ async def process_historical_data(bot, xp_update_channel_id):
                 print(f"Could not process channel {channel.name}: {str(e)}")
 
     print("Finished processing historical data.")
+
 ########### Get Job Listings ###############
 
 # API URL and API key for Indeed
@@ -539,14 +554,49 @@ async def assign_role(ctx, role_name=None):
 
 ########################################################################################
 
-ROLE_BUTTONS = [
-    {"label": "NIT_24", "style": discord.ButtonStyle.green},
-    {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
-    {"label": "NIT_22", "style": discord.ButtonStyle.red},
-    {"label": "Other Start Year", "style": discord.ButtonStyle.gray},
-    {"label": "The Additional Year!", "style": discord.ButtonStyle.green},
-    {"label": "Union Member", "style": discord.ButtonStyle.gray},
-]
+class RoleButton(Button):
+    def __init__(self, label, style):
+        super().__init__(label=label, style=style)
+
+    async def callback(self, interaction: discord.Interaction):
+        # Fetch the role from the server based on the button's label
+        role = discord.utils.get(interaction.guild.roles, name=self.label)
+        if role:
+            try:
+                # Check if user already has the role
+                if role in interaction.user.roles:
+                    await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
+                else:
+                    # Add role to user
+                    await interaction.user.add_roles(role)
+                    await interaction.response.send_message(f"The role {role.name} has been assigned to you.", ephemeral=True)
+            except discord.Forbidden:
+                # Handling lack of permissions to manage roles
+                await interaction.response.send_message("I do not have permission to assign roles.", ephemeral=True)
+            except Exception as e:
+                # Handling other exceptions
+                await interaction.response.send_message(f"Failed to assign role due to an error: {str(e)}", ephemeral=True)
+        else:
+            # Handling non-existent role
+            await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
+
+def create_role_buttons_view():
+    view = View()
+    # Define the button styles and labels
+    ROLE_BUTTONS = [
+        {"label": "NIT_24", "style": discord.ButtonStyle.green},
+        {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
+        {"label": "NIT_22", "style": discord.ButtonStyle.red},
+        {"label": "Another Start Year", "style": discord.ButtonStyle.gray},
+        {"label": "3rd Year!", "style": discord.ButtonStyle.green},
+        {"label": "Union Member", "style": discord.ButtonStyle.gray},
+    ]
+    
+    # Create buttons and add them to the view
+    for button_info in ROLE_BUTTONS:
+        button = RoleButton(label=button_info['label'], style=button_info['style'])
+        view.add_item(button)
+    return view
 
 def get_welcome_message_id():
     if os.path.exists(WELCOME_MESSAGE_FILE):
@@ -558,7 +608,7 @@ def get_welcome_message_id():
 def save_welcome_message_id(message_id):
     with open(WELCOME_MESSAGE_FILE, "w") as f:
         json.dump({"message_id": message_id}, f)
-
+'''
 class RoleButton(Button):
     def __init__(self, label, style):
         super().__init__(label=label, style=style)
@@ -573,14 +623,16 @@ class RoleButton(Button):
                 await interaction.response.send_message(f"The role {role.name} has been assigned to you.", ephemeral=True)
         else:
             await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
+'''            
 
+'''
 def create_role_buttons_view():
     view = View()
     for button_info in ROLE_BUTTONS:
         button = RoleButton(label=button_info["label"], style=button_info["style"])
         view.add_item(button)
     return view
-
+'''
 async def post_welcome_message(channel):
     embed = discord.Embed(
         title="Welcome to the HV - NIT + The Additional Year",
@@ -588,7 +640,7 @@ async def post_welcome_message(channel):
             "Hello!\n"
             "This is the NIT program's Discord server! (Welcome to the NIT Church)\n"
             "We have a unique year channel that you can access through roles.\n\n"
-            "In the PLUGG category, we have Course Chat Channels for Year 1, Year 2, and Year 3 (The Additional Year). "
+            "In the 'PLUGG' category, we have Course Chat Channels for Year 1, Year 2, and Year 3 (The Additional Year). "
             "And a forum for labs (Practical moments in the program).\n"
             "So, if you are in the lab or with PT and struggling, "
             "you can create a thread or read to see if there is something that can help you!\n\n"
