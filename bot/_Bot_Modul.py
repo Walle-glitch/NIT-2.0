@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import paramiko
 import _Router_Conf
 import time
+from datetime import datetime, timedelta
 import discord
 import asyncio
 import random
@@ -173,38 +174,29 @@ async def create_ticket(guild, category_id, user, channel_name=None):
     if not category:
         return None
 
-    # Use the provided channel name or generate a random 4-digit number
     if not channel_name:
         ticket_number = random.randint(1000, 9999)
         channel_name = f"ticket-{ticket_number}"
 
-    # Create the new channel in the specified category
     channel = await guild.create_text_channel(channel_name, category=category)
-
-    # Add a message in the new ticket channel
     await channel.send(f"Hello {user.mention}, thank you for creating a ticket. Please describe your issue.")
-
-    # Start the inactivity timer
     asyncio.create_task(check_inactivity(channel))
 
     return channel
 
-# Function to check inactivity and close the ticket after 2 days
-async def check_inactivity(channel):
-    def check_message(m):
-        return m.channel == channel
-
-    try:
-        # Wait for any message in the channel for 2 days (172800 seconds)
-        await channel.bot.wait_for('message', check=check_message, timeout=172800)
-    except asyncio.TimeoutError:
-        await channel.send("This ticket has been inactive for 2 days and will now be closed.")
-        await close_ticket(channel)
-
-# Function to close the ticket
 async def close_ticket(channel):
+    await channel.send("This ticket is now being closed.")
     await channel.delete()
 
+async def check_inactivity(channel, timeout=60):
+    last_activity_time = datetime.utcnow()
+    while True:
+        await asyncio.sleep(timeout * 60)
+        if (datetime.utcnow() - last_activity_time) >= timedelta(minutes=timeout):
+            await channel.send("Closing this ticket due to inactivity.")
+            await channel.delete()
+            break
+        last_activity_time = max((await channel.history(limit=1).flatten())[0].created_at, last_activity_time)
 
 ################### GET AN RFC ###################
 
@@ -608,31 +600,7 @@ def get_welcome_message_id():
 def save_welcome_message_id(message_id):
     with open(WELCOME_MESSAGE_FILE, "w") as f:
         json.dump({"message_id": message_id}, f)
-'''
-class RoleButton(Button):
-    def __init__(self, label, style):
-        super().__init__(label=label, style=style)
 
-    async def callback(self, interaction: discord.Interaction):
-        role = discord.utils.get(interaction.guild.roles, name=self.label)
-        if role:
-            if role in interaction.user.roles:
-                await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
-            else:
-                await interaction.user.add_roles(role)
-                await interaction.response.send_message(f"The role {role.name} has been assigned to you.", ephemeral=True)
-        else:
-            await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
-'''            
-
-'''
-def create_role_buttons_view():
-    view = View()
-    for button_info in ROLE_BUTTONS:
-        button = RoleButton(label=button_info["label"], style=button_info["style"])
-        view.add_item(button)
-    return view
-'''
 async def post_welcome_message(channel):
     embed = discord.Embed(
         title="Welcome to the HV - NIT + The Additional Year",

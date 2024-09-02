@@ -10,6 +10,7 @@ import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
 import json
+from datetime import datetime, timedelta
 
 # Bot specific Modules
 import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
@@ -39,6 +40,7 @@ CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE study channel
 CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
 WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
 LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
+TICKET_CATEGORY_ID = 1012026430470766816 # Ticket Category " information "
 
 # File Management 
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
@@ -171,8 +173,7 @@ async def about(ctx):
 async def create_ticket_command(ctx, *, channel_name=None):
     try:
         guild = ctx.guild
-        category_id = 1012026430470766816  # Replace with your actual category ID
-        channel = await _Bot_Modul.create_ticket(guild, category_id, ctx.author, channel_name)
+        channel = await _Bot_Modul.create_ticket(guild, TICKET_CATEGORY_ID, ctx.author, channel_name)
         
         if channel:
             await ctx.send(f"Your ticket has been created: {channel.mention}")
@@ -184,8 +185,12 @@ async def create_ticket_command(ctx, *, channel_name=None):
 @bot.command(name="close")
 async def close_ticket_command(ctx):
     try:
-        await _Bot_Modul.close_ticket(ctx.channel)
-        await ctx.send("This ticket has been closed.")
+        # Check if the channel name starts with 'ticket-'
+        if ctx.channel.name.startswith('ticket-'):
+            await _Bot_Modul.close_ticket(ctx.channel)
+            await ctx.send("This ticket has been closed.")
+        else:
+            await ctx.send("This command can only be used in ticket channels.")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
