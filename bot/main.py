@@ -22,7 +22,7 @@ import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/02.2"  # Global version number variable
+version_nr = "Current Version is 24/09/03.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -41,6 +41,7 @@ CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
 WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
 LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
 TICKET_CATEGORY_ID = 1012026430470766816 # Ticket Category " information "
+GEN_CHANNEL_ID = 1012026430932127926 # General "Skit snack"   
 
 # File Management 
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
@@ -302,7 +303,7 @@ async def update_roles():
         await log_to_channel(bot, f"An error occurred: {str(e)}")
 
 @bot.command()
-async def role(ctx, *, role_name: str):
+async def roll(ctx, *, role_name: str):
     try:    
         await _Bot_Modul.assign_role(ctx, role_name)
     except Exception as e:
@@ -438,7 +439,7 @@ async def on_member_join(member):
     Also logs errors to a specific channel if unable to send a DM.
     """
     # Fetch the welcome channel using the global variable
-    welcome_channel = bot.get_channel(WELCOME_CHANNEL_ID)
+    welcome_channel = bot.get_channel(GEN_CHANNEL_ID)
     if welcome_channel:
         await welcome_channel.send(f"Welcome to the server, {member.mention}! 🎉 Please check your DM for more info!")
 
