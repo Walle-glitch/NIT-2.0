@@ -449,7 +449,7 @@ async def on_member_join(member):
         await member.send(
             "Hello and welcome! 🎉\n\n"
             "Here's some information to get you started:\n"
-            "- Make sure to read the rules and verify yourself Your start Year in the FYI chanel\n"
+            "- Make sure to read the rules and set your Start year with the command ./addrole NIT_24 in the server\n"
             "- You can introduce yourself in the Skit-snack channel.\n"
             "- If you have any questions, feel free to ask a moderator(Privilege 10) or admin (Privilege 15).\n\n"
             "Enjoy your time here!"
