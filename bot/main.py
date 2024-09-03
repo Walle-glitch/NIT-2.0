@@ -22,7 +22,7 @@ import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/03.1"  # Global version number variable
+version_nr = "Current Version is 24/09/03.2"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -81,7 +81,8 @@ async def on_ready():
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()  
     update_roles.start()  
-    check_welcome_message.start()  
+    check_welcome_message.start()
+        # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 ###########################################_All_User_Commands_##########################################

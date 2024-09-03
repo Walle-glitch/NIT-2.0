@@ -25,6 +25,17 @@ WELCOME_MESSAGE_FILE = "Json_Files/welcome_message_id.json"  # File where the we
 XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the ./roll command
 
+# Define static roles in a dictionary format
+STATIC_ROLES = {
+    "NIT_24": "1254895590567837776",
+    "NIT_23": "1115331511848271942",
+    "NIT_22": "1012047713610760383",
+    "Another Start Year": "1013246037349126204",
+    "3rd Year!": "1079120617560879195",
+    "Union Member": "1079112794189865111",
+    "Arkiv-enjoyer": "1160861563083837511",
+}
+
 log_to_channel_id = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
 Admin_Channel_id = 1012447677880995920 # Admin Channel ID.  
 
@@ -547,46 +558,41 @@ async def assign_role(ctx, role_name=None):
 ########################################################################################
 
 class RoleButton(Button):
-    def __init__(self, label, style):
+    def __init__(self, label, style, role_id=None):
         super().__init__(label=label, style=style)
+        self.role_id = role_id
 
     async def callback(self, interaction: discord.Interaction):
-        # Fetch the role from the server based on the button's label
-        role = discord.utils.get(interaction.guild.roles, name=self.label)
+        # If role_id is provided, fetch the role by ID; otherwise, fetch it by name
+        role = interaction.guild.get_role(int(self.role_id)) if self.role_id else discord.utils.get(interaction.guild.roles, name=self.label)
+        
         if role:
-            try:
-                # Check if user already has the role
-                if role in interaction.user.roles:
-                    await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
-                else:
-                    # Add role to user
+            if role in interaction.user.roles:
+                await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
+            else:
+                try:
                     await interaction.user.add_roles(role)
                     await interaction.response.send_message(f"The role {role.name} has been assigned to you.", ephemeral=True)
-            except discord.Forbidden:
-                # Handling lack of permissions to manage roles
-                await interaction.response.send_message("I do not have permission to assign roles.", ephemeral=True)
-            except Exception as e:
-                # Handling other exceptions
-                await interaction.response.send_message(f"Failed to assign role due to an error: {str(e)}", ephemeral=True)
+                except discord.Forbidden:
+                    await interaction.response.send_message("I do not have permission to assign roles.", ephemeral=True)
         else:
-            # Handling non-existent role
-            await interaction.response.send_message(f"The role {self.label} could not be found on the server.", ephemeral=True)
+            await interaction.response.send_message(f"The role for {self.label} could not be found on the server.", ephemeral=True)
 
 def create_role_buttons_view():
     view = View()
-    # Define the button styles and labels
+    # Define the button styles and labels; using STATIC_ROLES if role_id is provided
     ROLE_BUTTONS = [
-        {"label": "NIT_24", "style": discord.ButtonStyle.green},
-        {"label": "NIT_23", "style": discord.ButtonStyle.blurple},
-        {"label": "NIT_22", "style": discord.ButtonStyle.red},
-        {"label": "Another Start Year", "style": discord.ButtonStyle.gray},
-        {"label": "3rd Year!", "style": discord.ButtonStyle.green},
-        {"label": "Union Member", "style": discord.ButtonStyle.gray},
+        {"label": "NIT_24", "style": discord.ButtonStyle.blurple, "role_id": STATIC_ROLES.get("NIT_24")},
+        {"label": "NIT_23", "style": discord.ButtonStyle.blurple, "role_id": STATIC_ROLES.get("NIT_23")},
+        {"label": "NIT_22", "style": discord.ButtonStyle.blurple, "role_id": STATIC_ROLES.get("NIT_22")},
+        {"label": "Another Start Year", "style": discord.ButtonStyle.gray, "role_id": STATIC_ROLES.get("Another Start Year")},
+        {"label": "3rd Year!", "style": discord.ButtonStyle.green, "role_id": STATIC_ROLES.get("3rd Year!")},
+        {"label": "Union Member", "style": discord.ButtonStyle.red, "role_id": STATIC_ROLES.get("Union Member")},
     ]
     
     # Create buttons and add them to the view
     for button_info in ROLE_BUTTONS:
-        button = RoleButton(label=button_info['label'], style=button_info['style'])
+        button = RoleButton(label=button_info['label'], style=button_info['style'], role_id=button_info['role_id'])
         view.add_item(button)
     return view
 
