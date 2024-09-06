@@ -53,7 +53,7 @@ EXCLUDED_ROLES = ["Admin",
                   "Bot-Master", 
                   "@everyone", 
                   "BOT", 
-                  "första medlemmen!",
+                  "Första Medlemmen!",
                   "DEN GLADASTE ADMIN",
                   "NET-BOT",
                   ]  # Roles that cannot be assigned via reactions
