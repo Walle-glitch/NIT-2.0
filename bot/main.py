@@ -22,7 +22,7 @@ import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/03.2"  # Global version number variable
+version_nr = "Current Version is 24/09/06.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -45,7 +45,18 @@ GEN_CHANNEL_ID = 1012026430932127926 # General "Skit snack"
 
 # File Management 
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
-EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator", "Privilege 15", "Privilege 10", "Bot-Master"]  # Roles that cannot be assigned via reactions
+EXCLUDED_ROLES = ["Admin", 
+                  "Moderator", 
+                  "Administrator", 
+                  "Privilege 15", 
+                  "Privilege 10", 
+                  "Bot-Master", 
+                  "@everyone", 
+                  "BOT", 
+                  "första medlemmen!",
+                  "DEN GLADASTE ADMIN",
+                  "NET-BOT",
+                  ]  # Roles that cannot be assigned via reactions
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -294,22 +305,6 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-############################_Role_Assignment_############################
-
-@tasks.loop(hours=1)
-async def update_roles():
-    try:    
-        await _Bot_Modul.fetch_and_save_roles(bot)
-    except Exception as e:
-        await log_to_channel(bot, f"An error occurred: {str(e)}")
-
-@bot.command()
-async def roll(ctx, *, role_name: str):
-    try:    
-        await _Bot_Modul.assign_role(ctx, role_name)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
 #############################_Study_Commands_#############################
 
 @bot.command()
@@ -335,6 +330,14 @@ async def rfc(ctx, rfc_number: str = None):
         await ctx.send(f"An error occurred: {str(e)}")
 
 ###########################################_Below this line_###########################################
+###########################################_Role_Assignment_###########################################
+
+@tasks.loop(hours=1)
+async def update_roles():
+    try:    
+        await _Bot_Modul.fetch_and_save_roles(bot)
+    except Exception as e:
+        await log_to_channel(bot, f"An error occurred: {str(e)}")
 
 def load_roles():
     try:
@@ -345,6 +348,8 @@ def load_roles():
         print(f"Failed to load roles: {str(e)}")
         return {}
 
+######_Add_Role_#####
+
 @bot.command()
 async def addrole(ctx, role_name: str = None):
     """
@@ -352,9 +357,23 @@ async def addrole(ctx, role_name: str = None):
     """
     roles = load_roles()
     
-    if role_name is None or role_name not in roles:
-        role_list = ', '.join(roles.keys())
-        await ctx.send(f"Role '{role_name}' could not be found. Available roles: {role_list}")
+    if role_name is None:
+        # Filtrera roller som inte finns i EXCLUDED_ROLES
+        available_roles = [role for role in roles.keys() if role not in EXCLUDED_ROLES]
+        if not available_roles:
+            await ctx.send("No roles available for assignment.")
+            return
+        
+        # Skapa en embed med rollerna
+        embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
+        for role in available_roles:
+            embed.add_field(name=role, value=f"Assign with `./addrole {role}`", inline=False)
+        
+        await ctx.send(embed=embed)
+        return
+    
+    if role_name not in roles:
+        await ctx.send(f"Role '{role_name}' could not be found.")
         return
 
     role = discord.utils.get(ctx.guild.roles, name=role_name)
@@ -373,6 +392,8 @@ async def addrole(ctx, role_name: str = None):
     
     await ctx.send(embed=embed)
 
+######_Remove_Role_#####
+
 @bot.command()
 async def removerole(ctx, role_name: str = None):
     """
@@ -380,9 +401,23 @@ async def removerole(ctx, role_name: str = None):
     """
     roles = load_roles()
     
-    if role_name is None or role_name not in roles:
-        role_list = ', '.join(roles.keys())
-        await ctx.send(f"Role '{role_name}' could not be found. Available roles: {role_list}")
+    if role_name is None:
+        # Filtrera roller som inte finns i EXCLUDED_ROLES
+        available_roles = [role for role in roles.keys() if role not in EXCLUDED_ROLES]
+        if not available_roles:
+            await ctx.send("No roles available for removal.")
+            return
+        
+        # Skapa en embed med rollerna
+        embed = discord.Embed(title="Available Roles", description="Here are the roles you can remove:", color=discord.Color.blue())
+        for role in available_roles:
+            embed.add_field(name=role, value=f"Remove with `./removerole {role}`", inline=False)
+        
+        await ctx.send(embed=embed)
+        return
+    
+    if role_name not in roles:
+        await ctx.send(f"Role '{role_name}' could not be found.")
         return
 
     role = discord.utils.get(ctx.guild.roles, name=role_name)
