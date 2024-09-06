@@ -364,11 +364,10 @@ async def addrole(ctx, role_name: str = None):
             await ctx.send("No roles available for assignment.")
             return
         
-        # Skapa en embed med rollerna
-        embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
-        for role in available_roles:
-            embed.add_field(name=role, value=f"Assign with `./addrole {role}`", inline=False)
-        
+# Skapa en embed med rollerna
+    embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
+    for role in available_roles:
+        embed.add_field(name=f'"{role}"', value=f'Assign with `./addrole "{role}"`', inline=False)
         await ctx.send(embed=embed)
         return
     
@@ -411,7 +410,7 @@ async def removerole(ctx, role_name: str = None):
         # Skapa en embed med rollerna
         embed = discord.Embed(title="Available Roles", description="Here are the roles you can remove:", color=discord.Color.blue())
         for role in available_roles:
-            embed.add_field(name=role, value=f"Remove with `./removerole {role}`", inline=False)
+            embed.add_field(name=role, value=f'Remove with `./removerole "{role}"`', inline=False)
         
         await ctx.send(embed=embed)
         return
