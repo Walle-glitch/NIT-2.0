@@ -368,8 +368,8 @@ async def addrole(ctx, role_name: str = None):
     embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
     for role in available_roles:
         embed.add_field(name=f'"{role}"', value=f'Assign with `./addrole "{role}"`', inline=False)
-        await ctx.send(embed=embed)
-        return
+    await ctx.send(embed=embed)
+    return
     
     if role_name not in roles:
         await ctx.send(f"Role '{role_name}' could not be found.")
