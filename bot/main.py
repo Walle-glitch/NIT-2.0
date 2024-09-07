@@ -19,10 +19,11 @@ import _Games  # Module for games.
 import _Open_AI  # Module for handling OpenAI API requests.
 import _CCIE_Study_Plan  # CCIE study plan module.
 import _CCNP_Study_Plan  # CCNP study plan module.
+import _External_Media
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/07.1"  # Global version number variable
+version_nr = "Current Version is 24/09/07.10"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -42,6 +43,8 @@ WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
 LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
 TICKET_CATEGORY_ID = 1012026430470766816 # Ticket Category " information "
 GEN_CHANNEL_ID = 1012026430932127926 # General "Skit snack"   
+YOUTUBE_CHANNEL_ID = 1012235998308094032  # Replace with actual channel ID
+PODCAST_CHANNEL_ID = 1012235998308094032  # Replace with actual channel ID
 
 # File Management 
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
@@ -328,6 +331,61 @@ async def rfc(ctx, rfc_number: str = None):
         await ctx.send(result)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+
+###########################################_Below this line_###########################################
+#############################################_Media_Stuff_#############################################
+
+@bot.command()
+async def add_youtube(ctx, channel: str = None):
+    if channel:
+        added = _External_Media.add_channel("youtube", channel)
+        if added:
+            await ctx.send(f'YouTube channel "{channel}" added successfully.')
+        else:
+            await ctx.send(f'YouTube channel "{channel}" is already added.')
+    else:
+        await _External_Media.display_instructions("youtube", bot, ctx)
+
+@bot.command()
+async def remove_youtube(ctx, channel: str = None):
+    if channel:
+        removed = _External_Media.remove_channel("youtube", channel)
+        if removed:
+            await ctx.send(f'YouTube channel "{channel}" removed successfully.')
+        else:
+            await ctx.send(f'YouTube channel "{channel}" not found in the list.')
+    else:
+        await _External_Media.display_active_channels("youtube", bot, ctx)
+
+@bot.command()
+async def add_pod(ctx, channel: str = None):
+    if channel:
+        added = _External_Media.add_channel("podcast", channel)
+        if added:
+            await ctx.send(f'Podcast "{channel}" added successfully.')
+        else:
+            await ctx.send(f'Podcast "{channel}" is already added.')
+    else:
+        await _External_Media.display_instructions("podcast", bot, ctx)
+
+@bot.command()
+async def remove_pod(ctx, channel: str = None):
+    if channel:
+        removed = _External_Media.remove_channel("podcast", channel)
+        if removed:
+            await ctx.send(f'Podcast "{channel}" removed successfully.')
+        else:
+            await ctx.send(f'Podcast "{channel}" not found in the list.')
+    else:
+        await _External_Media.display_active_channels("podcast", bot, ctx)
+
+@tasks.loop(hours=1)  # Weekly loop for fetching latest YouTube content
+async def fetch_youtube_content():
+    await _External_Media.fetch_latest_content("youtube", bot, YOUTUBE_CHANNEL_ID)
+
+@tasks.loop(hours=1)  # Weekly loop for fetching latest podcast content
+async def fetch_podcast_content():
+    await _External_Media.fetch_latest_content("podcast", bot, PODCAST_CHANNEL_ID)
 
 ###########################################_Below this line_###########################################
 ###########################################_Role_Assignment_###########################################
