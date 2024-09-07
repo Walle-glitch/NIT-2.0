@@ -22,7 +22,7 @@ import _CCNP_Study_Plan  # CCNP study plan module.
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/06.1"  # Global version number variable
+version_nr = "Current Version is 24/09/07.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -437,19 +437,25 @@ async def removerole(ctx, role_name: str = None):
 
 ###########################################_Study_Plan_Loops_###########################################
 
-@tasks.loop(hours=168)  # CCIE study plan loop (weekly)
+@tasks.loop(hours=12)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
-    try:
-        await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
-    except Exception as e:
-        await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
+    # Kontrollera att det är söndag innan den postar veckans tips
+    if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+        try:
+            await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
+        except Exception as e:
+            await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
-@tasks.loop(hours=168)  # CCNP study plan loop (weekly)
+
+@tasks.loop(hours=12)  # Kör varje vecka (12 timme)
 async def weekly_study_plan_CCNP():
-    try:
-        await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
-    except Exception as e:
-        await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
+    # Kontrollera att det är söndag innan den postar veckans tips
+    if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+        try:
+            await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
+        except Exception as e:
+            await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
+
 
 # Command to manually fetch and post jobs
 @bot.command()
