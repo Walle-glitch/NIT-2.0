@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify
 import threading
 import main as bot # Import bot.py
-import __Modules as _M # All Bot specific Moduels 
+import Internal_Modules as _M # All Bot specific Moduels 
 import os
 import requests
 

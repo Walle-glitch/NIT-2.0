@@ -16,8 +16,9 @@ from pypresence.exceptions import DiscordNotFound
 import time
 
 # Bot specific Modules
-import __Modules as _M # All Bot specific Moduels 
-from __Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media
+# import Internal_Modules as _M # All Bot specific Moduels 
+from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Bot_Config
+
 
 '''
 import _Bot_Modul  # Module for various functions.
@@ -716,5 +717,5 @@ async def test_error(ctx, error):
 
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################
-bot.run(_M._Bot_Config._Bot_Token())
+bot.run(_Bot_Config._Bot_Token())
 #############################################_END_#############################################
