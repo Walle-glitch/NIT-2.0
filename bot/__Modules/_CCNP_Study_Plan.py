@@ -5,8 +5,8 @@ import os
 from discord import app_commands
 
 # Paths to the current week and study plan JSON files
-_Current_Week_CCNP = "Json_Files/current_week_CCNP.json"
-_Study_Plan_CCNP = "Json_Files/CCNP_Study_Plan.json"
+_Current_Week_CCNP = "./Json_Files/current_week_CCNP.json"
+_Study_Plan_CCNP = "./Json_Files/CCNP_Study_Plan.json"
 
 
 def setup(bot):

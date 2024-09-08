@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 
 # Path to the media JSON file
-_Media_File = "Json_Files/media_channels.json"
+_Media_File = "./Json_Files/media_channels.json"
 
 def setup(bot):
     @bot.tree.command(name="add_youtube", description="Add a YouTube channel")

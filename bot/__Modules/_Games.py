@@ -13,7 +13,7 @@ game_type = None
 game_task = None
 
 # Path to the JSON file containing network questions
-QUESTION_FILE = "Json_Files/network_questions.json"
+QUESTION_FILE = "./Json_Files/network_questions.json"
 
 
 def setup(bot):

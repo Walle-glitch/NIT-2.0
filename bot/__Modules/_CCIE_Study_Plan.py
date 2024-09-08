@@ -5,8 +5,8 @@ import os
 from discord import app_commands
 
 # Path to the current week and study plan JSON files
-_Current_Week_CCIE = "Json_Files/current_week_CCIE.json"
-_Study_Plan_CCIE = "Json_Files/CCIE_Study_Plan.json"
+_Current_Week_CCIE = "./Json_Files/current_week_CCIE.json"
+_Study_Plan_CCIE = "./Json_Files/CCIE_Study_Plan.json"
 
 def setup(bot):
     @bot.tree.command(name="ccie_plan", description="Post the weekly CCIE study plan")

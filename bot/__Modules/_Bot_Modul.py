@@ -15,15 +15,16 @@ import random
 from discord.ext import commands
 import json
 import os
-import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
+import _Bot_Config as botConfig
+#nimport botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 from discord.ui import Button, View
 from discord import app_commands
 
 ################  Global Refs ################
 
-ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are saved
-WELCOME_MESSAGE_FILE = "Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
-XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
+ROLE_JSON_FILE = "./Json_Files/roles.json"  # File where roles are saved
+WELCOME_MESSAGE_FILE = "./Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
+XP_FILE = "./Json_Files/xp_data.json" # File For storing all User XP
 EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the /roll command
 
 # Define static roles in a dictionary format

@@ -1,8 +1,8 @@
 import openai
 import asyncio
-import botConfig
 import discord
 from discord import app_commands
+import _Bot_Config as botConfig
 
 
 # Set your OpenAI API key here

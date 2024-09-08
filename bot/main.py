@@ -15,13 +15,26 @@ from pypresence import Presence  # Import pypresence for Rich Presence
 import time
 
 # Bot specific Modules
-import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
+import __Modules as _M # All Bot specific Moduels 
+
+_Bot_Modul = _M._Bot_Modul
+_Games = _M._Games
+_Open_AI = _M._Open_AI
+_CCIE_Study_Plan = _M._CCIE_Study_Plan
+_CCNP_Study_Plan = _M._CCNP_Study_Plan
+_External_Media = _M._External_Media
+botConfig = _M._Bot_Config
+
+'''
 import _Bot_Modul  # Module for various functions.
 import _Games  # Module for games.
 import _Open_AI  # Module for handling OpenAI API requests.
 import _CCIE_Study_Plan  # CCIE study plan module.
 import _CCNP_Study_Plan  # CCNP study plan module.
 import _External_Media
+import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
+'''
+
 
 ###########################################_Global_Variables_##########################################
 
