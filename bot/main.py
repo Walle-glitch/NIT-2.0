@@ -10,7 +10,7 @@ import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
 import json
-import datetime
+from datetime import datetime 
 
 # Bot specific Modules
 import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
@@ -507,6 +507,7 @@ async def removerole(ctx, role_name: str = None):
     await ctx.send(embed=embed)
 
 ###########################################_Study_Plan_Loops_###########################################
+
 
 @tasks.loop(hours=1)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
