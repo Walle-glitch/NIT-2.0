@@ -116,7 +116,8 @@ async def on_ready():
     await bot.tree.sync() # Synchronize global application commands
     print("Global commands synced.")
     weekly_study_plan_CCIE.start()  
-    weekly_study_plan_CCNP.start()  
+    weekly_study_plan_CCNP.start()
+    update_presence()  
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
