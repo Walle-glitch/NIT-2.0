@@ -17,8 +17,9 @@ import time
 
 # Bot specific Modules
 import __Modules as _M # All Bot specific Moduels 
+from __Modules import _Bot_Modul
 
-_Bot_Modul = _M._Bot_Modul
+# _Bot_Modul
 _Games = _M._Games
 _Open_AI = _M._Open_AI
 _CCIE_Study_Plan = _M._CCIE_Study_Plan
