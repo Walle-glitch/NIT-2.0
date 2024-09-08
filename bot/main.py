@@ -36,7 +36,6 @@ import _External_Media
 import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
 '''
 
-
 ###########################################_Global_Variables_##########################################
 
 version_nr = "Current Version is 24/09/08.2"  # Global version number variable
