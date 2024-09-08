@@ -5,6 +5,7 @@ import Internal_Modules as _M # All Bot specific Moduels
 import os
 import requests
 import _Bot_Config
+import discord
 
 app = Flask(__name__)
 
