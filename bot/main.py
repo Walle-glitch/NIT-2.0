@@ -17,8 +17,8 @@ import time
 
 # Bot specific Modules
 # import Internal_Modules as _M # All Bot specific Moduels 
-from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Bot_Config
-
+from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media
+import _Bot_Config
 
 '''
 import _Bot_Modul  # Module for various functions.

@@ -4,12 +4,13 @@ import main as bot # Import bot.py
 import Internal_Modules as _M # All Bot specific Moduels 
 import os
 import requests
+import _Bot_Config
 
 app = Flask(__name__)
 
 # Discord OAuth2 credentials (replace with your own)
-CLIENT_ID = _M._Bot_Config._Client_ID()
-CLIENT_SECRET = _M._Bot_Config._Client_Secret()
+CLIENT_ID = _Bot_Config._Client_ID()
+CLIENT_SECRET = _Bot_Config._Client_Secret()
 REDIRECT_URI = 'http://172.20.0.31/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
