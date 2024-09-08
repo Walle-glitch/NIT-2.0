@@ -14,7 +14,7 @@ from datetime import datetime
 from pypresence import Presence
 from pypresence.exceptions import DiscordNotFound
 import time
-import botConfig
+import _Bot_Config
 
 # Bot specific Modules
 # import Internal_Modules as _M # All Bot specific Moduels 
