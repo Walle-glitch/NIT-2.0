@@ -1,11 +1,9 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import threading
-import main as bot # Import bot.py
-import Internal_Modules as _M # All Bot specific Moduels 
-import os
-import requests
+import main as bot  # Import bot.py
+import Internal_Modules as _M  # All Bot-specific Modules 
 import _Bot_Config
-import discord
+import requests
 
 app = Flask(__name__)
 
@@ -15,39 +13,32 @@ CLIENT_SECRET = _Bot_Config._Client_Secret()
 REDIRECT_URI = 'http://172.20.0.31/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
-# A route to display the bot status
+# Discord OAuth2 URL for authorization
+OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email%20guilds"
+
+
+# Route to display the bot's status
 @app.route('/')
 def home():
     return render_template('index.html', status="Bot is running!")
+
 
 # API route to check bot status
 @app.route('/api/status')
 def bot_status():
     return jsonify({"status": "running"})
 
-# Start the Flask server
-def run_flask_app():
-    app.run(host='0.0.0.0', port=5000)
 
-if __name__ == "__main__":
-    # Use threading to run Flask and Discord bot in parallel
-    flask_thread = threading.Thread(target=run_flask_app)
-    discord_bot_thread = threading.Thread(target=bot.run_discord_bot)
-
-    # Start the threads
-    flask_thread.start()
-    discord_bot_thread.start()
-
-# Discord OAuth2 URL
-OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email%20guilds"
-
-@app.route('/')
-def home():
+# Route for Discord OAuth2 login
+@app.route('/login')
+def login():
     return f'<a href="{OAUTH2_URL}">Login with Discord</a>'
 
+
+# OAuth2 callback route
 @app.route('/callback')
 def callback():
-    code = requests.args.get('code')
+    code = request.args.get('code')
 
     # Exchange authorization code for access token
     token_url = f"{DISCORD_API_BASE_URL}/oauth2/token"
@@ -60,11 +51,7 @@ def callback():
         'scope': 'identify email guilds'
     }
 
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-
-    # Make the POST request to get the token
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     token_response = requests.post(token_url, data=data, headers=headers)
     token_json = token_response.json()
 
@@ -73,9 +60,7 @@ def callback():
     if access_token:
         # Use access token to fetch user info
         user_info_url = f"{DISCORD_API_BASE_URL}/users/@me"
-        headers = {
-            'Authorization': f'Bearer {access_token}'
-        }
+        headers = {'Authorization': f'Bearer {access_token}'}
         user_info_response = requests.get(user_info_url, headers=headers)
         user_info_json = user_info_response.json()
 
@@ -84,5 +69,17 @@ def callback():
     else:
         return "Error getting access token", 400
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)  # Running on port 80 (HTTP)
+
+# Start the Flask server
+def run_flask_app():
+    app.run(host='0.0.0.0', port=5000)
+
+
+if __name__ == "__main__":
+    # Use threading to run Flask and Discord bot in parallel
+    flask_thread = threading.Thread(target=run_flask_app)
+    discord_bot_thread = threading.Thread(target=bot.run_discord_bot)
+
+    # Start the threads
+    flask_thread.start()
+    discord_bot_thread.start()
