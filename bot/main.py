@@ -17,10 +17,7 @@ import time
 
 # Bot specific Modules
 import __Modules as _M # All Bot specific Moduels 
-from __Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Bot_Config
-
-# _Bot_Modul
-botConfig = _Bot_Config
+from __Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media
 
 '''
 import _Bot_Modul  # Module for various functions.
@@ -29,7 +26,7 @@ import _Open_AI  # Module for handling OpenAI API requests.
 import _CCIE_Study_Plan  # CCIE study plan module.
 import _CCNP_Study_Plan  # CCNP study plan module.
 import _External_Media
-import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
+import _M._Bot_Config  # Bot token and bot information exists locally on the server; this module contains that info.
 '''
 
 ###########################################_Global_Variables_##########################################
@@ -719,5 +716,5 @@ async def test_error(ctx, error):
 
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################
-bot.run(botConfig._Bot_Token())
+bot.run(_M._Bot_Config._Bot_Token())
 #############################################_END_#############################################
