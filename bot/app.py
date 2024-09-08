@@ -1,9 +1,10 @@
 from flask import Flask, render_template, jsonify, request
 import threading
-import main as bot  # Import bot.py
 import Internal_Modules as _M  # All Bot-specific Modules 
 import _Bot_Config
+import botConfig
 import requests
+
 
 app = Flask(__name__)
 
