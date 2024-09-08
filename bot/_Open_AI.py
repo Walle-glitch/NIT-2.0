@@ -1,6 +1,9 @@
 import openai
 import asyncio
 import botConfig
+import discord
+from discord import app_commands
+
 
 # Set your OpenAI API key here
 openai.api_key = botConfig._Open_AI_Token()
@@ -8,6 +11,12 @@ openai.api_key = botConfig._Open_AI_Token()
 # Maximum tokens per response and max questions per session
 MAX_TOKENS = 150
 MAX_QUESTIONS_PER_SESSION = 5
+
+def setup(bot):
+    @bot.tree.command(name="ask_ai", description="Ask OpenAI a question")
+    async def ask_ai(interaction: discord.Interaction, question: str):
+        # OpenAI interaction logic
+        await interaction.response.send_message(f"OpenAI says: ...", ephemeral=True)
 
 async def ask_chatgpt(question, conversation_history):
     """

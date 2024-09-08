@@ -1,9 +1,36 @@
 import discord
 import json
 import os
+from discord import app_commands
 
 # Path to the media JSON file
 _Media_File = "Json_Files/media_channels.json"
+
+
+
+
+def setup(bot):
+    @bot.tree.command(name="add_youtube", description="Add a YouTube channel")
+    async def add_youtube(interaction: discord.Interaction, channel: str):
+        # Logic to add a YouTube channel
+        await interaction.response.send_message(f"Added YouTube channel: {channel}", ephemeral=True)
+
+    @bot.tree.command(name="remove_youtube", description="Remove a YouTube channel")
+    async def remove_youtube(interaction: discord.Interaction, channel: str):
+        # Logic to remove a YouTube channel
+        await interaction.response.send_message(f"Removed YouTube channel: {channel}", ephemeral=True)
+
+    @bot.tree.command(name="add_podcast", description="Add a podcast")
+    async def add_podcast(interaction: discord.Interaction, channel: str):
+        # Logic to add a podcast
+        await interaction.response.send_message(f"Added podcast: {channel}", ephemeral=True)
+
+    @bot.tree.command(name="remove_podcast", description="Remove a podcast")
+    async def remove_podcast(interaction: discord.Interaction, channel: str):
+        # Logic to remove a podcast
+        await interaction.response.send_message(f"Removed podcast: {channel}", ephemeral=True)
+
+
 
 # Function to load the media channels from the JSON file
 def load_media_channels():

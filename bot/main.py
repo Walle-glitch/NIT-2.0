@@ -21,6 +21,9 @@ import _CCIE_Study_Plan  # CCIE study plan module.
 import _CCNP_Study_Plan  # CCNP study plan module.
 import _External_Media
 
+
+
+
 ###########################################_Global_Variables_##########################################
 
 version_nr = "Current Version is 24/09/08.1"  # Global version number variable
@@ -88,16 +91,27 @@ async def log_to_channel(bot, message):
 @bot.event
 async def on_ready():
     await log_to_channel(bot, f'Logged in as {bot.user}')
+    await bot.tree.sync() # Synchronize global application commands
+    print("Global commands synced.")
+    weekly_study_plan_CCIE.start()  
+    weekly_study_plan_CCNP.start()  
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     # Start scheduled tasks when the bot is ready
-    weekly_study_plan_CCIE.start()  
-    weekly_study_plan_CCNP.start()  
     update_roles.start()  
     check_welcome_message.start()
         # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
+
+
+# Load modules that contain bot features
+_Bot_Modul.setup(bot)
+_CCIE_Study_Plan.setup(bot)
+_CCNP_Study_Plan.setup(bot)
+_External_Media.setup(bot)
+_Games.setup(bot)
+_Open_AI.setup(bot)
 
 ###########################################_All_User_Commands_##########################################
 

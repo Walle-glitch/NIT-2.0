@@ -17,6 +17,7 @@ import json
 import os
 import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 from discord.ui import Button, View
+from discord import app_commands
 
 ################  Global Refs ################
 
@@ -38,6 +39,17 @@ STATIC_ROLES = {
 
 log_to_channel_id = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
 Admin_Channel_id = 1012447677880995920 # Admin Channel ID.  
+
+
+def setup(bot):
+    # Define a simple slash command
+    @bot.tree.command(name="ping", description="Check if the bot is active")
+    async def ping(interaction: discord.Interaction):
+        await interaction.response.send_message("Pong!", ephemeral=True)
+
+    @bot.tree.command(name="hello", description="Say hello")
+    async def hello(interaction: discord.Interaction):
+        await interaction.response.send_message("Hello!", ephemeral=True)
 
 ######### Utility Functions for Logging #########
 

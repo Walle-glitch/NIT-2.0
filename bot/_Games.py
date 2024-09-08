@@ -3,6 +3,8 @@ import random
 import asyncio
 import json
 import os
+import discord 
+from discord import app_commands
 
 # Global variables to keep track of current game state
 current_question = None
@@ -12,6 +14,14 @@ game_task = None
 
 # Path to the JSON file containing network questions
 QUESTION_FILE = "Json_Files/network_questions.json"
+
+
+def setup(bot):
+    @bot.tree.command(name="start_game", description="Start a new game")
+    async def start_game(interaction: discord.Interaction):
+        # Game logic
+        await interaction.response.send_message("Game started!", ephemeral=True)
+
 
 def load_network_questions():
     """
