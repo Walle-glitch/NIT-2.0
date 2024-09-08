@@ -23,7 +23,7 @@ import _External_Media
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/07.10"  # Global version number variable
+version_nr = "Current Version is 24/09/08.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -70,7 +70,7 @@ intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
 # Command Prefix
-bot = commands.Bot(command_prefix="./", intents=intents)
+bot = commands.Bot(command_prefix="/", intents=intents)
 
 ##################_BOT_BOOT_##################
 
@@ -495,7 +495,7 @@ async def removerole(ctx, role_name: str = None):
 
 ###########################################_Study_Plan_Loops_###########################################
 
-@tasks.loop(hours=12)  # Kör varje vecka (168 timmar = 7 dagar)
+@tasks.loop(hours=1)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
@@ -504,8 +504,7 @@ async def weekly_study_plan_CCIE():
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
-
-@tasks.loop(hours=12)  # Kör varje vecka (12 timme)
+@tasks.loop(hours=1)  # Kör varje vecka (12 timme)
 async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
@@ -513,7 +512,6 @@ async def weekly_study_plan_CCNP():
             await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
-
 
 # Command to manually fetch and post jobs
 @bot.command()
@@ -696,5 +694,7 @@ async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
 
+##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################
 bot.run(botConfig._Bot_Token())
+#############################################_END_#############################################
