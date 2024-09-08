@@ -75,26 +75,31 @@ intents.members = True  # Access to members for role assignment
 bot = commands.Bot(command_prefix="/", intents=intents)
 
 client_id = botConfig._Client_ID()  # Discord application client ID for Rich Presence
-RPC = Presence(client_id)  # Initialize the Presence client
-RPC.connect()  # Connect to Discord Rich Presence
+RPC = None
 
-# Function to update Discord Rich Presence
-def update_presence():
-    RPC.update(
-        state="Playing Solo",
-        details="Competitive",
-        start=time.time(),
-        end=time.time() + 3600,  # Add 1 hour to the timestamp
-        large_image="numbani",  # Make sure to have these images uploaded to the Rich Presence app
-        large_text="Numbani",
-        small_image="rogue",
-        small_text="Rogue - Level 100",
-        party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
-        party_size=1,
-        party_max=5,
-        join="MTI4NzM0OjFpMmhuZToxMjMxMjM="
-    )
-    print("Presence updated!")
+# Function to initialize Rich Presence
+def setup_rich_presence():
+    global RPC
+    try:
+        RPC = Presence(client_id)
+        RPC.connect()
+        RPC.update(
+            state="Playing Sol",
+            details="Competitive",
+            start=time.time(),
+            end=time.time() + 3600,
+            large_image="numbani",
+            large_text="Numbani",
+            small_image="rogue",
+            small_text="Rogue - Level 100",
+            party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
+            party_size=1,
+            party_max=5,
+            join="MTI4NzM0OjFpMmhuZToxMjMxMjM="
+        )
+        print("Rich Presence setup complete.")
+    except DiscordNotFound:
+        print("Discord is not running. Skipping Rich Presence setup.")
 
 
 ##################_BOT_BOOT_##################
@@ -117,7 +122,7 @@ async def on_ready():
     print("Global commands synced.")
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
-    update_presence()  
+    setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
