@@ -17,15 +17,10 @@ import time
 
 # Bot specific Modules
 import __Modules as _M # All Bot specific Moduels 
-from __Modules import _Bot_Modul
+from __Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Bot_Config
 
 # _Bot_Modul
-_Games = _M._Games
-_Open_AI = _M._Open_AI
-_CCIE_Study_Plan = _M._CCIE_Study_Plan
-_CCNP_Study_Plan = _M._CCNP_Study_Plan
-_External_Media = _M._External_Media
-botConfig = _M._Bot_Config
+botConfig = _Bot_Config
 
 '''
 import _Bot_Modul  # Module for various functions.
