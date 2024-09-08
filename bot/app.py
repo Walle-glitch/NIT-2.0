@@ -4,6 +4,7 @@ import Internal_Modules as _M  # All Bot-specific Modules
 import _Bot_Config
 import botConfig
 import requests
+from main import bot  # Import bot instance from main.py
 
 
 app = Flask(__name__)
@@ -79,7 +80,7 @@ def run_flask_app():
 if __name__ == "__main__":
     # Use threading to run Flask and Discord bot in parallel
     flask_thread = threading.Thread(target=run_flask_app)
-    discord_bot_thread = threading.Thread(target=bot.run_discord_bot)
+    discord_bot_thread = threading.Thread(target=bot.run)
 
     # Start the threads
     flask_thread.start()
