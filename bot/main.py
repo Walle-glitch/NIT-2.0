@@ -11,6 +11,8 @@ from discord.ext import commands, tasks
 from urllib.request import urlopen
 import json
 from datetime import datetime 
+from pypresence import Presence  # Import pypresence for Rich Presence
+import time
 
 # Bot specific Modules
 import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
@@ -21,12 +23,9 @@ import _CCIE_Study_Plan  # CCIE study plan module.
 import _CCNP_Study_Plan  # CCNP study plan module.
 import _External_Media
 
-
-
-
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/08.1"  # Global version number variable
+version_nr = "Current Version is 24/09/08.2"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -61,7 +60,7 @@ EXCLUDED_ROLES = ["Admin",
                   "BOT", 
                   "Första Medlemmen!",
                   "DEN GLADASTE ADMIN",
-                  "NET-BOT",
+                  "NIT",
                   ]  # Roles that cannot be assigned via reactions
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
@@ -74,6 +73,29 @@ intents.members = True  # Access to members for role assignment
 
 # Command Prefix
 bot = commands.Bot(command_prefix="/", intents=intents)
+
+client_id = botConfig._Client_ID()  # Discord application client ID for Rich Presence
+RPC = Presence(client_id)  # Initialize the Presence client
+RPC.connect()  # Connect to Discord Rich Presence
+
+# Function to update Discord Rich Presence
+def update_presence():
+    RPC.update(
+        state="Playing Solo",
+        details="Competitive",
+        start=time.time(),
+        end=time.time() + 3600,  # Add 1 hour to the timestamp
+        large_image="numbani",  # Make sure to have these images uploaded to the Rich Presence app
+        large_text="Numbani",
+        small_image="rogue",
+        small_text="Rogue - Level 100",
+        party_id="ae488379-351d-4a4f-ad32-2b9b01c91657",
+        party_size=1,
+        party_max=5,
+        join="MTI4NzM0OjFpMmhuZToxMjMxMjM="
+    )
+    print("Presence updated!")
+
 
 ##################_BOT_BOOT_##################
 
@@ -677,8 +699,8 @@ async def test(ctx):
         ("about", None),
         ("ping", "8.8.8.8"),
         ("rfc", "791"),
-        ("subnet", "null"),
-        ("BGP-Setup", "1.1.1.1 65000"),
+        ("subnet", None),
+        ("BGP", None),
         ("start_game", "subnet"),
         ("stop_game", None),
         ("start_game", "network"),
