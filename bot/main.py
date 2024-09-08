@@ -10,7 +10,7 @@ import asyncio
 from discord.ext import commands, tasks
 from urllib.request import urlopen
 import json
-from datetime import datetime, timedelta
+import datetime
 
 # Bot specific Modules
 import botConfig  # Bot token and bot information exists locally on the server; this module contains that info.
@@ -103,7 +103,6 @@ async def on_ready():
     check_welcome_message.start()
         # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
-
 
 # Load modules that contain bot features
 _Bot_Modul.setup(bot)
@@ -512,7 +511,7 @@ async def removerole(ctx, role_name: str = None):
 @tasks.loop(hours=1)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
-    if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
             await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
         except Exception as e:
@@ -521,7 +520,7 @@ async def weekly_study_plan_CCIE():
 @tasks.loop(hours=1)  # Kör varje vecka (12 timme)
 async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
-    if datetime.datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
             await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:

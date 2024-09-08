@@ -212,10 +212,10 @@ async def close_ticket(channel):
     await channel.delete()
 
 async def check_inactivity(channel, timeout=60):
-    last_activity_time = datetime.utcnow()
+    last_activity_time = datetime.now(datetime.UTC)()
     while True:
         await asyncio.sleep(timeout * 60)
-        if (datetime.utcnow() - last_activity_time) >= timedelta(minutes=timeout):
+        if (datetime.now(datetime.UTC)() - last_activity_time) >= timedelta(minutes=timeout):
             await channel.send("Closing this ticket due to inactivity.")
             await channel.delete()
             break
@@ -439,22 +439,21 @@ async def show_level(ctx, member):
         await ctx.send(f"{member.mention} is at level {user_data['level']} with {user_data['xp']} XP.")
     else:
         await ctx.send(f"{member.mention} has no XP data yet.")
-
-async def process_historical_data(bot, xp_update_channel_id):
-    print("Processing historical data... Notifications are disabled.")
-    xp_data.clear()  # Clear existing XP data when processing historical data
-    save_xp_data(xp_data)
-
+async def process_historical_data(bot, XP_UPDATE_CHANNEL_ID):
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
+                # Iterate through the message history
                 async for message in channel.history(limit=None):
-                    await handle_xp(message, xp_update_channel_id, send_notifications=False)
+                    await handle_xp(message, XP_UPDATE_CHANNEL_ID, send_notifications=False)
+                    
+                    # Handle reactions
                     for reaction in message.reactions:
-                        users = await reaction.users().flatten()
+                        # Replace flatten() with an async comprehension
+                        users = [user async for user in reaction.users()]
                         for user in users:
                             if user != message.author:
-                                await handle_reaction_xp(message, xp_update_channel_id, send_notifications=False)
+                                await handle_reaction_xp(message, XP_UPDATE_CHANNEL_ID, send_notifications=False)
             except Exception as e:
                 print(f"Could not process channel {channel.name}: {str(e)}")
 
