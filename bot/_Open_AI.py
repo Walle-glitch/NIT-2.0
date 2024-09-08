@@ -68,7 +68,7 @@ async def handle_ai_session(ctx, initial_question):
             message = await ctx.bot.wait_for('message', check=lambda m: m.author.id == user_id, timeout=300)
             
             # End session if the user sends the stop command
-            if message.content.strip().lower() == "./ai-stop":
+            if message.content.strip().lower() == "/ai-stop":
                 await ctx.send("AI session ended.")
                 break
 

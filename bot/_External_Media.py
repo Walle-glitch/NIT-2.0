@@ -6,9 +6,6 @@ from discord import app_commands
 # Path to the media JSON file
 _Media_File = "Json_Files/media_channels.json"
 
-
-
-
 def setup(bot):
     @bot.tree.command(name="add_youtube", description="Add a YouTube channel")
     async def add_youtube(interaction: discord.Interaction, channel: str):
@@ -29,8 +26,6 @@ def setup(bot):
     async def remove_podcast(interaction: discord.Interaction, channel: str):
         # Logic to remove a podcast
         await interaction.response.send_message(f"Removed podcast: {channel}", ephemeral=True)
-
-
 
 # Function to load the media channels from the JSON file
 def load_media_channels():
@@ -93,7 +88,7 @@ async def fetch_latest_content(media_type, bot, channel_id):
 async def display_instructions(media_type, bot, ctx):
     embed = discord.Embed(
         title=f"Add {media_type.capitalize()} Channel",
-        description=f"To add a {media_type} channel, use the command:\n`./add-{media_type} [channel_name]`\nTo remove, use `./remove-{media_type} [channel_name]`.",
+        description=f"To add a {media_type} channel, use the command:\n`/add-{media_type} [channel_name]`\nTo remove, use `/remove-{media_type} [channel_name]`.",
         color=discord.Color.green()
     )
     await ctx.send(embed=embed)
@@ -108,7 +103,7 @@ async def display_active_channels(media_type, bot, ctx):
             color=discord.Color.blue()
         )
         for channel in channels:
-            embed.add_field(name=channel, value=f"To remove: `./remove-{media_type} {channel}`", inline=False)
+            embed.add_field(name=channel, value=f"To remove: `/remove-{media_type} {channel}`", inline=False)
         await ctx.send(embed=embed)
     else:
         await ctx.send(f"No active {media_type} channels found.")

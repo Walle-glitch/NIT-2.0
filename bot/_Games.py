@@ -39,7 +39,7 @@ async def start_game(ctx, chosen_game):
 
     # Check if a game is already in progress
     if game_task and not game_task.done():
-        await ctx.send("A game is already in progress. Please use `./stop_game` to stop it first.")
+        await ctx.send("A game is already in progress. Please use `/stop_game` to stop it first.")
         return
 
     game_type = chosen_game

@@ -24,7 +24,7 @@ from discord import app_commands
 ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are saved
 WELCOME_MESSAGE_FILE = "Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
 XP_FILE = "Json_Files/xp_data.json" # File For storing all User XP
-EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the ./roll command
+EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the /roll command
 
 # Define static roles in a dictionary format
 STATIC_ROLES = {
