@@ -32,7 +32,7 @@ import _M._Bot_Config  # Bot token and bot information exists locally on the ser
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/08.2"  # Global version number variable
+version_nr = "Current Version is 24/09/10.1M"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -79,7 +79,7 @@ intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
 # Command Prefix
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 ##################_BOT_BOOT_##################
 
@@ -236,7 +236,7 @@ async def close_ticket_command(ctx):
 async def ai_command(ctx, *, question=None):
     try:
         if question is None:
-            await ctx.send("Please provide a question after the command: `/AI \"Question\"`")
+            await ctx.send("Please provide a question after the command: `!AI \"Question\"`")
             return
         
         await _Open_AI.handle_ai_session(ctx, question)
@@ -306,9 +306,9 @@ async def ping(ctx, ip: str = "8.8.8.8"):
 async def BGP(ctx):
     try:
         reply = (
-            'When using the /BGP_Setup command,\n' 
+            'When using the !BGP_Setup command,\n' 
             'you need to provide two variables,\n'
-            'like this: "/BGP_Setup [your IP address] [your AS number]".\n'
+            'like this: "!BGP_Setup [your IP address] [your AS number]".\n'
             'You will receive a reply with the needed info when the configuration is complete.'
         )
         await ctx.send(reply)
@@ -445,7 +445,7 @@ async def addrole(ctx, role_name: str = None):
 # Skapa en embed med rollerna
     embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
     for role in available_roles:
-        embed.add_field(name=f'"{role}"', value=f'Assign with `/addrole "{role}"`', inline=False)
+        embed.add_field(name=f'"{role}"', value=f'Assign with `!addrole "{role}"`', inline=False)
     await ctx.send(embed=embed)
     return
     
@@ -488,7 +488,7 @@ async def removerole(ctx, role_name: str = None):
         # Skapa en embed med rollerna
         embed = discord.Embed(title="Available Roles", description="Here are the roles you can remove:", color=discord.Color.blue())
         for role in available_roles:
-            embed.add_field(name=role, value=f'Remove with `/removerole "{role}"`', inline=False)
+            embed.add_field(name=role, value=f'Remove with `!removerole "{role}"`', inline=False)
         
         await ctx.send(embed=embed)
         return
@@ -566,7 +566,7 @@ async def on_member_join(member):
         await member.send(
             "Hello and welcome! 🎉\n\n"
             "Here's some information to get you started:\n"
-            "- Make sure to read the rules and set your Start year with the command /addrole NIT_24 in the server\n"
+            "- Make sure to read the rules and set your Start year with the command !addrole NIT_24 in the server\n"
             "- You can introduce yourself in the Skit-snack channel.\n"
             "- If you have any questions, feel free to ask a moderator(Privilege 10) or admin (Privilege 15).\n\n"
             "Enjoy your time here!"
