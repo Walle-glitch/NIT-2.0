@@ -1,5 +1,6 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, Markup
 import threading
+import os
 import _Bot_Config
 import requests
 from main import bot  # Import bot instance from main.py
@@ -13,13 +14,62 @@ REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
 # Discord OAuth2 URL for authorization
-OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email%20guilds"
+OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email guilds"
 
 
-# Route to display the bot's status
+# Function to load README.md content from the root directory
+def get_readme_content():
+    with open(os.path.join(os.getcwd(), 'README.md'), 'r', encoding='utf-8') as readme_file:
+        return Markup(readme_file.read().replace("\n", "<br>"))
+
+
+# Simulate user data for the 'users' view
+users_data = [
+    {"id": 1, "name": "John Doe", "role": "Admin"},
+    {"id": 2, "name": "Jane Smith", "role": "Moderator"},
+    {"id": 3, "name": "Alice Johnson", "role": "Member"}
+]
+
+# Bot hierarchy structure for display
+bot_structure = """
+/bot/
+├── __pycache__/
+│   └── Bot.cpython-310.pyc
+├── __Internal_Modules/           
+│   └── __init__.py
+│   └── _Bot_Modul.py     
+│   └── _CCIE_Study_Plan.py
+│   └── _CCNP_Study_Plan.py
+│   └── _External_Media.py
+│   └── _Games.py
+│   └── _Open_AI.py
+├── Json_Files/
+│   └── CCIE_Study_Plan.json
+│   └── CCNP_Study_Plan.json
+│   └── current_week_CCIE.json
+│   └── current_week_CCNP.json
+│   └── Help_Commands.json
+│   └── media_channels.json
+│   └── network_questions.json
+│   └── roles.json
+│   └── welcome_message_id.json
+│   └── xp_data.json
+├── static/
+│   └── style.css
+├── templates
+│   └── index.html
+├── main.py               
+├── app.py 
+├── README.md
+├── requirements.txt
+"""
+
+
+# Route to display the bot's status and README.md content
 @app.route('/')
 def home():
-    return render_template('index.html', status="Bot is running!")
+    readme_content = get_readme_content()
+    return render_template('home.html', readme_content=readme_content)
 
 
 # API route to check bot status
@@ -28,7 +78,19 @@ def bot_status():
     return jsonify({"status": "running"})
 
 
-# Route for Discord OAuth2 login
+# Route for displaying the bot's file structure
+@app.route('/bot-hierarchy')
+def bot_hierarchy():
+    return render_template('bot_hierarchy.html', bot_structure=bot_structure)
+
+
+# Route for displaying user list
+@app.route('/users')
+def users():
+    return render_template('users.html', users=users_data)
+
+
+# OAuth2 login route
 @app.route('/login')
 def login():
     return f'<a href="{OAUTH2_URL}">Login with Discord</a>'
