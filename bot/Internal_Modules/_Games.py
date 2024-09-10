@@ -15,14 +15,6 @@ game_task = None
 # Path to the JSON file containing network questions
 QUESTION_FILE = "./Json_Files/network_questions.json"
 
-
-def setup(bot):
-    @bot.tree.command(name="start_game", description="Start a new game")
-    async def start_game(interaction: discord.Interaction):
-        # Game logic
-        await interaction.response.send_message("Game started!", ephemeral=True)
-
-
 def load_network_questions():
     """
     Loads network questions from the JSON file.

@@ -41,17 +41,6 @@ STATIC_ROLES = {
 log_to_channel_id = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
 Admin_Channel_id = 1012447677880995920 # Admin Channel ID.  
 
-
-def setup(bot):
-    # Define a simple slash command
-    @bot.tree.command(name="ping", description="Check if the bot is active")
-    async def ping(interaction: discord.Interaction):
-        await interaction.response.send_message("Pong!", ephemeral=True)
-
-    @bot.tree.command(name="hello", description="Say hello")
-    async def hello(interaction: discord.Interaction):
-        await interaction.response.send_message("Hello!", ephemeral=True)
-
 ######### Utility Functions for Logging #########
 
 async def log_to_channel(bot, message):
@@ -190,37 +179,6 @@ async def send_resource_embed(ctx):
     for embed in embeds:
         await ctx.send(embed=embed)
 
-######### Create a Ticket ######### 
-
-# Function to create a new ticket
-async def create_ticket(guild, category_id, user, channel_name=None):
-    category = discord.utils.get(guild.categories, id=category_id)
-    if not category:
-        return None
-
-    if not channel_name:
-        ticket_number = random.randint(1000, 9999)
-        channel_name = f"ticket-{ticket_number}"
-
-    channel = await guild.create_text_channel(channel_name, category=category)
-    await channel.send(f"Hello {user.mention}, thank you for creating a ticket. Please describe your issue.")
-    asyncio.create_task(check_inactivity(channel))
-
-    return channel
-
-async def close_ticket(channel):
-    await channel.send("This ticket is now being closed.")
-    await channel.delete()
-
-async def check_inactivity(channel, timeout=60):
-    last_activity_time = datetime.now(datetime.UTC)()
-    while True:
-        await asyncio.sleep(timeout * 60)
-        if (datetime.now(datetime.UTC)() - last_activity_time) >= timedelta(minutes=timeout):
-            await channel.send("Closing this ticket due to inactivity.")
-            await channel.delete()
-            break
-        last_activity_time = max((await channel.history(limit=1).flatten())[0].created_at, last_activity_time)
 
 ################### GET AN RFC ###################
 

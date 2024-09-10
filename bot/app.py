@@ -95,12 +95,10 @@ def bot_hierarchy():
 def users():
     return render_template('users.html', users=users_data)
 
-
 # OAuth2 login route
 @app.route('/login')
 def login():
     return f'<a href="{OAUTH2_URL}">Login with Discord</a>'
-
 
 # OAuth2 callback route
 @app.route('/callback')

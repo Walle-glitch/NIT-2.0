@@ -18,17 +18,7 @@ import _Bot_Config
 
 # Bot specific Modules
 # import Internal_Modules as _M # All Bot specific Moduels 
-from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media
-
-'''
-import _Bot_Modul  # Module for various functions.
-import _Games  # Module for games.
-import _Open_AI  # Module for handling OpenAI API requests.
-import _CCIE_Study_Plan  # CCIE study plan module.
-import _CCNP_Study_Plan  # CCNP study plan module.
-import _External_Media
-import _M._Bot_Config  # Bot token and bot information exists locally on the server; this module contains that info.
-'''
+from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands
 
 ###########################################_Global_Variables_##########################################
 
@@ -38,6 +28,7 @@ version_nr = "Current Version is 24/09/10.1M"  # Global version number variable
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
 ADMIN_ROLE_NAME = "Privilege 15"
 MOD_ROLE_NAME = "Privilege 10"
+MENTOR_ROLE = "Mentor"
 
 # Initialize global variables
 current_question = None
@@ -68,6 +59,7 @@ EXCLUDED_ROLES = ["Admin",
                   "Första Medlemmen!",
                   "DEN GLADASTE ADMIN",
                   "NIT",
+                  "Mentor",
                   ]  # Roles that cannot be assigned via reactions
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
@@ -111,13 +103,8 @@ async def on_ready():
         # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
-# Load modules that contain bot features
-_Bot_Modul.setup(bot)
-_CCIE_Study_Plan.setup(bot)
-_CCNP_Study_Plan.setup(bot)
-_External_Media.setup(bot)
-_Games.setup(bot)
-_Open_AI.setup(bot)
+# Load module that contain bot Slash commands
+_Slash_Commands(bot)
 
 ###########################################_All_User_Commands_##########################################
 
@@ -128,45 +115,6 @@ _Open_AI.setup(bot)
 async def resuser_command(ctx):
     try:
         await _Bot_Modul.send_resource_embed(ctx)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-# Help Command 
-# Load the help commands from the JSON file
-def load_help_commands():
-    help_commands = "Json_Files/Help_Commands.json"
-    
-    if os.path.exists(help_commands):
-        with open(help_commands, "r") as file:
-            return json.load(file)
-    else:
-        print(f"Error: {help_commands} not found.")
-        return None
-
-@bot.command()
-async def h(ctx):
-    """
-    Display a list of all available commands with descriptions and the current bot version.
-    """
-    try:
-        help_data = load_help_commands()
-        
-        if help_data:
-            version_nr = help_data.get("version", "Unknown Version")
-            commands_list = help_data.get("commands", {})
-            
-            embed = discord.Embed(
-                title="Available Commands",
-                description=f"Current version: {version_nr}\n\nHere is a list of all available commands:",
-                color=discord.Color.blue()
-            )
-            
-            for command, description in commands_list.items():
-                embed.add_field(name=command, value=description, inline=False)
-            
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send("Error loading help commands.")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -204,32 +152,6 @@ async def about(ctx):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Ticket creation     
-@bot.command(name="ticket")
-async def create_ticket_command(ctx, *, channel_name=None):
-    try:
-        guild = ctx.guild
-        channel = await _Bot_Modul.create_ticket(guild, TICKET_CATEGORY_ID, ctx.author, channel_name)
-        
-        if channel:
-            await ctx.send(f"Your ticket has been created: {channel.mention}")
-        else:
-            await ctx.send("Failed to create the ticket. Please contact an administrator.")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-@bot.command(name="close")
-async def close_ticket_command(ctx):
-    try:
-        # Check if the channel name starts with 'ticket-'
-        if ctx.channel.name.startswith('ticket-'):
-            await _Bot_Modul.close_ticket(ctx.channel)
-            await ctx.send("This ticket has been closed.")
-        else:
-            await ctx.send("This command can only be used in ticket channels.")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
 #############################_Open_AI_Commands_#############################
 
 @bot.command(name="AI")
@@ -240,16 +162,6 @@ async def ai_command(ctx, *, question=None):
             return
         
         await _Open_AI.handle_ai_session(ctx, question)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-#############################_User_Test_Commands_#############################
-
-# Hello Command
-@bot.command()
-async def hello(ctx):
-    try:
-        await ctx.send('Hello!')
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 

@@ -8,11 +8,6 @@ from discord import app_commands
 _Current_Week_CCIE = "./Json_Files/current_week_CCIE.json"
 _Study_Plan_CCIE = "./Json_Files/CCIE_Study_Plan.json"
 
-def setup(bot):
-    @bot.tree.command(name="ccie_plan", description="Post the weekly CCIE study plan")
-    async def ccie_plan(interaction: discord.Interaction):
-        # Logic to fetch and post the study plan
-        await interaction.response.send_message("Here is the CCIE plan for the week!", ephemeral=True)
 
 # Function to fetch the current week from a file
 def get_current_week_CCIE():
