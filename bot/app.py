@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify, request, Markup
+from flask import Flask, render_template, jsonify, request
+from markupsafe import Markup  # Import from markupsafe instead
 import threading
 import os
 import _Bot_Config
