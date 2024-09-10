@@ -4,3 +4,5 @@ beautifulsoup4==4.12.2
 paramiko==2.11.0
 openai==0.27.7
 asyncio==3.4.3
+pypresence==4.2.1
+flask==3.0.3
