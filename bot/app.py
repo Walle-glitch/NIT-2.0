@@ -1,13 +1,12 @@
 from flask import Flask, render_template, jsonify, request
 import threading
-import Internal_Modules as _M  # All Bot-specific Modules 
 import _Bot_Config
 import requests
 from main import bot  # Import bot instance from main.py
 
 app = Flask(__name__)
 
-# Discord OAuth2 credentials (replace with your own)
+# Discord OAuth2 credentials
 CLIENT_ID = _Bot_Config._Client_ID()
 CLIENT_SECRET = _Bot_Config._Client_Secret()
 REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
@@ -74,7 +73,7 @@ def callback():
 def run_flask_app():
     app.run(host='0.0.0.0', port=5000)
 
-'''
+
 if __name__ == "__main__":
     # Use threading to run Flask and Discord bot in parallel
     flask_thread = threading.Thread(target=run_flask_app)
@@ -82,10 +81,9 @@ if __name__ == "__main__":
     # Fetch the bot token from _Bot_Config
     bot_token = _Bot_Config._Bot_Token()
     
-    # Pass the token when starting the bot
+    # Start the bot on a separate thread
     discord_bot_thread = threading.Thread(target=bot.run, args=(bot_token,))
 
-    # Start the threads
+    # Start both threads
     flask_thread.start()
     discord_bot_thread.start()
-'''
