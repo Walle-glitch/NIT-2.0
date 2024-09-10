@@ -35,7 +35,7 @@ from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CC
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/10.1M"  # Global version number variable
+version_nr = "Current Version is 24/09/10.10M"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -117,7 +117,7 @@ async def on_ready():
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 # Load module that contain bot Slash commands
-_Slash_Commands(bot)
+_Slash_Commands.setup(bot)
 
 ###########################################_All_User_Commands_##########################################
 
