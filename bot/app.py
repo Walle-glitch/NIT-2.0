@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify, request
 import threading
 import Internal_Modules as _M  # All Bot-specific Modules 
 import _Bot_Config
-import botConfig
 import requests
 from main import bot  # Import bot instance from main.py
 
