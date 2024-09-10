@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
 CLIENT_SECRET = _Bot_Config._Client_Secret()
-REDIRECT_URI = 'http://172.20.0.31/callback'  # Replace with your server IP
+REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
 # Discord OAuth2 URL for authorization
@@ -74,7 +74,7 @@ def callback():
 def run_flask_app():
     app.run(host='0.0.0.0', port=5000)
 
-
+'''
 if __name__ == "__main__":
     # Use threading to run Flask and Discord bot in parallel
     flask_thread = threading.Thread(target=run_flask_app)
@@ -88,3 +88,4 @@ if __name__ == "__main__":
     # Start the threads
     flask_thread.start()
     discord_bot_thread.start()
+'''
