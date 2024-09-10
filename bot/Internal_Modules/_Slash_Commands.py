@@ -24,18 +24,13 @@ from markupsafe import Markup  # Safely handles string injection for HTML conten
 from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 
 # Local modules in this project
-import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
-import _Router_Conf  # Contains configuration details for routers
-import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands  # Internal bot modules for various bot functionalities
-from main import bot  # Imports the bot instance from the main.py file to run it
+# import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
+# import _Router_Conf  # Contains configuration details for routers
+# import _Bot_Modul
+# import _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands  # Internal bot modules for various bot functionalities
+# from main import bot  # Imports the bot instance from the main.py file to run it
 
 # Global variable. 
-import discord
-from datetime import datetime, timedelta
-import asyncio
-import json
-import os
-
 TICKET_CATEGORY_ID = 1012026430470766816  # Ticket Category ID
 ARCHIVE_CATEGORY_ID = 1283156618682306601  # Archive Category ID
 MENTOR_ROLE = "Mentor"  # Role to ping in the ticket system
