@@ -2,23 +2,36 @@
 
 ###########################################_Import_Modules_##########################################
 
-import os
-import discord
-import sys
-import subprocess
-import asyncio
-from discord.ext import commands, tasks
-from urllib.request import urlopen
-import json
-from datetime import datetime 
-from pypresence import Presence
-from pypresence.exceptions import DiscordNotFound
-import time
-import _Bot_Config
+import discord  # Main Discord library for building bots
+from discord import app_commands  # For building Discord slash commands
+from discord.ext import commands, tasks  # Commands and tasks extension for Discord
+from discord.ui import Button, View  # For creating interactive buttons and views in Discord
+from datetime import datetime, timedelta  # For handling date and time operations
+import json  # For handling JSON data
+import os  # For interacting with the operating system, like file paths
+import requests  # For making HTTP requests
+import telnetlib  # For Telnet connections
+import paramiko  # For SSH connections
+import ipaddress  # For handling and validating IP addresses
+import time  # Provides time-related functions
+import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
+import random  # For generating random numbers or choices
+import sys  # System-specific parameters and functions
+import subprocess  # For running system commands
+import threading  # To run multiple tasks concurrently (Flask and Discord bot together)
+import openai  # For interacting with OpenAI's API
+from pypresence import Presence  # To integrate Rich Presence for Discord
+from pypresence.exceptions import DiscordNotFound  # Exception handling for pypresence
+from flask import Flask, render_template, jsonify, request  # Flask web framework for building the GUI
+from urllib.request import urlopen  # For making simple HTTP requests
+from markupsafe import Markup  # Safely handles string injection for HTML content
+from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 
-# Bot specific Modules
-# import Internal_Modules as _M # All Bot specific Moduels 
-from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands
+# Local modules in this project
+import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
+import _Router_Conf  # Contains configuration details for routers
+import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands  # Internal bot modules for various bot functionalities
+from main import bot  # Imports the bot instance from the main.py file to run it
 
 ###########################################_Global_Variables_##########################################
 
