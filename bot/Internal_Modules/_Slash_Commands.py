@@ -37,7 +37,7 @@ import json
 import os
 
 TICKET_CATEGORY_ID = 1012026430470766816  # Ticket Category ID
-ARCHIVE_CATEGORY_ID = 1012026430470766817  # Archive Category ID
+ARCHIVE_CATEGORY_ID = 1283156618682306601  # Archive Category ID
 MENTOR_ROLE = "Mentor"  # Role to ping in the ticket system
 INACTIVITY_TIMEOUT_DAYS = 2  # Timeout for ticket inactivity before archiving
 TICKET_COUNTER_FILE = "Json_Files/ticket_counter.json"  # File to store last ticket number
