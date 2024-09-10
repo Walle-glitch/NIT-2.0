@@ -19,9 +19,8 @@ OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redire
 
 # Function to load README.md content from the root directory
 def get_readme_content():
-    with open(os.path.join(os.getcwd(), 'README.md'), 'r', encoding='utf-8') as readme_file:
+    with open(os.path.join(os.getcwd(), '/home/bot/NIT-2.0/README.md'), 'r', encoding='utf-8') as readme_file:
         return Markup(readme_file.read().replace("\n", "<br>"))
-
 
 # Simulate user data for the 'users' view
 users_data = [
@@ -32,36 +31,42 @@ users_data = [
 
 # Bot hierarchy structure for display
 bot_structure = """
-/bot/
-├── __pycache__/
-│   └── Bot.cpython-310.pyc
-├── __Internal_Modules/           
-│   └── __init__.py
-│   └── _Bot_Modul.py     
-│   └── _CCIE_Study_Plan.py
-│   └── _CCNP_Study_Plan.py
-│   └── _External_Media.py
-│   └── _Games.py
-│   └── _Open_AI.py
-├── Json_Files/
-│   └── CCIE_Study_Plan.json
-│   └── CCNP_Study_Plan.json
-│   └── current_week_CCIE.json
-│   └── current_week_CCNP.json
-│   └── Help_Commands.json
-│   └── media_channels.json
-│   └── network_questions.json
-│   └── roles.json
-│   └── welcome_message_id.json
-│   └── xp_data.json
-├── static/
-│   └── style.css
-├── templates
-│   └── index.html
-├── main.py               
-├── app.py 
+/nit-2.0/
 ├── README.md
 ├── requirements.txt
+├──bot/
+|  └──__pycache__/
+│      └── Bot.cpython-310.pyc
+|  └──__Internal_Modules/           
+│      └── __init__.py
+│      └── _Bot_Modul.py     
+│      └── _CCIE_Study_Plan.py
+│      └── _CCNP_Study_Plan.py
+│      └── _External_Media.py
+│      └── _Games.py
+│      └── _Open_AI.py
+|  └──Json_Files/
+│      └── CCIE_Study_Plan.json
+│      └── CCNP_Study_Plan.json
+│      └── current_week_CCIE.json
+│      └── current_week_CCNP.json
+│      └── Help_Commands.json
+│      └── media_channels.json
+│      └── network_questions.json
+│      └── roles.json
+│      └── welcome_message_id.json
+│      └── xp_data.json
+|  └──static/
+│      └── style.css
+|  └──templates
+│      └── index.html
+│      └── base.html
+│      └── bot_hierarchy.html
+│      └── home.html
+│      └── template_view.html
+│      └── users.html
+|  └──main.py               
+|  └──app.py 
 """
 
 
