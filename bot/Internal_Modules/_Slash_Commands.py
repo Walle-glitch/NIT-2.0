@@ -95,7 +95,7 @@ def setup(bot):
     # Function to close the ticket
     async def close_ticket(channel):
         await channel.send("This ticket is now being closed.")
-        await channel.delete()
+        await archive_ticket(channel)
 
     # Check for inactivity and archive the ticket after the specified timeout
     async def check_inactivity(channel):
@@ -113,7 +113,7 @@ def setup(bot):
         archive_category = discord.utils.get(channel.guild.categories, id=ARCHIVE_CATEGORY_ID)
         if archive_category:
             await channel.edit(category=archive_category)
-            await channel.send("This ticket has been archived due to inactivity.")
+            await channel.send("This ticket has been archived.")
         else:
             await channel.send("Failed to archive the ticket. Archive category not found.")
 
