@@ -1,7 +1,7 @@
 import discord  # Main Discord library for building bots
-from discord import app_commands  # For building Discord slash commands
-from discord.ext import commands  # Commands extension for Discord
-from datetime import datetime, timedelta  # For handling date and time operations
+# from discord import app_commands  # For building Discord slash commands
+# from discord.ext import commands  # Commands extension for Discord
+from datetime import datetime #, timedelta  # For handling date and time operations
 import json  # For handling JSON data
 import os  # For interacting with the operating system
 import asyncio  # Asynchronous I/O handling, used extensively in Discord bots

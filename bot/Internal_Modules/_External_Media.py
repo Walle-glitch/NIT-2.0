@@ -1,7 +1,7 @@
 import discord
 import json
 import os
-from discord import app_commands
+# from discord import app_commands
 
 # Path to the media JSON file
 _Media_File = "./Json_Files/media_channels.json"

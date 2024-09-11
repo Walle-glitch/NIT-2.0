@@ -5,20 +5,20 @@
 import requests
 import telnetlib
 from bs4 import BeautifulSoup
-import paramiko
+# import paramiko
 import _Router_Conf
 import time
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 import discord
-import asyncio
+# import asyncio
 import random
-from discord.ext import commands
+# from discord.ext import commands
 import json
 import os
 import _Bot_Config as botConfig
-#nimport botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
+#import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 from discord.ui import Button, View
-from discord import app_commands
+# from discord import app_commands
 
 ################  Global Refs ################
 

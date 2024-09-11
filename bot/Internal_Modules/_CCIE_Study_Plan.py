@@ -1,8 +1,8 @@
-import datetime
+# import datetime
 import discord
 import json
 import os
-from discord import app_commands
+# from discord import app_commands
 
 # Path to the current week and study plan JSON files
 _Current_Week_CCIE = "./Json_Files/current_week_CCIE.json"

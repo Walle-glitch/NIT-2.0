@@ -1,8 +1,8 @@
-import datetime
+# import datetime
 import discord
 import json
 import os
-from discord import app_commands
+# from discord import app_commands
 
 # Paths to the current week and study plan JSON files
 _Current_Week_CCNP = "./Json_Files/current_week_CCNP.json"
