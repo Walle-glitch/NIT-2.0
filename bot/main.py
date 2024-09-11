@@ -3,39 +3,40 @@
 ###########################################_Import_Modules_##########################################
 
 import discord  # Main Discord library for building bots
-from discord import app_commands  # For building Discord slash commands
+# from discord import app_commands  # For building Discord slash commands
 from discord.ext import commands, tasks  # Commands and tasks extension for Discord
-from discord.ui import Button, View  # For creating interactive buttons and views in Discord
-from datetime import datetime, timedelta  # For handling date and time operations
+# from discord.ui import Button, View  # For creating interactive buttons and views in Discord
+from datetime import datetime #, timedelta  # For handling date and time operations
 import json  # For handling JSON data
 import os  # For interacting with the operating system, like file paths
-import requests  # For making HTTP requests
-import telnetlib  # For Telnet connections
-import paramiko  # For SSH connections
-import ipaddress  # For handling and validating IP addresses
-import time  # Provides time-related functions
-import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
-import random  # For generating random numbers or choices
+# import requests  # For making HTTP requests
+# import telnetlib  # For Telnet connections
+# import paramiko  # For SSH connections
+# import ipaddress  # For handling and validating IP addresses
+# import time  # Provides time-related functions
+# import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
+# import random  # For generating random numbers or choices
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
-import threading  # To run multiple tasks concurrently (Flask and Discord bot together)
-import openai  # For interacting with OpenAI's API
-from pypresence import Presence  # To integrate Rich Presence for Discord
-from pypresence.exceptions import DiscordNotFound  # Exception handling for pypresence
-from flask import Flask, render_template, jsonify, request  # Flask web framework for building the GUI
-from urllib.request import urlopen  # For making simple HTTP requests
-from markupsafe import Markup  # Safely handles string injection for HTML content
-from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
+# import threading  # To run multiple tasks concurrently (Flask and Discord bot together)
+# import openai  # For interacting with OpenAI's API
+# from pypresence import Presence  # To integrate Rich Presence for Discord
+# from pypresence.exceptions import DiscordNotFound  # Exception handling for pypresence
+# from flask import Flask, render_template, jsonify, request  # Flask web framework for building the GUI
+# from urllib.request import urlopen  # For making simple HTTP requests
+# from markupsafe import Markup  # Safely handles string injection for HTML content
+# from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 
 # Local modules in this project
 import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
-import _Router_Conf  # Contains configuration details for routers
-from Internal_Modules import _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands  # Internal bot modules for various bot functionalities
-# from main import bot  # Imports the bot instance from the main.py file to run it
+# import _Router_Conf  # Contains configuration details for routers
+from Internal_Modules import (
+    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _auction
+)
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/10.10M"  # Global version number variable
+version_nr = "Current Version is 24/09/11.10M"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = "Bot-Master"
@@ -122,6 +123,24 @@ _Slash_Commands.setup(bot)
 ###########################################_All_User_Commands_##########################################
 
 #############################_Utilities_Commands_#############################
+
+
+# Sell command to start an auction
+@bot.command(name="Sell")
+async def sell(ctx, item_name: str = None, start_price: int = None, buy_now_price: int = None, days_duration: int = None):
+    if not all([item_name, start_price, buy_now_price, days_duration]):
+        await ctx.send("Error: Please provide all required parameters: `!Sell <item_name> <start_price> <buy_now_price> <days_duration>`.")
+        return
+    
+    channel = ctx.channel
+    user = ctx.author
+
+    # Call the auction creation function from Internal_Modules._auction
+    await _auction.create_auction(channel, user, item_name, start_price, buy_now_price, days_duration)
+
+# Load auctions when bot starts
+_auction.load_auctions()
+
 
 # Resource command
 @bot.command(name="r")
