@@ -1,6 +1,6 @@
-# import discord  # Main Discord library for building bots
-# from discord import app_commands  # For building Discord slash commands
-# from discord.ext import commands, tasks  # Commands and tasks extension for Discord
+import discord  # Main Discord library for building bots
+#from discord import app_commands  # For building Discord slash commands
+from discord.ext import commands, tasks  # Commands and tasks extension for Discord
 # from discord.ui import Button, View  # For creating interactive buttons and views in Discord
 # from datetime import datetime, timedelta  # For handling date and time operations
 # import json  # For handling JSON data
@@ -27,9 +27,19 @@ from markupsafe import Markup  # Safely handles string injection for HTML conten
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import _Bot_Config
-from main import bot  # Imports the bot instance from the main.py file to run it
+# import main # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
+
+
+intents = discord.Intents.all()
+intents.message_content = True
+intents.reactions = True  # Enable reaction events
+intents.guilds = True  # Access to server information, including roles
+intents.members = True  # Access to members for role assignment
+
+bot = commands.Bot(command_prefix="!", intents=intents)
+
 
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
