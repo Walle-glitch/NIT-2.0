@@ -31,6 +31,7 @@ import subprocess  # For running system commands
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 import Internal_Modules as IM
+from Internal_Modules import _Slash_Commands
 # from Internal_Modules import (
 #    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config,
 #)
@@ -119,7 +120,7 @@ async def on_ready():
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 # Load module that contain bot Slash commands
-IM._Slash_Commands.setup(bot)
+_Slash_Commands.setup(bot)
 
 ###########################################_All_User_Commands_##########################################
 
