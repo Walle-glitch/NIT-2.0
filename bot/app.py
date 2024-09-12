@@ -27,7 +27,7 @@ from markupsafe import Markup  # Safely handles string injection for HTML conten
 import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import (
-    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _auction, _Bot_Config, _Router_Conf
+    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config, _Router_Conf
 )
 from main import bot  # Imports the bot instance from the main.py file to run it
 
