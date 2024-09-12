@@ -31,7 +31,7 @@ import subprocess  # For running system commands
 import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import (
-    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _auction, _Bot_Config, _Router_Conf
+    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config, _Router_Conf
 )
 
 ###########################################_Global_Variables_##########################################
@@ -136,11 +136,10 @@ async def sell(ctx, item_name: str = None, start_price: int = None, buy_now_pric
     user = ctx.author
 
     # Call the auction creation function from Internal_Modules._auction
-    await _auction.create_auction(channel, user, item_name, start_price, buy_now_price, days_duration)
+    await _Auction.create_auction(channel, user, item_name, start_price, buy_now_price, days_duration)
 
 # Load auctions when bot starts
-_auction.load_auctions()
-
+_Auction.load_auctions()
 
 # Resource command
 @bot.command(name="r")
