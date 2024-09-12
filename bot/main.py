@@ -31,15 +31,17 @@ import subprocess  # For running system commands
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 
-from Internal_Modules import _Bot_Modul
-from Internal_Modules import _Open_AI
-from Internal_Modules import _Games
-from Internal_Modules import _CCIE_Study_Plan
-from Internal_Modules import _CCNP_Study_Plan
-from Internal_Modules import _External_Media
-from Internal_Modules import _Slash_Commands
-from Internal_Modules import _Auction
-from Internal_Modules import _Bot_Config
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+
+import _Bot_Modul
+import _Open_AI
+import _Games
+import _CCIE_Study_Plan
+import _CCNP_Study_Plan
+import _External_Media
+import _Slash_Commands
+import _Auction
+import _Bot_Config
 
 
 
