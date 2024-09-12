@@ -86,9 +86,8 @@ intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
-def bot():
-    bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
-    return bot
+bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
+
 ##################_BOT_BOOT_##################
 
 # Create a function that sends messages to both server logs and a Discord channel
