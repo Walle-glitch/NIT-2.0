@@ -19,16 +19,14 @@ import threading  # To run multiple tasks concurrently (Flask and Discord bot to
 #from pypresence import Presence  # To integrate Rich Presence for Discord
 # from pypresence.exceptions import DiscordNotFound  # Exception handling for pypresence
 from flask import Flask, render_template, jsonify, request  # Flask web framework for building the GUI
-from urllib.request import urlopen  # For making simple HTTP requests
+# from urllib.request import urlopen  # For making simple HTTP requests
 from markupsafe import Markup  # Safely handles string injection for HTML content
 # from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 
 # Local modules in this project
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
-from Internal_Modules import (
-    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config, _Router_Conf
-)
+from Internal_Modules import _Bot_Config
 from main import bot  # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
