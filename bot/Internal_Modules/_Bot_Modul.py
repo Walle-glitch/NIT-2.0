@@ -3,11 +3,11 @@
 ###########################################_Import_Modules_##########################################
 
 import requests
-import telnetlib
+#vimport telnetlib
 from bs4 import BeautifulSoup
 # import paramiko
-import _Router_Conf
-import time
+# import _Router_Conf
+# import time
 # from datetime import datetime, timedelta
 import discord
 # import asyncio
@@ -15,7 +15,7 @@ import random
 # from discord.ext import commands
 import json
 import os
-import _Bot_Config as botConfig
+import _Bot_Config
 #import botConfig  # Bot-token and Bot info exists locally on the server; this module contains that info.
 from discord.ui import Button, View
 # from discord import app_commands
@@ -216,6 +216,8 @@ def get_rfc(rfc_number):
     except requests.RequestException as e:
         return f"Error retrieving RFC: {e}"
 
+
+'''
 ############### Create a BGP neighbor ###################
 
 # Function to configure BGP on a specific router
@@ -279,6 +281,7 @@ def configure_bgp_neighbor(neighbor_ip, neighbor_as):
         # Close the Telnet connection
         tn.write(b"exit\n")
         tn.close()
+'''
 
 ############### Moderation of Members ###################
 
@@ -422,7 +425,7 @@ async def process_historical_data(bot, XP_UPDATE_CHANNEL_ID):
 
 # API URL and API key for Indeed
 INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
-INDEED_API_KEY = botConfig._YOUR_INDEED_API_KEY()
+INDEED_API_KEY = _Bot_Config._YOUR_INDEED_API_KEY()
 
 def fetch_jobs():
     jobs = []
