@@ -26,7 +26,8 @@ from markupsafe import Markup  # Safely handles string injection for HTML conten
 # Local modules in this project
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
-from Internal_Modules import _Bot_Config
+import Internal_Modules
+# from Internal_Modules import _Bot_Config
 from  main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
@@ -42,8 +43,8 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 '''
 
 # Discord OAuth2 credentials (replace with your own)
-CLIENT_ID = _Bot_Config._Client_ID()
-CLIENT_SECRET = _Bot_Config._Client_Secret()
+CLIENT_ID = Internal_Modules._Bot_Config._Client_ID()
+CLIENT_SECRET = Internal_Modules._Bot_Config._Client_Secret()
 REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
@@ -179,5 +180,5 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # Start the Discord bot in the main thread to avoid asyncio issues
-    bot_token = _Bot_Config._Bot_Token()
+    bot_token = Internal_Modules._Bot_Config._Bot_Token()
     bot.run(bot_token)
