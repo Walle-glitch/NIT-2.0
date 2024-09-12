@@ -78,15 +78,17 @@ EXCLUDED_ROLES = ["Admin",
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
-intents = discord.Intents.all()
-intents.message_content = True
-intents.reactions = True  # Enable reaction events
-intents.guilds = True  # Access to server information, including roles
-intents.members = True  # Access to members for role assignment
+def bot_Setup():
+    intents = discord.Intents.all()
+    intents.message_content = True
+    intents.reactions = True  # Enable reaction events
+    intents.guilds = True  # Access to server information, including roles
+    intents.members = True  # Access to members for role assignment
+    return
 
-# Command Prefix
-bot = commands.Bot(command_prefix="!", intents=intents)
-
+def bot():
+    bot = commands.Bot(command_prefix="!", intents=bot_Setup.intents) # Command Prefix 
+    return 
 ##################_BOT_BOOT_##################
 
 # Create a function that sends messages to both server logs and a Discord channel

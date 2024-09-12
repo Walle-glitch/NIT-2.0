@@ -27,11 +27,11 @@ from markupsafe import Markup  # Safely handles string injection for HTML conten
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import _Bot_Config
-# import main # Imports the bot instance from the main.py file to run it
+from  main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
 
-
+'''
 intents = discord.Intents.all()
 intents.message_content = True
 intents.reactions = True  # Enable reaction events
@@ -39,7 +39,7 @@ intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-
+'''
 
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
