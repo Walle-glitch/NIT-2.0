@@ -31,7 +31,7 @@ import subprocess  # For running system commands
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import (
-    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config
+    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config,
 )
 
 ###########################################_Global_Variables_##########################################
@@ -78,17 +78,16 @@ EXCLUDED_ROLES = ["Admin",
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
-def bot_Setup():
-    intents = discord.Intents.all()
-    intents.message_content = True
-    intents.reactions = True  # Enable reaction events
-    intents.guilds = True  # Access to server information, including roles
-    intents.members = True  # Access to members for role assignment
-    return
+
+intents = discord.Intents.all()
+intents.message_content = True
+intents.reactions = True  # Enable reaction events
+intents.guilds = True  # Access to server information, including roles
+intents.members = True  # Access to members for role assignment
 
 def bot():
-    bot = commands.Bot(command_prefix="!", intents=bot_Setup.intents) # Command Prefix 
-    return 
+    bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
+    return bot
 ##################_BOT_BOOT_##################
 
 # Create a function that sends messages to both server logs and a Discord channel
