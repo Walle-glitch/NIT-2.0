@@ -28,7 +28,7 @@ import subprocess  # For running system commands
 # from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 
 # Local modules in this project
-import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
+# import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
 from Internal_Modules import (
     _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config, _Router_Conf
