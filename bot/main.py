@@ -115,7 +115,7 @@ async def on_ready():
     # Start scheduled tasks when the bot is ready
     update_roles.start()  
     check_welcome_message.start()
-        # Find a specific channel to post the welcome message or ensure it's updated
+    # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 # Load module that contain bot Slash commands
