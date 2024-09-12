@@ -4,20 +4,23 @@ import asyncio
 import json
 import os
 
-# Global variables for managing auctions
-active_auctions = {}
 AUCTIONS_FILE = "Json_Files/auctions.json"  # Path to the file storing auctions
+active_auctions = {}
 
 # Function to load existing auctions from the file
 def load_auctions():
     if os.path.exists(AUCTIONS_FILE):
-        with open(AUCTIONS_FILE, "r") as file:
-            data = json.load(file)
-            for auction_data in data.get("active_auctions", []):
-                auction_data["end_time"] = datetime.fromisoformat(auction_data["end_time"])
-                active_auctions[auction_data["channel_id"]] = auction_data
+        try:
+            with open(AUCTIONS_FILE, "r") as file:
+                data = json.load(file)
+                for auction_data in data.get("active_auctions", []):
+                    auction_data["end_time"] = datetime.fromisoformat(auction_data["end_time"])
+                    active_auctions[auction_data["channel_id"]] = auction_data
+        except (json.JSONDecodeError, ValueError):
+            print("Error: auctions.json is empty or corrupted. Initializing with an empty auction list.")
+            save_auctions()  # Create a new file with an empty structure
     else:
-        save_auctions()
+        save_auctions()  # If the file doesn't exist, create it
 
 # Function to save the current state of auctions to a file
 def save_auctions():
