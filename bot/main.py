@@ -30,9 +30,10 @@ import subprocess  # For running system commands
 # Local modules in this project
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
-from Internal_Modules import (
-    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config,
-)
+import Internal_Modules as IM
+# from Internal_Modules import (
+#    _Bot_Modul, _Open_AI, _Games, _CCIE_Study_Plan, _CCNP_Study_Plan, _External_Media, _Slash_Commands, _Auction, _Bot_Config,
+#)
 
 ###########################################_Global_Variables_##########################################
 
@@ -110,7 +111,7 @@ async def on_ready():
     weekly_study_plan_CCNP.start()
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
-    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+    await IM._Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     # Start scheduled tasks when the bot is ready
     update_roles.start()  
@@ -119,7 +120,7 @@ async def on_ready():
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
 # Load module that contain bot Slash commands
-_Slash_Commands.setup(bot)
+IM._Slash_Commands.setup(bot)
 
 ###########################################_All_User_Commands_##########################################
 
@@ -137,16 +138,16 @@ async def sell(ctx, item_name: str = None, start_price: int = None, buy_now_pric
     user = ctx.author
 
     # Call the auction creation function from Internal_Modules._auction
-    await _Auction.create_auction(channel, user, item_name, start_price, buy_now_price, days_duration)
+    await IM._Auction.create_auction(channel, user, item_name, start_price, buy_now_price, days_duration)
 
 # Load auctions when bot starts
-_Auction.load_auctions()
+IM._Auction.load_auctions()
 
 # Resource command
 @bot.command(name="r")
 async def resuser_command(ctx):
     try:
-        await _Bot_Modul.send_resource_embed(ctx)
+        await IM._Bot_Modul.send_resource_embed(ctx)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -193,7 +194,7 @@ async def ai_command(ctx, *, question=None):
             await ctx.send("Please provide a question after the command: `!AI \"Question\"`")
             return
         
-        await _Open_AI.handle_ai_session(ctx, question)
+        await IM._Open_AI.handle_ai_session(ctx, question)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -204,7 +205,7 @@ async def subnet(ctx):
     try:
         global current_question, correct_answer
         
-        current_question, correct_answer = _Games.generate_subnet_question()
+        current_question, correct_answer = IM._Games.generate_subnet_question()
         await ctx.send(f"Subnet question: {current_question}")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
@@ -217,9 +218,9 @@ async def on_message(message):
         if current_question and message.author != bot.user:
             user_answer = message.content
             
-            if _Games.check_answer(user_answer, correct_answer):
+            if IM._Games.check_answer(user_answer, correct_answer):
                 await message.channel.send("Correct answer! Well done!")
-                _Games.reset_game()
+                IM._Games.reset_game()
             else:
                 await message.channel.send(f"Incorrect answer. The correct answer is: {correct_answer}")
             
@@ -263,7 +264,7 @@ async def BGP(ctx):
 async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
     try:
         await ctx.send("Starting BGP configuration...")
-        gi0_ip, as_number = _Bot_Modul.configure_bgp_neighbor(neighbor_ip, neighbor_as)
+        gi0_ip, as_number = IM._Bot_Modul.configure_bgp_neighbor(neighbor_ip, neighbor_as)
         
         if as_number is None:
             await ctx.send(f"An error occurred: {gi0_ip}")
@@ -288,7 +289,7 @@ async def rfc(ctx, rfc_number: str = None):
 
         try:
             rfc_number = int(rfc_number)
-            result = _Bot_Modul.get_rfc(rfc_number)
+            result = IM._Bot_Modul.get_rfc(rfc_number)
         except ValueError:
             result = "Error: Invalid RFC number. Please provide a valid integer."
 
@@ -302,54 +303,54 @@ async def rfc(ctx, rfc_number: str = None):
 @bot.command()
 async def add_youtube(ctx, channel: str = None):
     if channel:
-        added = _External_Media.add_channel("youtube", channel)
+        added = IM._External_Media.add_channel("youtube", channel)
         if added:
             await ctx.send(f'YouTube channel "{channel}" added successfully.')
         else:
             await ctx.send(f'YouTube channel "{channel}" is already added.')
     else:
-        await _External_Media.display_instructions("youtube", bot, ctx)
+        await IM._External_Media.display_instructions("youtube", bot, ctx)
 
 @bot.command()
 async def remove_youtube(ctx, channel: str = None):
     if channel:
-        removed = _External_Media.remove_channel("youtube", channel)
+        removed = IM._External_Media.remove_channel("youtube", channel)
         if removed:
             await ctx.send(f'YouTube channel "{channel}" removed successfully.')
         else:
             await ctx.send(f'YouTube channel "{channel}" not found in the list.')
     else:
-        await _External_Media.display_active_channels("youtube", bot, ctx)
+        await IM._External_Media.display_active_channels("youtube", bot, ctx)
 
 @bot.command()
 async def add_pod(ctx, channel: str = None):
     if channel:
-        added = _External_Media.add_channel("podcast", channel)
+        added = IM._External_Media.add_channel("podcast", channel)
         if added:
             await ctx.send(f'Podcast "{channel}" added successfully.')
         else:
             await ctx.send(f'Podcast "{channel}" is already added.')
     else:
-        await _External_Media.display_instructions("podcast", bot, ctx)
+        await IM._External_Media.display_instructions("podcast", bot, ctx)
 
 @bot.command()
 async def remove_pod(ctx, channel: str = None):
     if channel:
-        removed = _External_Media.remove_channel("podcast", channel)
+        removed = IM._External_Media.remove_channel("podcast", channel)
         if removed:
             await ctx.send(f'Podcast "{channel}" removed successfully.')
         else:
             await ctx.send(f'Podcast "{channel}" not found in the list.')
     else:
-        await _External_Media.display_active_channels("podcast", bot, ctx)
+        await IM._External_Media.display_active_channels("podcast", bot, ctx)
 
 @tasks.loop(hours=1)  # Weekly loop for fetching latest YouTube content
 async def fetch_youtube_content():
-    await _External_Media.fetch_latest_content("youtube", bot, YOUTUBE_CHANNEL_ID)
+    await IM._External_Media.fetch_latest_content("youtube", bot, YOUTUBE_CHANNEL_ID)
 
 @tasks.loop(hours=1)  # Weekly loop for fetching latest podcast content
 async def fetch_podcast_content():
-    await _External_Media.fetch_latest_content("podcast", bot, PODCAST_CHANNEL_ID)
+    await IM._External_Media.fetch_latest_content("podcast", bot, PODCAST_CHANNEL_ID)
 
 ###########################################_Below this line_###########################################
 ###########################################_Role_Assignment_###########################################
@@ -357,7 +358,7 @@ async def fetch_podcast_content():
 @tasks.loop(hours=1)
 async def update_roles():
     try:    
-        await _Bot_Modul.fetch_and_save_roles(bot)
+        await IM._Bot_Modul.fetch_and_save_roles(bot)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred: {str(e)}")
 
@@ -465,7 +466,7 @@ async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
-            await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
+            await IM._CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
@@ -474,7 +475,7 @@ async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
-            await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
+            await IM._CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
 
@@ -482,14 +483,14 @@ async def weekly_study_plan_CCNP():
 @bot.command()
 async def post_jobs(ctx):
     try:
-        await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
+        await IM._Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
 @tasks.loop(hours=24)  # Job posting loop (daily)
 async def job_posting_loop():
     try:
-        await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
+        await IM._Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
 
@@ -529,7 +530,7 @@ async def on_message(message):
         return
 
     try:
-        await _Bot_Modul.handle_xp(message, XP_UPDATE_CHANNEL_ID)
+        await IM._Bot_Modul.handle_xp(message, XP_UPDATE_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred while handling XP: {str(e)}")
     await bot.process_commands(message)
@@ -537,7 +538,7 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
     try:
-        await _Bot_Modul.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
+        await IM._Bot_Modul.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred while handling reaction XP: {str(e)}")
 
@@ -547,7 +548,7 @@ async def level(ctx, member: discord.Member = None):
     try:
         if member is None:
             member = ctx.author
-        await _Bot_Modul.show_level(ctx, member)
+        await IM._Bot_Modul.show_level(ctx, member)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -555,7 +556,7 @@ async def level(ctx, member: discord.Member = None):
 @tasks.loop(hours=1)
 async def check_welcome_message():
     try:
-        await _Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
+        await IM._Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred while checking the welcome message: {str(e)}")
 
@@ -571,7 +572,7 @@ def has_privileged_role(ctx):
 @commands.has_permissions(kick_members=True)
 async def kick_command(ctx, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.kick_user(ctx, user, reason)
+        await IM._Bot_Modul.kick_user(ctx, user, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -581,7 +582,7 @@ async def kick_command(ctx, user: discord.Member, *, reason=None):
 @commands.has_permissions(ban_members=True)
 async def ban_command(ctx, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.ban_user(ctx, user, reason)
+        await IM._Bot_Modul.ban_user(ctx, user, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -591,7 +592,7 @@ async def ban_command(ctx, user: discord.Member, *, reason=None):
 @commands.has_permissions(moderate_members=True)
 async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.mute_user(ctx, user, duration, reason)
+        await IM._Bot_Modul.mute_user(ctx, user, duration, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -662,5 +663,5 @@ async def test_error(ctx, error):
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################
 if __name__ == "__main__":
-    bot.run(_Bot_Config._Bot_Token())
+    bot.run(IM._Bot_Config._Bot_Token())
 #############################################_END_#############################################
