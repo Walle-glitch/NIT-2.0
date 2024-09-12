@@ -22,19 +22,24 @@ from flask import Flask, render_template, jsonify, request  # Flask web framewor
 # from urllib.request import urlopen  # For making simple HTTP requests
 from markupsafe import Markup  # Safely handles string injection for HTML content
 # from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
+import sys  # System-specific parameters and functions
+
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+import _Bot_Config
 
 # Local modules in this project
 # import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
 # import _Router_Conf  # Contains configuration details for routers
-import Internal_Modules as IM
+# import Internal_Modules as IM
 # from Internal_Modules import _Bot_Config
 from main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
 
 # Discord OAuth2 credentials (replace with your own)
-CLIENT_ID = IM._Bot_Config._Client_ID()
-CLIENT_SECRET = IM._Bot_Config._Client_Secret()
+CLIENT_ID = _Bot_Config._Client_ID()
+CLIENT_SECRET = _Bot_Config._Client_Secret()
 REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
 DISCORD_API_BASE_URL = 'https://discord.com/api'
 
@@ -170,5 +175,5 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # Start the Discord bot in the main thread to avoid asyncio issues
-    bot_token = IM._Bot_Config._Bot_Token()
+    bot_token = _Bot_Config._Bot_Token()
     bot.run(bot_token)
