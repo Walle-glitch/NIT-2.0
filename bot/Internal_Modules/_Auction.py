@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import asyncio
 import json
 import os
+from uuid import uuid4
 
 AUCTIONS_FILE = "Json_Files/auctions.json"  # Path to the file storing auctions
 active_auctions = {}
@@ -33,47 +34,44 @@ def save_auctions():
     with open(AUCTIONS_FILE, "w") as file:
         json.dump(data, file, indent=4)
 
-# View for the auction buttons
 class AuctionView(discord.ui.View):
-    def __init__(self, channel_id, first_bid_placed):
+    def __init__(self, auction_id, first_bid_placed):
         super().__init__(timeout=None)
-        self.channel_id = channel_id
+        self.auction_id = auction_id
         self.first_bid_placed = first_bid_placed
 
     @discord.ui.button(label="Bid +10 kr", style=discord.ButtonStyle.green)
     async def place_bid(self, interaction: discord.Interaction, button: discord.ui.Button):
-        auction = active_auctions.get(self.channel_id)
+        auction = active_auctions.get(self.auction_id)
         if not auction:
             await interaction.response.send_message("No active auction found.", ephemeral=True)
             return
 
-        # If the first bid hasn't been placed, set the current bid to the start price
         if not self.first_bid_placed:
             auction["current_bid"] = auction["start_price"]
             self.first_bid_placed = True
         else:
-            # Increment the bid by 10 kr
             auction["current_bid"] += 10
-        
+
         auction["highest_bidder"] = interaction.user.id
 
-        # Update the auction message
         await interaction.response.edit_message(content=f"**Item:** {auction['item_name']}\n"
                                                         f"**Current Bid:** {auction['current_bid']} kr\n"
                                                         f"**Highest Bidder:** {interaction.user.mention}",
                                                 view=self)
 
-        # Save the updated auctions to file
         save_auctions()
 
         await interaction.followup.send(f"Your bid of {auction['current_bid']} kr has been placed!", ephemeral=True)
 
-# Function to create a new auction
+# Function to create a new auction with a unique ID
 async def create_auction(channel, user, item_name, start_price, buy_now_price, days_duration):
-    # Calculate the end time based on days duration
+    # Generate a unique ID for the auction
+    auction_id = str(uuid4())  # Generates a unique identifier for the auction
     end_time = datetime.now() + timedelta(days=days_duration)
 
     auction = {
+        "auction_id": auction_id,
         "seller": user.id,
         "item_name": item_name,
         "start_price": start_price,
@@ -85,11 +83,11 @@ async def create_auction(channel, user, item_name, start_price, buy_now_price, d
         "first_bid_placed": False  # Tracks whether the first bid is placed
     }
 
-    active_auctions[channel.id] = auction
+    active_auctions[auction_id] = auction
     save_auctions()
 
     # Create a thread for questions and discussion
-    thread = await channel.create_thread(name=f"Questions for {item_name}", auto_archive_duration=1440)  # Archive after 24 hours of inactivity
+    thread = await channel.create_thread(name=f"Questions for {item_name}", auto_archive_duration=1440)
 
     # Create and send the auction message with the bid button
     embed = discord.Embed(
@@ -102,28 +100,29 @@ async def create_auction(channel, user, item_name, start_price, buy_now_price, d
     embed.set_author(name=user.display_name, icon_url=user.avatar.url)
     embed.set_footer(text=f"Auction ends on {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-    view = AuctionView(channel.id, False)  # Initially, no bid has been placed
+    view = AuctionView(auction_id, False)  # Pass auction_id instead of channel.id
     await channel.send(embed=embed, view=view)
 
     # Handle auction end asynchronously
-    asyncio.create_task(handle_auction_end(channel))
+    asyncio.create_task(handle_auction_end(auction_id))
 
-# Function to handle auction end
-async def handle_auction_end(channel):
-    auction = active_auctions.get(channel.id)
+async def handle_auction_end(auction_id):
+    auction = active_auctions.get(auction_id)
     while auction["end_time"] > datetime.now():
         await asyncio.sleep(60)  # Check every minute
 
-    await end_auction(channel)
+    await end_auction(auction_id)
 
-# Function to finalize the auction
-async def end_auction(channel, reason="time"):
-    auction = active_auctions.pop(channel.id, None)
+async def end_auction(auction_id, reason="time"):
+    auction = active_auctions.pop(auction_id, None)
 
     if not auction:
         return
 
     save_auctions()
+
+    channel = auction["channel_id"]
+    # Resten av auktionens slutkod förblir densamma
 
     if auction["highest_bidder"]:
         guild = channel.guild
