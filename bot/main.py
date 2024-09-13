@@ -27,10 +27,10 @@ import _Slash_Commands
 version_nr = "Current Version is 24/09/13.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
-BOT_ADMIN_ROLE_NAME = "Bot-Master"
-ADMIN_ROLE_NAME = "Privilege 15"
-MOD_ROLE_NAME = "Privilege 10"
-MENTOR_ROLE = "Mentor"
+BOT_ADMIN_ROLE_NAME = _Bot_Modul._Bot_Admin_Role_Name()
+ADMIN_ROLE_NAME =  _Bot_Modul._Admin_Role_Name()
+MOD_ROLE_NAME = _Bot_Modul._Mod_Role_Name()
+MENTOR_ROLE = _Bot_Modul._Mentor_Role_Name()
 
 # Initialize global variables
 current_question = None

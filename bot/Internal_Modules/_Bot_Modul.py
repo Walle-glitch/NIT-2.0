@@ -5,12 +5,12 @@
 import requests
 from bs4 import BeautifulSoup
 import discord
+from discord.ext import tasks
 import random
 import json
 import os
 import _Bot_Config
 from discord.ui import Button, View
-
 
 ################  Global Refs ################
 
@@ -528,9 +528,7 @@ class RoleButton(Button):
         self.role_id = role_id
 
     async def callback(self, interaction: discord.Interaction):
-        # If role_id is provided, fetch the role by ID; otherwise, fetch it by name
         role = interaction.guild.get_role(int(self.role_id)) if self.role_id else discord.utils.get(interaction.guild.roles, name=self.label)
-        
         if role:
             if role in interaction.user.roles:
                 await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
@@ -542,6 +540,12 @@ class RoleButton(Button):
                     await interaction.response.send_message("I do not have permission to assign roles.", ephemeral=True)
         else:
             await interaction.response.send_message(f"The role for {self.label} could not be found on the server.", ephemeral=True)
+
+@tasks.loop(minutes=10)
+async def refresh_welcome_message(channel_id, bot):
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await ensure_welcome_message(bot, channel.id)
 
 def create_role_buttons_view():
     view = View()
