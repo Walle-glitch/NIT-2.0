@@ -341,11 +341,11 @@ xp_data = load_xp_data()
 
 def xp_needed_for_level(level):
     if level < 11:
-        return 100
-    elif level < 101:
         return 1000
+    elif level < 101:
+        return 10000
     else:
-        return 2500
+        return 20000
 
 async def handle_xp(message, xp_update_channel_id, send_notifications=True):
     user = message.author
@@ -528,7 +528,9 @@ class RoleButton(Button):
         self.role_id = role_id
 
     async def callback(self, interaction: discord.Interaction):
+        # Get the role from the guild
         role = interaction.guild.get_role(int(self.role_id)) if self.role_id else discord.utils.get(interaction.guild.roles, name=self.label)
+        
         if role:
             if role in interaction.user.roles:
                 await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
@@ -541,15 +543,9 @@ class RoleButton(Button):
         else:
             await interaction.response.send_message(f"The role for {self.label} could not be found on the server.", ephemeral=True)
 
-@tasks.loop(minutes=10)
-async def refresh_welcome_message(channel_id, bot):
-    channel = bot.get_channel(channel_id)
-    if channel:
-        await ensure_welcome_message(bot, channel.id)
-
 def create_role_buttons_view():
-    view = View()
-    # Define the button styles and labels; using STATIC_ROLES if role_id is provided
+    view = View(timeout=None)  # Set timeout to None to avoid the view expiring
+
     ROLE_BUTTONS = [
         {"label": "NIT_24", "style": discord.ButtonStyle.blurple, "role_id": STATIC_ROLES.get("NIT_24")},
         {"label": "NIT_23", "style": discord.ButtonStyle.blurple, "role_id": STATIC_ROLES.get("NIT_23")},
@@ -559,18 +555,11 @@ def create_role_buttons_view():
         {"label": "Union Member", "style": discord.ButtonStyle.red, "role_id": STATIC_ROLES.get("Union Member")},
     ]
     
-    # Create buttons and add them to the view
     for button_info in ROLE_BUTTONS:
         button = RoleButton(label=button_info['label'], style=button_info['style'], role_id=button_info['role_id'])
         view.add_item(button)
+    
     return view
-
-def get_welcome_message_id():
-    if os.path.exists(WELCOME_MESSAGE_FILE):
-        with open(WELCOME_MESSAGE_FILE, "r") as f:
-            data = json.load(f)
-            return data.get("message_id", None)
-    return None
 
 def save_welcome_message_id(message_id):
     with open(WELCOME_MESSAGE_FILE, "w") as f:
@@ -623,6 +612,13 @@ async def post_welcome_message(channel):
     view = create_role_buttons_view()
     message = await channel.send(embed=embed, view=view)
     save_welcome_message_id(message.id)
+
+def get_welcome_message_id():
+    if os.path.exists(WELCOME_MESSAGE_FILE):
+        with open(WELCOME_MESSAGE_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("message_id", None)
+    return None
 
 async def ensure_welcome_message(bot, channel_id):
     channel = bot.get_channel(channel_id)

@@ -105,6 +105,7 @@ async def on_ready():
     # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
+
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
 
