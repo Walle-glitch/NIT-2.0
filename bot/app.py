@@ -1,38 +1,13 @@
-# import discord  # Main Discord library for building bots
-# from discord import app_commands  # For building Discord slash commands
-# from discord.ext import commands, tasks  # Commands and tasks extension for Discord
-# from discord.ui import Button, View  # For creating interactive buttons and views in Discord
-# from datetime import datetime, timedelta  # For handling date and time operations
-# import json  # For handling JSON data
 import os  # For interacting with the operating system, like file paths
 import requests  # For making HTTP requests
-# import telnetlib  # For Telnet connections
-# import paramiko  # For SSH connections
-# import ipaddress  # For handling and validating IP addresses
-# import time  # Provides time-related functions
-# import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
-# import random  # For generating random numbers or choices
-# import sys  # System-specific parameters and functions
-# import subprocess  # For running system commands
 import threading  # To run multiple tasks concurrently (Flask and Discord bot together)
-# import openai  # For interacting with OpenAI's API
-#from pypresence import Presence  # To integrate Rich Presence for Discord
-# from pypresence.exceptions import DiscordNotFound  # Exception handling for pypresence
 from flask import Flask, render_template, jsonify, request  # Flask web framework for building the GUI
-# from urllib.request import urlopen  # For making simple HTTP requests
 from markupsafe import Markup  # Safely handles string injection for HTML content
-# from bs4 import BeautifulSoup  # For web scraping and parsing HTML/XML
 import sys  # System-specific parameters and functions
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 import _Bot_Config
-
-# Local modules in this project
-# import _Bot_Config  # Bot configuration module (for credentials, tokens, etc.)
-# import _Router_Conf  # Contains configuration details for routers
-# import Internal_Modules as IM
-# from Internal_Modules import _Bot_Config
 from main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
@@ -98,7 +73,6 @@ bot_structure = """
 |  └──main.py               
 |  └──app.py 
 """
-
 
 # Route to display the bot's status and README.md content
 @app.route('/')

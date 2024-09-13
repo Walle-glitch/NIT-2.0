@@ -3,8 +3,6 @@ import random
 import asyncio
 import json
 import os
-# import discord 
-# from discord import app_commands
 
 # Global variables to keep track of current game state
 current_question = None

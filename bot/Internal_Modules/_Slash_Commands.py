@@ -1,10 +1,10 @@
 import discord  # Main Discord library for building bots
-# from discord import app_commands  # For building Discord slash commands
-# from discord.ext import commands  # Commands extension for Discord
-from datetime import datetime #, timedelta  # For handling date and time operations
+from datetime import datetime  # For handling date and time operations
 import json  # For handling JSON data
 import os  # For interacting with the operating system
 import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
+import aiohttp  # For making HTTP requests to the GitHub API
+import Bot_Config 
 
 # Global variables
 TICKET_CATEGORY_ID = 1012026430470766816  # Ticket Category ID
@@ -12,7 +12,8 @@ ARCHIVE_CATEGORY_ID = 1283156618682306601  # Archive Category ID
 MENTOR_ROLE = "Mentor"  # Role to ping in the ticket system
 INACTIVITY_TIMEOUT_DAYS = 2  # Timeout for ticket inactivity before archiving
 TICKET_COUNTER_FILE = "Json_Files/ticket_counter.json"  # File to store last ticket number
-
+GITHUB_API_URL = "https://api.github.com/repos/Walle-glitch/NIT-2.0//issues"
+GITHUB_TOKEN = Bot_Config._GITHUB_TOKEN()  # Replace with your GitHub token
 
 def setup(bot):
     # Function to load the last ticket number from the file
@@ -117,8 +118,39 @@ def setup(bot):
         else:
             await channel.send("Failed to archive the ticket. Archive category not found.")
 
-    # Help Command 
-    # Load the help commands from the JSON file
+    # Function to create a GitHub issue
+    async def create_github_issue(title, body, labels=None):
+        url = GITHUB_API_URL.format(owner="your_github_username", repo="your_repository")
+        headers = {
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+
+        data = {
+            "title": title,
+            "body": body,
+            "labels": labels or []
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=data, headers=headers) as response:
+                if response.status == 201:
+                    return await response.json()  # Issue successfully created
+                else:
+                    return await response.json()  # Handle errors
+
+    # Slash command to create a GitHub issue
+    @bot.tree.command(name="issue", description="Create a GitHub issue")
+    async def create_github_issue_command(interaction: discord.Interaction, title: str, *, description: str):
+        await interaction.response.send_message(f"Creating GitHub issue: {title}...", ephemeral=True)
+        issue = await create_github_issue(title, description)
+
+        if issue.get("html_url"):
+            await interaction.followup.send(f"Issue created successfully: {issue['html_url']}", ephemeral=True)
+        else:
+            await interaction.followup.send(f"Failed to create issue: {issue.get('message', 'Unknown error')}", ephemeral=True)
+
+    # Help Command
     def load_help_commands():
         help_commands = "Json_Files/Help_Commands.json"
         if os.path.exists(help_commands):

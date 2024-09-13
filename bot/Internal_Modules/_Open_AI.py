@@ -1,11 +1,9 @@
 import openai
 import asyncio
-# import discord
-# from discord import app_commands
-import _Bot_Config as botConfig
+import _Bot_Config
 
 # Set your OpenAI API key here
-openai.api_key = botConfig._Open_AI_Token()
+openai.api_key = _Bot_Config._Open_AI_Token()
 
 # Maximum tokens per response and max questions per session
 MAX_TOKENS = 150
