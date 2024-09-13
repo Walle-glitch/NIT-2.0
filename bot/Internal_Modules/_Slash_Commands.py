@@ -4,6 +4,10 @@ import json  # For handling JSON data
 import os  # For interacting with the operating system
 import asyncio  # Asynchronous I/O handling, used extensively in Discord bots
 import aiohttp  # For making HTTP requests to the GitHub API
+import sys  # System-specific parameters and functions
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+
 import Bot_Config 
 
 # Global variables

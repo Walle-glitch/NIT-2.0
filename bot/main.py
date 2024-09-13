@@ -18,9 +18,9 @@ import _Games
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan
 import _External_Media
-import _Slash_Commands
 import _Auction
 import _Bot_Config
+import _Slash_Commands
 
 ###########################################_Global_Variables_##########################################
 
