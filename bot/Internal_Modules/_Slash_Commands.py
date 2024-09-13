@@ -8,7 +8,7 @@ import sys  # System-specific parameters and functions
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
-import Bot_Config 
+import _Bot_Config 
 
 # Global variables
 TICKET_CATEGORY_ID = 1012026430470766816  # Ticket Category ID
@@ -17,7 +17,7 @@ MENTOR_ROLE = "Mentor"  # Role to ping in the ticket system
 INACTIVITY_TIMEOUT_DAYS = 2  # Timeout for ticket inactivity before archiving
 TICKET_COUNTER_FILE = "Json_Files/ticket_counter.json"  # File to store last ticket number
 GITHUB_API_URL = "https://api.github.com/repos/Walle-glitch/NIT-2.0//issues"
-GITHUB_TOKEN = Bot_Config._GITHUB_TOKEN()  # Replace with your GitHub token
+GITHUB_TOKEN = _Bot_Config._GITHUB_TOKEN()  # Replace with your GitHub token
 
 def setup(bot):
     # Function to load the last ticket number from the file
