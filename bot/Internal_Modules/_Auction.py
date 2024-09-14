@@ -4,8 +4,10 @@ import asyncio
 import json
 import os
 from uuid import uuid4
+import _Bot_Config
 
-AUCTIONS_FILE = "Json_Files/auctions.json"  # Path to the file storing auctions
+AUCTIONS_FILE = _Bot_Config._Auctions_File()
+ # Path to the file storing auctions
 active_auctions = {}
 
 # Function to load existing auctions from the file

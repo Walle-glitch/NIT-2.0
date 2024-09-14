@@ -1,14 +1,15 @@
 import discord
 import json
 import os
+import _Bot_Config
 
-# Path to the media JSON file
-_Media_File = "./Json_Files/media_channels.json"
+# Path to the media channels JSON file
+MEDIA_FILE = _Bot_Config._Media_File()
 
 # Function to load the media channels from the JSON file
 def load_media_channels():
-    if os.path.exists(_Media_File):
-        with open(_Media_File, "r") as f:
+    if os.path.exists(MEDIA_FILE):
+        with open(MEDIA_FILE, "r") as f:
             try:
                 return json.load(f)
             except json.JSONDecodeError:
@@ -17,7 +18,7 @@ def load_media_channels():
 
 # Function to save media channels to the JSON file
 def save_media_channels(media_data):
-    with open(_Media_File, "w") as f:
+    with open(MEDIA_FILE, "w") as f:
         json.dump(media_data, f, indent=4)
 
 # Function to add a YouTube channel or podcast

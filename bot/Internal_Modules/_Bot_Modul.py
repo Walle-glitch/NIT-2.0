@@ -14,24 +14,13 @@ from discord.ui import Button, View
 
 ################  Global Refs ################
 
-ROLE_JSON_FILE = "./Json_Files/roles.json"  # File where roles are saved
-WELCOME_MESSAGE_FILE = "./Json_Files/welcome_message_id.json"  # File where the welcome message ID is saved
-XP_FILE = "./Json_Files/xp_data.json" # File For storing all User XP
-EXCLUDED_ROLES = ["Admin", "Moderator", "Administrator"] # Roles that cannot be assigned using the /roll command
-
-# Define static roles in a dictionary format
-STATIC_ROLES = {
-    "NIT_24": "1254895590567837776",
-    "NIT_23": "1115331511848271942",
-    "NIT_22": "1012047713610760383",
-    "Another Start Year": "1013246037349126204",
-    "3rd Year!": "1079120617560879195",
-    "Union Member": "1079112794189865111",
-    "Arkiv-enjoyer": "1160861563083837511",
-}
-
-log_to_channel_id = 1277567653765976074  # The Discord channel ID where you want to send the logs OBS! Controll that it is the same as LOG_CHANNEL_ID in main.py
-Admin_Channel_id = 1012447677880995920 # Admin Channel ID.  
+ROLE_JSON_FILE = _Bot_Config._Role_Json_File()  # File where roles are saved
+WELCOME_MESSAGE_FILE = _Bot_Config._Welcome_Message_File()  # File where the welcome message ID is saved
+XP_FILE = _Bot_Config._XP_File()  # File for storing all User XP
+EXCLUDED_ROLES = _Bot_Config._Excluded_Roles()  # Roles that cannot be assigned using the /roll command
+STATIC_ROLES = _Bot_Config._Static_Roles()  # Static role names and their IDs
+LOG_TO_CHANNEL_ID = _Bot_Config._Log_To_Channel_ID()  # The Discord channel ID where logs are sent
+ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()  # Admin Channel ID
 
 ######### Utility Functions for Logging #########
 
@@ -40,7 +29,7 @@ async def log_to_channel(bot, message):
     Sends a message to the logging channel and prints to the server logs.
     """
     print(message)  # Print to server logs
-    channel = bot.get_channel(log_to_channel_id)
+    channel = bot.get_channel(LOG_TO_CHANNEL_ID)
     if channel:
         await channel.send(message)
 
@@ -306,7 +295,7 @@ async def mute_user(ctx, user: discord.Member, duration_in_hours: int, reason=No
         await ctx.send(f"An error occurred while muting the user: {str(e)}")
 
 async def report_action(ctx, user: discord.Member, action: str, reason=None, duration=None):
-    report_channel_id = Admin_Channel_id  # Replace with the actual channel ID for reports
+    report_channel_id = ADMIN_CHANNEL_ID  # Replace with the actual channel ID for reports
     report_channel = ctx.guild.get_channel(report_channel_id)
 
     if not report_channel:

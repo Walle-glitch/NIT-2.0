@@ -2,17 +2,17 @@
 import discord
 import json
 import os
+import _Bot_Config
 
 # Path to the current week and study plan JSON files
-_Current_Week_CCIE = "./Json_Files/current_week_CCIE.json"
-_Study_Plan_CCIE = "./Json_Files/CCIE_Study_Plan.json"
-
+CURRENT_WEEK_CCNP = _Bot_Config._Current_Week_CCIE()
+STUDY_PLAN_CCNP = _Bot_Config._Study_Plan_CCIE()
 
 # Function to fetch the current week from a file
 def get_current_week_CCIE():
-    if os.path.exists(_Current_Week_CCIE):
+    if os.path.exists(CURRENT_WEEK_CCNP):
         try:
-            with open(_Current_Week_CCIE, "r") as f:
+            with open(CURRENT_WEEK_CCNP, "r") as f:
                 data = json.load(f)
                 return data.get("current_week", 1)
         except json.JSONDecodeError:
@@ -22,21 +22,21 @@ def get_current_week_CCIE():
 
 # Function to save the current week to a file
 def save_current_week_CCIE(week_number):
-    with open(_Current_Week_CCIE, "w") as f:
+    with open(CURRENT_WEEK_CCNP, "w") as f:
         json.dump({"current_week": week_number}, f)
 
 # Function to fetch the study plan for the current week from a JSON file
 def get_weekly_goal_CCIE(week_number):
-    if os.path.exists(_Study_Plan_CCIE):
+    if os.path.exists(STUDY_PLAN_CCNP):
         try:
-            with open(_Study_Plan_CCIE, "r") as f:
+            with open(STUDY_PLAN_CCNP, "r") as f:
                 study_plan = json.load(f)
                 return study_plan.get(str(week_number), None)
         except json.JSONDecodeError:
             print("Study plan file is empty or invalid.")
             return None
     else:
-        print(f"Study plan file {_Study_Plan_CCIE} not found.")
+        print(f"Study plan file {STUDY_PLAN_CCNP} not found.")
         return None
 
 # Function to check if there was any previous post in the channel
@@ -53,8 +53,8 @@ async def post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID):
 
     # Fetch study plan data
     study_plan = None
-    if os.path.exists(_Study_Plan_CCIE):
-        with open(_Study_Plan_CCIE, "r") as f:
+    if os.path.exists(STUDY_PLAN_CCNP):
+        with open(STUDY_PLAN_CCNP, "r") as f:
             study_plan = json.load(f)
 
     if not study_plan:

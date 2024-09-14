@@ -15,8 +15,9 @@ app = Flask(__name__)
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
 CLIENT_SECRET = _Bot_Config._Client_Secret()
-REDIRECT_URI = 'http://172.20.0.10/callback'  # Replace with your server IP
-DISCORD_API_BASE_URL = 'https://discord.com/api'
+REDIRECT_URI = _Bot_Config._Redirect_URI()  # Or you can keep it as is if it's a static URI
+DISCORD_API_BASE_URL = _Bot_Config._Discord_API_Base_URL()
+
 
 # Discord OAuth2 URL for authorization
 OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email guilds"

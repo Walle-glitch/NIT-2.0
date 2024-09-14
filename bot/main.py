@@ -32,40 +32,23 @@ ADMIN_ROLE_NAME =  _Bot_Config._Admin_Role_Name()
 MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
 
-# Initialize global variables
-current_question = None
-correct_answer = None
-
 # Channel IDs
-XP_UPDATE_CHANNEL_ID = 1012067343452622949  # Channel for level-up notifications
-JOB_CHANNEL_ID = 1012235998308094032  # External job postings
-CCIE_STUDY_CHANNEL_ID = 1277674142686248971  # CCIE study channel
-CCNP_STUDY_CHANNEL_ID = 1277675077428842496  # CCNP study channel
-WELCOME_CHANNEL_ID = 1012026430470766818  # Welcome channel
-LOG_CHANNEL_ID = 1277567653765976074  # The Discord channel ID where you want to send the logs
-TICKET_CATEGORY_ID = 1012026430470766816 # Ticket Category " information "
-GEN_CHANNEL_ID = 1012026430932127926 # General "Skit snack"   
-YOUTUBE_CHANNEL_ID = 1012235998308094032  # Replace with actual channel ID
-PODCAST_CHANNEL_ID = 1012235998308094032  # Replace with actual channel ID
+XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
+JOB_CHANNEL_ID = _Bot_Config._Job_Channel_ID()
+CCIE_STUDY_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
+CCNP_STUDY_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
+WELCOME_CHANNEL_ID = _Bot_Config._Welcome_Channel_ID()
+LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
+TICKET_CATEGORY_ID = _Bot_Config._Ticket_Category_ID()
+GEN_CHANNEL_ID = _Bot_Config._Gen_Channel_ID()
+YOUTUBE_CHANNEL_ID = _Bot_Config._YouTube_Channel_ID()
+PODCAST_CHANNEL_ID = _Bot_Config._Podcast_Channel_ID()
 
 # File Management 
-ROLE_JSON_FILE = "Json_Files/roles.json"  # File where roles are stored
-EXCLUDED_ROLES = ["Admin", 
-                  "Moderator", 
-                  "Administrator", 
-                  "Privilege 15", 
-                  "Privilege 10", 
-                  "Bot-Master", 
-                  "@everyone", 
-                  "BOT", 
-                  "Första Medlemmen!",
-                  "DEN GLADASTE ADMIN",
-                  "NIT",
-                  "Mentor",
-                  ]  # Roles that cannot be assigned via reactions
+ROLE_JSON_FILE = _Bot_Config._Role_Json_File() # File where roles are stored
+EXCLUDED_ROLES = _Bot_Config._Excluded_Roles() # Roles that cannot be assigned via reactions
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
-
 
 intents = discord.Intents.all()
 intents.message_content = True
