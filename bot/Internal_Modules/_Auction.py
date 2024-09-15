@@ -6,7 +6,7 @@ import os
 from uuid import uuid4
 import _Bot_Config
 
-AUCTIONS_FILE = _Bot_Config._Auctions_File()  # Path to the file storing auctions
+AUCTIONS_FILE = _Bot_Config._Auctions_File()
 active_auctions = {}
 
 # Load existing auctions from the file
@@ -81,6 +81,7 @@ class AuctionView(discord.ui.View):
         # End the auction immediately
         await end_auction(self.auction_id, reason="buy_now")
 
+        # Remove the buttons from the auction post
         await interaction.response.edit_message(content=f"**Item:** {auction['item_name']}\n"
                                                         f"**Sold to:** {interaction.user.mention} for {auction['buy_now_price']} kr.\n"
                                                         f"**Auction Ended**",
@@ -121,7 +122,11 @@ async def create_auction(channel, user, item_name, start_price, buy_now_price, d
     embed.set_author(name=user.display_name, icon_url=user.avatar.url)
 
     view = AuctionView(auction_id, False, channel)
-    await channel.send(embed=embed, view=view)
+    auction_message = await channel.send(embed=embed, view=view)
+
+    # Create a thread and ping the user
+    thread = await auction_message.create_thread(name=f"{item_name} Discussion", auto_archive_duration=1440)
+    await thread.send(f"{user.mention}, här kan du lägga till information om din vara, eller svara på frågor om den.")
 
     # Handle auction end asynchronously
     asyncio.create_task(handle_auction_end(auction_id))
@@ -153,6 +158,17 @@ async def end_auction(auction_id, reason="time"):
 
         await channel.send(f"Auction for **{auction['item_name']}** is over!\n"
                            f"Winner: {winner.mention} with a bid of {auction['current_bid']} kr.")
+
+        # Send PMs to the seller and winner
+        try:
+            await seller.send(f"Your auction for **{auction['item_name']}** has ended. The winner is {winner.display_name} with a bid of {auction['current_bid']} kr.")
+        except discord.Forbidden:
+            print(f"Could not send PM to seller {seller.display_name}")
+
+        try:
+            await winner.send(f"Congratulations! You won the auction for **{auction['item_name']}** with a bid of {auction['current_bid']} kr.")
+        except discord.Forbidden:
+            print(f"Could not send PM to winner {winner.display_name}")
 
     # Remove the buttons and disable the view
     await channel.edit(name=f"closed-{auction['item_name']}")
