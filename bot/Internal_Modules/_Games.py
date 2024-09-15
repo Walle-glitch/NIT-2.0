@@ -12,6 +12,7 @@ import _Bot_Config
 # Global variables to keep track of current game state
 current_question = None
 correct_answer = None
+current_game_type = None  # Ny variabel för att spåra spelets typ
 game_task = None
 
 # Paths to JSON files
@@ -62,8 +63,11 @@ def generate_subnet_question():
 def generate_network_question():
     """Generates a random network-related question from the loaded JSON file."""
     questions = load_network_questions()
-    question = random.choice(questions)
-    return question["question"], question["options"], question["correct_option_index"]
+    question_data = random.choice(questions)
+    question = question_data["question"]
+    options = question_data["options"]
+    correct_index = question_data["correct_option_index"]
+    return question, options, correct_index
 
 def check_subnet_answer(user_answer, correct_answer):
     """Checks if the user's answer for subnet question is correct."""
@@ -75,11 +79,13 @@ def check_network_answer(selected_option_index, correct_option_index):
 
 async def start_game(ctx, game_type):
     """Starts a game based on the selected game type."""
-    global current_question, correct_answer, game_task
+    global current_question, correct_answer, current_game_type, game_task
 
     if game_task and not game_task.done():
         await ctx.send("A game is already in progress. Please finish it first.")
         return
+
+    current_game_type = game_type  # Spara spelets typ
 
     if game_type == 'subnet':
         current_question, correct_answer = generate_subnet_question()
@@ -101,22 +107,23 @@ async def run_game(ctx):
 
 def reset_game():
     """Resets the game state."""
-    global current_question, correct_answer, game_task
+    global current_question, correct_answer, current_game_type, game_task
     current_question = None
     correct_answer = None
+    current_game_type = None
     if game_task and not game_task.done():
         game_task.cancel()
         game_task = None
 
 async def process_answer(message):
     """Processes the answer from the user."""
-    global current_question, correct_answer
+    global current_question, correct_answer, current_game_type
 
-    if current_question is None:
+    if current_question is None or current_game_type is None:
         return
-    
+
     # Handle Subnet question
-    if "Subnet question" in current_question:
+    if current_game_type == 'subnet':
         if check_subnet_answer(message.content, correct_answer):
             await message.channel.send(f"Correct! The answer is {correct_answer}.")
             await show_score_comparison(message.channel, message.author.id, 10)  # 10 points for correct answer
@@ -125,7 +132,7 @@ async def process_answer(message):
         reset_game()
     
     # Handle Network question
-    elif "Network question" in current_question:
+    elif current_game_type == 'network':
         try:
             selected_option = int(message.content) - 1
             if check_network_answer(selected_option, correct_answer):

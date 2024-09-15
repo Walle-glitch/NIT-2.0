@@ -213,6 +213,7 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {str(e)}")
 
 #############################_Study_Commands_#############################
+
 @bot.command()
 async def game(ctx):
     view = View()
@@ -254,7 +255,9 @@ async def on_message(message):
     # Check if a game is running and if we are waiting for an answer
     if _Games.current_question is not None and message.content and message.author != bot.user:
         await _Games.process_answer(message)
-        
+
+##############_RFC_##############
+
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
     """
