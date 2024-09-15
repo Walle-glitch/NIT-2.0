@@ -109,6 +109,35 @@ def reset_game():
         game_task.cancel()
         game_task = None
 
+async def process_answer(message):
+    """Processes the answer from the user."""
+    global current_question, correct_answer
+
+    if current_question is None:
+        return
+    
+    # Handle Subnet question
+    if "Subnet question" in current_question:
+        if check_subnet_answer(message.content, correct_answer):
+            await message.channel.send(f"Correct! The answer is {correct_answer}.")
+            await show_score_comparison(message.channel, message.author.id, 10)  # 10 points for correct answer
+        else:
+            await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
+        reset_game()
+    
+    # Handle Network question
+    elif "Network question" in current_question:
+        try:
+            selected_option = int(message.content) - 1
+            if check_network_answer(selected_option, correct_answer):
+                await message.channel.send("Correct!")
+                await show_score_comparison(message.channel, message.author.id, 10)
+            else:
+                await message.channel.send(f"Wrong answer. The correct option was {correct_answer + 1}.")
+            reset_game()
+        except ValueError:
+            await message.channel.send("Please respond with the option number (1, 2, 3, etc.).")
+
 def update_user_score(user_id, points):
     """Updates the score for the user and saves it to a JSON file."""
     scores = load_user_scores()
@@ -131,4 +160,3 @@ async def show_score_comparison(ctx, user_id, new_points):
         await ctx.send(f"Your current score is {new_score} points. This is your first game!")
     else:
         await ctx.send(f"Your previous score was {previous_score} points, and now your score is {new_score} points.")
-

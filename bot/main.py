@@ -56,6 +56,7 @@ intents.message_content = True
 intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
+intents.messages = True
 
 bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
 
@@ -212,7 +213,6 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {str(e)}")
 
 #############################_Study_Commands_#############################
-
 @bot.command()
 async def game(ctx):
     view = View()
@@ -221,10 +221,12 @@ async def game(ctx):
     network_button = Button(label="Network Questions", style=discord.ButtonStyle.secondary)
     
     # Lägg till callbacks för knapparna
-    async def subnet_callback(interaction):
+    async def subnet_callback(interaction: discord.Interaction):
+        await interaction.response.defer()
         await _Games.start_game(ctx, 'subnet')
-    
-    async def network_callback(interaction):
+
+    async def network_callback(interaction: discord.Interaction):
+        await interaction.response.defer()
         await _Games.start_game(ctx, 'network')
     
     subnet_button.callback = subnet_callback
@@ -237,8 +239,15 @@ async def game(ctx):
 
 @bot.event
 async def on_message(message):
-    # Detta ser till att kommandohantering fortfarande fungerar
+    if message.author == bot.user:
+        return
+    
+    # This ensures command handling still works
     await bot.process_commands(message)
+    
+    # Check if there is a current question active in the game
+    if _Games.current_question and message.content:
+        await _Games.process_answer(message)
 
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
