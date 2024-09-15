@@ -363,7 +363,8 @@ async def addrole(ctx, role_name: str = None):
         embed.add_field(name=f'"{role}"', value=f'Assign with `!addrole "{role}"`', inline=False)
     await ctx.send(embed=embed)
     return
-    
+
+'''
     if role_name not in roles:
         await ctx.send(f"Role '{role_name}' could not be found.")
         return
@@ -383,6 +384,8 @@ async def addrole(ctx, role_name: str = None):
             embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
     
     await ctx.send(embed=embed)
+    return
+''' 
 
 ######_Remove_Role_#####
 
@@ -431,7 +434,7 @@ async def removerole(ctx, role_name: str = None):
 ###########################################_Study_Plan_Loops_###########################################
 
 
-@tasks.loop(hours=1)  # Kör varje vecka (168 timmar = 7 dagar)
+@tasks.loop(hours=24)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
@@ -440,7 +443,7 @@ async def weekly_study_plan_CCIE():
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
-@tasks.loop(hours=1)  # Kör varje vecka (12 timme)
+@tasks.loop(hours=24)  # Kör varje vecka (12 timme)
 async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
