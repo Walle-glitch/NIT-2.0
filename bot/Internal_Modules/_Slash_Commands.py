@@ -125,10 +125,10 @@ def setup(bot):
 
     # Function to create a GitHub issue
     async def create_github_issue(title, body, labels=None):
-        url = GITHUB_API_URL.format(owner="your_github_username", repo="your_repository")
+        url = GITHUB_API_URL.format(owner="your_github_username", repo="your_repository")  # Replace with actual owner and repo
         headers = {
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
         }
 
         data = {
@@ -141,10 +141,14 @@ def setup(bot):
             async with session.post(url, json=data, headers=headers) as response:
                 if response.status == 201:
                     return await response.json()  # Issue successfully created
+                elif response.status == 404:
+                    return {"message": "Repository not found or invalid URL"}
+                elif response.status == 401:
+                    return {"message": "Invalid GitHub token or insufficient permissions"}
                 else:
-                    return await response.json()  # Handle errors
+                    return await response.json()  # Handle other errors
 
-    # Slash command to create a GitHub issue
+# Slash command to create a GitHub issue
     @bot.tree.command(name="issue", description="Create a GitHub issue")
     async def create_github_issue_command(interaction: discord.Interaction, title: str, *, description: str):
         await interaction.response.send_message(f"Creating GitHub issue: {title}...", ephemeral=True)
