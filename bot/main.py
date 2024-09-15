@@ -237,18 +237,24 @@ async def game(ctx):
     
     await ctx.send("Choose a game mode:", view=view)
 
+@bot.command()
+async def game_stop(ctx):
+    """Command to stop a running game."""
+    if _Games.game_task:
+        _Games.reset_game()
+        await ctx.send("Game stopped.")
+    else:
+        await ctx.send("No game is currently running.")
+
 @bot.event
 async def on_message(message):
-    if message.author == bot.user:
-        return
-    
-    # This ensures command handling still works
+    # Process commands first
     await bot.process_commands(message)
     
-    # Check if there is a current question active in the game
-    if _Games.current_question and message.content:
+    # Check if a game is running and if we are waiting for an answer
+    if _Games.current_question is not None and message.content and message.author != bot.user:
         await _Games.process_answer(message)
-
+        
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
     """

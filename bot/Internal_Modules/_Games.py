@@ -91,14 +91,13 @@ async def start_game(ctx, game_type):
         correct_answer = correct_index  # Store the correct answer index
         await ctx.send(f"Network question:\n{current_question}")
     
-    game_task = asyncio.create_task(run_game_timer(ctx, 300))  # 5 minutes
+    game_task = asyncio.create_task(run_game(ctx))
 
-async def run_game_timer(ctx, duration):
-    """Runs a timer and ends the game when time is up."""
-    await asyncio.sleep(duration)
-    if game_task and not game_task.done():
-        await ctx.send("Time is up! The game has ended.")
-        reset_game()
+async def run_game(ctx):
+    """Runs the game loop until the user stops it with !game_stop."""
+    while True:
+        # Keep the game running until stopped
+        await asyncio.sleep(60)  # Keeping it alive, checks every minute
 
 def reset_game():
     """Resets the game state."""
