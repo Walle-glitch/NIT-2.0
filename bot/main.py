@@ -4,6 +4,7 @@
 
 import discord  # Main Discord library for building bots
 from discord.ext import commands, tasks  # Commands and tasks extension for Discord
+from discord.ui import Button, View
 from datetime import datetime #, timedelta  # For handling date and time operations
 import json  # For handling JSON data
 import os  # For interacting with the operating system, like file paths
@@ -24,7 +25,7 @@ import _Slash_Commands
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/13.1"  # Global version number variable
+version_nr = "Current Version is 24/09/15.1M"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
@@ -95,7 +96,6 @@ _Slash_Commands.setup(bot)
 ###########################################_All_User_Commands_##########################################
 
 #############################_Utilities_Commands_#############################
-
 
 # Sell command to start an auction
 @bot.command(name="Sell")
@@ -168,38 +168,6 @@ async def ai_command(ctx, *, question=None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-#############################_Game_Commands_#############################
-
-@bot.command()
-async def subnet(ctx):
-    try:
-        global current_question, correct_answer
-        
-        current_question, correct_answer = _Games.generate_subnet_question()
-        await ctx.send(f"Subnet question: {current_question}")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-@bot.event
-async def on_message(message):
-    try:
-        global current_question, correct_answer
-        
-        if current_question and message.author != bot.user:
-            user_answer = message.content
-            
-            if _Games.check_answer(user_answer, correct_answer):
-                await message.channel.send("Correct answer! Well done!")
-                _Games.reset_game()
-            else:
-                await message.channel.send(f"Incorrect answer. The correct answer is: {correct_answer}")
-            
-            current_question = None
-            correct_answer = None
-    except Exception as e:
-        await message.channel.send(f"An error occurred: {str(e)}")
-    
-    await bot.process_commands(message)
 
 #############################_Network_Commands_#############################
 
@@ -244,6 +212,33 @@ async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
         await ctx.send(f"An error occurred: {str(e)}")
 
 #############################_Study_Commands_#############################
+
+@bot.command()
+async def game(ctx):
+    view = View()
+    
+    subnet_button = Button(label="Subnet", style=discord.ButtonStyle.primary)
+    network_button = Button(label="Network Questions", style=discord.ButtonStyle.secondary)
+    
+    # Lägg till callbacks för knapparna
+    async def subnet_callback(interaction):
+        await _Games.start_game(ctx, 'subnet')
+    
+    async def network_callback(interaction):
+        await _Games.start_game(ctx, 'network')
+    
+    subnet_button.callback = subnet_callback
+    network_button.callback = network_callback
+    
+    view.add_item(subnet_button)
+    view.add_item(network_button)
+    
+    await ctx.send("Choose a game mode:", view=view)
+
+@bot.event
+async def on_message(message):
+    # Detta ser till att kommandohantering fortfarande fungerar
+    await bot.process_commands(message)
 
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):

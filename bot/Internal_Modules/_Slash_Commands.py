@@ -15,7 +15,7 @@ GITHUB_TOKEN = _Bot_Config._GITHUB_TOKEN()  # Replace with your GitHub token
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name() # Role to ping in the ticket system
 TICKET_CATEGORY_ID = _Bot_Config._Ticket_Category_ID()  # Ticket Category ID
 ARCHIVE_CATEGORY_ID = _Bot_Config._Archive_Category_ID() # Archive Category ID
-TICKET_COUNTER_FILE = _Bot_Config._ticket_counter_File()  # File to store last ticket number
+TICKET_COUNTER_FILE = _Bot_Config._Ticket_Counter_File()  # File to store last ticket number
 GITHUB_API_URL = _Bot_Config._Github_API_URL()
 
 INACTIVITY_TIMEOUT_DAYS = 2  # Timeout for ticket inactivity before archiving
