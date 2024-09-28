@@ -12,6 +12,7 @@ from main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
 
+
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
 CLIENT_SECRET = _Bot_Config._Client_Secret()
@@ -20,7 +21,7 @@ DISCORD_API_BASE_URL = _Bot_Config._Discord_API_Base_URL()
 
 
 # Discord OAuth2 URL for authorization
-OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20email guilds"
+OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20emailguilds"
 
 
 # Function to load README.md content from the root directory
@@ -35,64 +36,16 @@ users_data = [
     {"id": 3, "name": "Alice Johnson", "role": "Member"}
 ]
 
-# Bot hierarchy structure for display
-bot_structure = """
-/nit-2.0/
-├── README.md
-├── requirements.txt
-├──bot/
-|  └──__pycache__/
-│      └── Bot.cpython-310.pyc
-|  └──__Internal_Modules/           
-│      └── __init__.py
-│      └── _Bot_Modul.py     
-│      └── _CCIE_Study_Plan.py
-│      └── _CCNP_Study_Plan.py
-│      └── _External_Media.py
-│      └── _Games.py
-│      └── _Open_AI.py
-|  └──Json_Files/
-│      └── CCIE_Study_Plan.json
-│      └── CCNP_Study_Plan.json
-│      └── current_week_CCIE.json
-│      └── current_week_CCNP.json
-│      └── Help_Commands.json
-│      └── media_channels.json
-│      └── network_questions.json
-│      └── roles.json
-│      └── welcome_message_id.json
-│      └── xp_data.json
-|  └──static/
-│      └── style.css
-|  └──templates
-│      └── index.html
-│      └── base.html
-│      └── bot_hierarchy.html
-│      └── home.html
-│      └── template_view.html
-│      └── users.html
-|  └──main.py               
-|  └──app.py 
-"""
-
 # Route to display the bot's status and README.md content
 @app.route('/')
 def home():
     readme_content = get_readme_content()
     return render_template('home.html', readme_content=readme_content)
 
-
 # API route to check bot status
 @app.route('/api/status')
 def bot_status():
     return jsonify({"status": "running"})
-
-
-# Route for displaying the bot's file structure
-@app.route('/bot-hierarchy')
-def bot_hierarchy():
-    return render_template('bot_hierarchy.html', bot_structure=bot_structure)
-
 
 # Route for displaying user list
 @app.route('/users')
