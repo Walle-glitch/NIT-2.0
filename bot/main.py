@@ -10,6 +10,7 @@ import json  # For handling JSON data
 import os  # For interacting with the operating system, like file paths
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
+import asyncio 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
@@ -25,13 +26,16 @@ import _Slash_Commands
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/15.1M"  # Global version number variable
+version_nr = "Current Version is 24/09/29.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
 ADMIN_ROLE_NAME =  _Bot_Config._Admin_Role_Name()
 MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
+
+# Definiera roller som kräver lösenord
+PASSWORD_PROTECTED_ROLES = _Bot_Config._protected_Poles()
 
 # Channel IDs
 XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
@@ -95,7 +99,6 @@ async def on_ready():
 _Slash_Commands.setup(bot)
 
 ###########################################_All_User_Commands_##########################################
-
 #############################_Utilities_Commands_#############################
 
 # Sell command to start an auction
@@ -183,32 +186,6 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
     except subprocess.CalledProcessError as e:
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-@bot.command()
-async def BGP(ctx):
-    try:
-        reply = (
-            'When using the !BGP_Setup command,\n' 
-            'you need to provide two variables,\n'
-            'like this: "!BGP_Setup [your IP address] [your AS number]".\n'
-            'You will receive a reply with the needed info when the configuration is complete.'
-        )
-        await ctx.send(reply)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-@bot.command()
-async def BGP_Setup(ctx, neighbor_ip: str, neighbor_as: str):
-    try:
-        await ctx.send("Starting BGP configuration...")
-        gi0_ip, as_number = _Bot_Modul.configure_bgp_neighbor(neighbor_ip, neighbor_as)
-        
-        if as_number is None:
-            await ctx.send(f"An error occurred: {gi0_ip}")
-        else:
-            await ctx.send(f"BGP configuration complete. GigabitEthernet0/0 IP address: {gi0_ip}, AS number: {as_number}")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
@@ -354,30 +331,28 @@ def load_roles():
         print(f"Failed to load roles: {str(e)}")
         return {}
 
-######_Add_Role_#####
-
 @bot.command()
 async def addrole(ctx, role_name: str = None):
     """
     Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
     """
     roles = load_roles()
-    
+
     if role_name is None:
         # Filtrera roller som inte finns i EXCLUDED_ROLES
         available_roles = [role for role in roles.keys() if role not in EXCLUDED_ROLES]
         if not available_roles:
             await ctx.send("No roles available for assignment.")
             return
-        
-# Skapa en embed med rollerna
-    embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
-    for role in available_roles:
-        embed.add_field(name=f'"{role}"', value=f'Assign with `!addrole "{role}"`', inline=False)
-    await ctx.send(embed=embed)
-    return
 
-'''
+        # Skapa en embed med rollerna
+        embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
+        for role in available_roles:
+            embed.add_field(name=f'"{role}"', value=f'Assign with `!addrole "{role}"`', inline=False)
+
+        await ctx.send(embed=embed)
+        return
+
     if role_name not in roles:
         await ctx.send(f"Role '{role_name}' could not be found.")
         return
@@ -387,6 +362,23 @@ async def addrole(ctx, role_name: str = None):
         await ctx.send(f"Role '{role_name}' could not be found on this server.")
         return
 
+    # Kontrollera om rollen är lösenordsskyddad
+    if role_name in PASSWORD_PROTECTED_ROLES:
+        await ctx.author.send(f"The role '{role_name}' requires a password. Please respond with the password within 60 seconds:")
+
+        try:
+            # Vänta på att användaren skickar lösenordet i DM
+            msg = await bot.wait_for('message', timeout=60.0, check=lambda m: m.author == ctx.author and isinstance(m.channel, discord.DMChannel))
+
+            # Kontrollera om lösenordet är korrekt
+            if msg.content != PASSWORD_PROTECTED_ROLES[role_name]:
+                await ctx.author.send("Incorrect password. Role assignment canceled.")
+                return
+
+        except asyncio.TimeoutError:
+            await ctx.author.send("You took too long to respond. Role assignment canceled.")
+            return
+
     if role in ctx.author.roles:
         embed = discord.Embed(title="Role Already Assigned", description=f"You already have the role **{role_name}**.", color=discord.Color.orange())
     else:
@@ -395,10 +387,8 @@ async def addrole(ctx, role_name: str = None):
             embed = discord.Embed(title="Role Assigned", description=f"The role **{role_name}** has been assigned to you!", color=discord.Color.green())
         except discord.Forbidden:
             embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
-    
+
     await ctx.send(embed=embed)
-    return
-''' 
 
 ######_Remove_Role_#####
 
@@ -446,7 +436,6 @@ async def removerole(ctx, role_name: str = None):
 
 ###########################################_Study_Plan_Loops_###########################################
 
-
 @tasks.loop(hours=24)  # Kör varje vecka (168 timmar = 7 dagar)
 async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
@@ -479,7 +468,7 @@ async def job_posting_loop():
         await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
-
+'''
 # Welcome Message
 @bot.event
 async def on_member_join(member):
@@ -508,6 +497,7 @@ async def on_member_join(member):
         log_channel = bot.get_channel(LOG_CHANNEL_ID)
         if log_channel:
             await log_channel.send(f"Could not send DM to {member.mention}. They might have DMs disabled.")
+'''
 
 # XP Levels Handling
 @bot.event
@@ -615,8 +605,6 @@ async def test(ctx):
         ("about", None),
         ("ping", "8.8.8.8"),
         ("rfc", "791"),
-        ("subnet", None),
-        ("BGP", None),
         ("start_game", "subnet"),
         ("stop_game", None),
         ("start_game", "network"),

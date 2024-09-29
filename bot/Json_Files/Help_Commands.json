@@ -12,7 +12,6 @@
         "Game Menu": "!game - Choose between different games (Subnet and Network Questions).",
         "Ping": "!ping [IP_ADDRESS] - Perform a ping test to the specified IP address.",
         "RFC": "!rfc [NUMBER] - Retrieve information about the specified RFC number.",
-        "BGP Setup": "!BGP-Setup [IP_ADDRESS] [AS_NUMBER] - Configure BGP peering with the given IP address and AS number.",
         "Add Role": "!addrole - Assign a predefined role to the user.",
         "Remove Role": "!removerole - Remove a predefined role from the user.",
         "Kick": "!kick [username] - Kick a user from the server. (Privilege 10/15 only)",
