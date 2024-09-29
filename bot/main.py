@@ -364,7 +364,7 @@ async def addrole(ctx, role_name: str = None):
 
     # Kontrollera om rollen är lösenordsskyddad
     if role_name in PASSWORD_PROTECTED_ROLES:
-        await ctx.author.send(f"The role '{role_name}' requires a password. Please respond with the password within 60 seconds:")
+        await ctx.author.send(f"The role '{role_name}' requires a password. Please respond with the password within 60 seconds, The pasword can be found on Canvas in the descussion thread.:")
 
         try:
             # Vänta på att användaren skickar lösenordet i DM
