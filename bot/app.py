@@ -5,13 +5,12 @@ from flask import Flask, render_template, jsonify, request  # Flask web framewor
 from markupsafe import Markup  # Safely handles string injection for HTML content
 import sys  # System-specific parameters and functions
 
-
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+
 import _Bot_Config
 from main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)
-
 
 # Discord OAuth2 credentials (replace with your own)
 CLIENT_ID = _Bot_Config._Client_ID()
@@ -19,10 +18,8 @@ CLIENT_SECRET = _Bot_Config._Client_Secret()
 REDIRECT_URI = _Bot_Config._Redirect_URI()  # Or you can keep it as is if it's a static URI
 DISCORD_API_BASE_URL = _Bot_Config._Discord_API_Base_URL()
 
-
 # Discord OAuth2 URL for authorization
 OAUTH2_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20emailguilds"
-
 
 # Function to load README.md content from the root directory
 def get_readme_content():
@@ -91,11 +88,9 @@ def callback():
     else:
         return "Error getting access token", 400
 
-
 # Start the Flask server in a separate thread
 def run_flask_app():
     app.run(host='0.0.0.0', port=5000)
-
 
 if __name__ == "__main__":
     # Run Flask in a separate thread

@@ -24,7 +24,6 @@ import _External_Media
 import _Auction
 import _Bot_Config
 import _Slash_Commands
-import discord
 
 ###########################################_Global_Variables_##########################################
 
@@ -58,6 +57,7 @@ PODCAST_CHANNEL_ID = _Bot_Config._Podcast_Channel_ID()
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File() # File where roles are stored
 EXCLUDED_ROLES = _Bot_Config._Excluded_Roles() # Roles that cannot be assigned via reactions
 ACTIVE_USERS_FILE = _Bot_Config._ACTIVE_USERS_FILE()
+
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 intents = discord.Intents.all()
@@ -479,7 +479,6 @@ async def job_posting_loop():
     except Exception as e:
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
 
-
 ####################################################
 
 # Kolla om filen existerar, annars skapa en ny fil
@@ -490,24 +489,20 @@ if not os.path.isfile(ACTIVE_USERS_FILE):
     with open(ACTIVE_USERS_FILE, 'w') as file:
         json.dump({}, file)
 
-
 def is_late_night():
     """Kolla om det är mellan 00:01 och 05:00"""
     current_time = datetime.now().time()
     return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
-
 
 def load_active_users():
     """Ladda aktiva användare från JSON-filen"""
     with open(ACTIVE_USERS_FILE, 'r') as file:
         return json.load(file)
 
-
 def save_active_users(active_users):
     """Spara aktiva användare till JSON-filen"""
     with open(ACTIVE_USERS_FILE, 'w') as file:
         json.dump(active_users, file)
-
 
 async def add_role(member, role):
     """Lägg till LateNightCrew rollen till medlemmen"""
@@ -515,13 +510,11 @@ async def add_role(member, role):
         await member.add_roles(role)
         print(f"Lagt till LateNightCrew-roll för {member.name}")
 
-
 async def remove_role(member, role):
     """Ta bort LateNightCrew rollen från medlemmen"""
     if role in member.roles:
         await member.remove_roles(role)
         print(f"Tagit bort LateNightCrew-roll från {member.name}")
-
 
 @tasks.loop(minutes=1)
 async def monitor_activity(bot):
@@ -550,7 +543,6 @@ async def monitor_activity(bot):
     if not is_late_night():
         with open(ACTIVE_USERS_FILE, 'w') as file:
             json.dump({}, file)
-
 
 async def track_activity(message):
     """Spåra användaraktivitet"""

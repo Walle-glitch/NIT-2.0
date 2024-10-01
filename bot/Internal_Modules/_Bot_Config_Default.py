@@ -158,5 +158,3 @@ def _GitHub_API_URL():
 def _GitHub_Token():
     """Returns the GitHub access token."""
     return "GitHub access token"  # Replace with actual token
-
-

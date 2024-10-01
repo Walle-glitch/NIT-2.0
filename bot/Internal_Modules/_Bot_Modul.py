@@ -12,7 +12,6 @@ import os
 import _Bot_Config
 from discord.ui import Button, View
 
-
 ################  Global Refs ################
 
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File()  # File where roles are saved
@@ -161,7 +160,6 @@ async def send_resource_embed(ctx):
     for embed in embeds:
         await ctx.send(embed=embed)
 
-
 ################### GET AN RFC ###################
 
 def get_rfc(rfc_number):
@@ -197,73 +195,6 @@ def get_rfc(rfc_number):
     
     except requests.RequestException as e:
         return f"Error retrieving RFC: {e}"
-
-
-'''
-############### Create a BGP neighbor ###################
-
-# Function to configure BGP on a specific router
-def configure_bgp_neighbor(neighbor_ip, neighbor_as):
-    router_ip = _Router_Conf.ROUTER_IP
-    username = _Router_Conf.SSH_USERNAME
-    password = _Router_Conf.SSH_PASSWORD
-    
-    try:
-        # Connect to the router via Telnet
-        tn = telnetlib.Telnet(router_ip)
-
-        # Log in with username and password
-        tn.read_until(b"Username: ")
-        tn.write(username.encode('ascii') + b"\n")
-        
-        tn.read_until(b"Password: ")
-        tn.write(password.encode('ascii') + b"\n")
-
-        # Wait for the prompt
-        
-        # Send commands to configure BGP
-        commands = [
-            "enable",  # Assuming no enable password is needed
-            "configure terminal",
-            f"router bgp 64512",
-            f"neighbor {neighbor_ip} remote-as {neighbor_as}",
-            f"neighbor {neighbor_ip} ebgp-multihop 30",
-            f"neighbor {neighbor_ip} update-source GigabitEthernet0/0",
-            f"address-family ipv4",
-            f"neighbor {neighbor_ip} activate",
-            "exit-address-family",
-            "exit",
-            "interface gi0/0",
-            "do show ip interface brief | include GigabitEthernet0/0",
-            "do show running-config | include router bgp"
-        ]
-
-        output = ""
-        for cmd in commands:
-            tn.write(cmd.encode('ascii') + b"\n")
-            time.sleep(1)  # Wait for the command to execute
-            output += tn.read_very_eager().decode('ascii')
-
-        # Extract information about IP address and existing AS number
-        interface_output = output.splitlines()
-        gi0_ip = ""
-        as_number = ""
-        for line in interface_output:
-            if "GigabitEthernet0/0" in line:
-                gi0_ip = line.split()[1]  # Extract the IP address from the correct line
-            if "router bgp" in line:
-                as_number = line.split()[2]  # Extract the AS number from the correct line
-
-        return gi0_ip, as_number
-
-    except Exception as e:
-        return f"An error occurred: {str(e)}", None
-
-    finally:
-        # Close the Telnet connection
-        tn.write(b"exit\n")
-        tn.close()
-'''
 
 ############### Moderation of Members ###################
 
