@@ -20,6 +20,7 @@ import _Open_AI
 import _Games
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan
+import _CCNA_Study_Plan
 import _External_Media
 import _Auction
 import _Bot_Config
@@ -46,6 +47,7 @@ XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
 JOB_CHANNEL_ID = _Bot_Config._Job_Channel_ID()
 CCIE_STUDY_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
 CCNP_STUDY_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
+CCNA_STUDY_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
 WELCOME_CHANNEL_ID = _Bot_Config._Welcome_Channel_ID()
 LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
 TICKET_CATEGORY_ID = _Bot_Config._Ticket_Category_ID()
@@ -89,6 +91,7 @@ async def on_ready():
     print("Global commands synced.")
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
+    weekly_study_plan_CCNA.start()
     monitor_activity.start(bot)
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
@@ -463,6 +466,15 @@ async def weekly_study_plan_CCNP():
             await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
+
+@tasks.loop(hours=24)  # Kör varje vecka (12 timme)
+async def weekly_study_plan_CCNA():
+    # Kontrollera att det är söndag innan den postar veckans tips
+    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+        try:
+            await _CCNA_Study_Plan.post_weekly_goal_CCNA(bot, CCNA_STUDY_CHANNEL_ID)
+        except Exception as e:
+            await log_to_channel(bot, f"An error occurred during the CCNA study plan: {str(e)}")
 
 # Command to manually fetch and post jobs
 @bot.command()

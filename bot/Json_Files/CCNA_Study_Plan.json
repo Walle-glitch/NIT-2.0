@@ -1,0 +1,296 @@
+{
+    "1": {
+        "title": "Week 1: Network Fundamentals Part 1",
+        "reading": [
+            "1.1 Explain the role and function of network components",
+            "1.2 Describe characteristics of network topology architectures",
+            "1.3 Compare physical interface and cabling types"
+        ],
+        "labs": [
+            "Identify different network components",
+            "Practice configuring different topology architectures",
+            "Explore different cabling types and their uses"
+        ],
+        "tips": [
+            "Understand the differences between various network devices like routers, switches, and firewalls.",
+            "Familiarize yourself with common topology architectures."
+        ],
+        "resources": [
+            "Cisco CCNA Official Cert Guide",
+            "Cisco Packet Tracer for lab simulations"
+        ]
+    },
+    "2": {
+        "title": "Week 2: Network Fundamentals Part 2",
+        "reading": [
+            "1.4 Identify interface and cable issues",
+            "1.5 Compare TCP to UDP",
+            "1.6 Configure and verify IPv4 addressing and subnetting"
+        ],
+        "labs": [
+            "Configure IPv4 addresses and practice subnetting",
+            "Troubleshoot cable issues and recognize collision/errors"
+        ],
+        "tips": [
+            "Practice subnetting exercises regularly.",
+            "Understand the differences between TCP and UDP."
+        ],
+        "resources": [
+            "Subnetting Practice Websites",
+            "Wireshark for analyzing TCP/UDP traffic"
+        ]
+    },
+    "3": {
+        "title": "Week 3: Network Fundamentals Part 3",
+        "reading": [
+            "1.7 Describe private IPv4 addressing",
+            "1.8 Configure and verify IPv6 addressing and prefix",
+            "1.9 Describe IPv6 address types"
+        ],
+        "labs": [
+            "Configure IPv6 addresses",
+            "Practice configuring private IPv4 networks"
+        ],
+        "tips": [
+            "Get comfortable with IPv6 concepts, as it's increasingly relevant.",
+            "Learn the different IPv6 address types."
+        ],
+        "resources": [
+            "IPv6 Fundamentals by Rick Graziani",
+            "Cisco Documentation on IPv6 Addressing"
+        ]
+    },
+    "4": {
+        "title": "Week 4: Network Fundamentals Part 4",
+        "reading": [
+            "1.10 Verify IP parameters for Client OS",
+            "1.11 Describe wireless principles",
+            "1.12 Explain virtualization fundamentals",
+            "1.13 Describe switching concepts"
+        ],
+        "labs": [
+            "Set up a basic wireless network and configure wireless encryption",
+            "Verify IP configurations on different OS (Windows, Mac, Linux)"
+        ],
+        "tips": [
+            "Understand wireless encryption standards and their differences.",
+            "Familiarize yourself with MAC address tables."
+        ],
+        "resources": [
+            "Cisco Wireless LAN Fundamentals",
+            "Packet Tracer labs for switching concepts"
+        ]
+    },
+    "5": {
+        "title": "Week 5: Network Access Part 1",
+        "reading": [
+            "2.1 Configure and verify VLANs spanning multiple switches",
+            "2.2 Configure and verify interswitch connectivity",
+            "2.3 Configure and verify Layer 2 discovery protocols"
+        ],
+        "labs": [
+            "Configure VLANs and interswitch connections using trunk ports",
+            "Set up and verify Cisco Discovery Protocol and LLDP"
+        ],
+        "tips": [
+            "Understand VLAN tagging and trunking concepts.",
+            "Use Cisco Packet Tracer for VLAN practice."
+        ],
+        "resources": [
+            "Cisco Official VLAN Documentation",
+            "Lab exercises on VLANs and trunking"
+        ]
+    },
+    "6": {
+        "title": "Week 6: Network Access Part 2",
+        "reading": [
+            "2.4 Configure and verify EtherChannel",
+            "2.5 Interpret basic operations of Rapid PVST+ Spanning Tree Protocol",
+            "2.6 Describe Cisco Wireless Architectures and AP modes"
+        ],
+        "labs": [
+            "Configure EtherChannel and practice troubleshooting",
+            "Experiment with different Spanning Tree Protocols and configurations"
+        ],
+        "tips": [
+            "Understand the role of STP in preventing loops.",
+            "Practice EtherChannel configurations on Packet Tracer."
+        ],
+        "resources": [
+            "Cisco Spanning Tree Protocol Guide",
+            "EtherChannel Configuration Lab Exercises"
+        ]
+    },
+    "7": {
+        "title": "Week 7: Network Access Part 3 & Review",
+        "reading": [
+            "2.7 Describe physical infrastructure connections of WLAN components",
+            "2.8 Describe network device management access",
+            "2.9 Interpret the wireless LAN GUI configuration"
+        ],
+        "labs": [
+            "Practice managing network devices via SSH, Telnet, HTTP, HTTPS",
+            "Explore wireless LAN configurations through GUI"
+        ],
+        "tips": [
+            "Use a Cisco device emulator to get familiar with WLAN GUIs.",
+            "Understand the different management access methods."
+        ],
+        "resources": [
+            "Cisco Wireless LAN Controller Configuration Guide",
+            "Packet Tracer for wireless labs"
+        ]
+    },
+    "8": {
+        "title": "Week 8: IP Connectivity Part 1",
+        "reading": [
+            "3.1 Interpret the components of a routing table",
+            "3.2 Determine how a router makes forwarding decisions"
+        ],
+        "labs": [
+            "Analyze routing tables and understand how routers make forwarding decisions"
+        ],
+        "tips": [
+            "Pay attention to routing protocol codes and their meanings.",
+            "Understand administrative distances."
+        ],
+        "resources": [
+            "Routing and Switching Essentials by Cisco Press",
+            "GNS3 for advanced routing labs"
+        ]
+    },
+    "9": {
+        "title": "Week 9: IP Connectivity Part 2",
+        "reading": [
+            "3.3 Configure and verify IPv4 and IPv6 static routing",
+            "3.4 Configure and verify single-area OSPFv2"
+        ],
+        "labs": [
+            "Set up OSPFv2 and static routing for both IPv4 and IPv6 networks"
+        ],
+        "tips": [
+            "Practice different routing scenarios.",
+            "Understand the differences between OSPF and static routing."
+        ],
+        "resources": [
+            "OSPF Configuration Guide",
+            "Cisco OSPF Lab Exercises"
+        ]
+    },
+    "10": {
+        "title": "Week 10: IP Connectivity Part 3 & Review",
+        "reading": [
+            "3.5 Describe the purpose, functions, and concepts of first hop redundancy protocols"
+        ],
+        "labs": [
+            "Configure and verify first hop redundancy protocols like HSRP, VRRP, and GLBP"
+        ],
+        "tips": [
+            "Understand how FHRP works and where it's used in networks.",
+            "Test different scenarios using GNS3."
+        ],
+        "resources": [
+            "Cisco FHRP Configuration Guide",
+            "Network Lessons on HSRP, VRRP, and GLBP"
+        ]
+    },
+    "11": {
+        "title": "Week 11: IP Services",
+        "reading": [
+            "4.1 Configure and verify inside source NAT using static and pools",
+            "4.2 Configure and verify NTP operating in client and server mode",
+            "4.3 Explain the role of DHCP and DNS within the network",
+            "4.4 Explain the function of SNMP in network operations"
+        ],
+        "labs": [
+            "Set up NAT, NTP, DHCP, and DNS configurations on routers and switches"
+        ],
+        "tips": [
+            "Understand the differences between NAT types.",
+            "Configure NTP and test its synchronization."
+        ],
+        "resources": [
+            "Cisco NAT Configuration Guide",
+            "DHCP and DNS Lab Exercises"
+        ]
+    },
+    "12": {
+        "title": "Week 12: Security Fundamentals Part 1",
+        "reading": [
+            "5.1 Define key security concepts",
+            "5.2 Describe security program elements",
+            "5.3 Configure and verify device access control using local passwords",
+            "5.4 Describe security password policy elements"
+        ],
+        "labs": [
+            "Configure device access controls and implement security measures"
+        ],
+        "tips": [
+            "Always use strong, unique passwords for device access.",
+            "Familiarize yourself with security concepts."
+        ],
+        "resources": [
+            "Cisco Security Configuration Guide",
+            "Network Security Basics by Cisco Press"
+        ]
+    },
+    "13": {
+        "title": "Week 13: Security Fundamentals Part 2",
+        "reading": [
+            "5.5 Describe IPsec remote access and site-to-site VPNs",
+            "5.6 Configure and verify access control lists",
+            "5.7 Configure and verify Layer 2 security features",
+            "5.8 Compare authentication, authorization, and accounting concepts"
+        ],
+        "labs": [
+            "Practice configuring VPNs and setting up ACLs for different scenarios"
+        ],
+        "tips": [
+            "Understand how ACLs filter traffic in the network.",
+            "Practice configuring site-to-site VPNs using GNS3."
+        ],
+        "resources": [
+            "IPsec VPN Configuration Guide",
+            "ACL and Layer 2 Security Labs"
+        ]
+    },
+    "14": {
+        "title": "Week 14: Automation and Programmability Part 1",
+        "reading": [
+            "6.1 Explain how automation impacts network management",
+            "6.2 Compare traditional networks with controller-based networking",
+            "6.3 Describe controller-based, software-defined architecture"
+        ],
+        "labs": [
+            "Explore Cisco DNA Center and other automation tools"
+        ],
+        "tips": [
+            "Get familiar with automation and scripting concepts.",
+            "Understand the differences between traditional and software-defined networks."
+        ],
+        "resources": [
+            "Cisco DNA Center Documentation",
+            "Python for Network Engineers"
+        ]
+    },
+    "15": {
+        "title": "Week 15: Automation and Programmability Part 2 & Final Review",
+        "reading": [
+            "6.4 Explain AI and machine learning in network operations",
+            "6.5 Describe characteristics of REST-based APIs",
+            "6.6 Recognize the capabilities of configuration management mechanisms",
+            "6.7 Recognize components of JSON-encoded data"
+        ],
+        "labs": [
+            "Practice API-based configurations and network automation scripts"
+        ],
+        "tips": [
+            "Understand how RESTful APIs work.",
+            "Practice writing and reading JSON data."
+        ],
+        "resources": [
+            "RESTful API and JSON Guide",
+            "Network Automation Labs"
+        ]
+    }
+}
