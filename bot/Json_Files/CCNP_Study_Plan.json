@@ -1,244 +1,401 @@
 {
-    "1": {
-        "title": "Week 1: Enterprise Network Design and Administrative Distance Troubleshooting",
-        "reading": [
-            "High-level enterprise network design: 2-tier, 3-tier, fabric, cloud",
-            "Troubleshoot administrative distance across all routing protocols",
-            "High availability techniques: Redundancy, FHRP, SSO"
-        ],
-        "labs": [
-            "Lab 1: Configuring HSRP for High Availability",
-            "Lab 2: Troubleshooting Administrative Distance with EIGRP and OSPF"
-        ],
-        "tips": [
-            "Förstå skillnaderna mellan 2-tier och 3-tier designmodeller och deras användningsfall.",
-            "Simulera hur administrativ distans påverkar routing-val och labba med att justera dessa värden."
-        ],
-        "resources": [
-            "Cisco Press: CCNP and CCIE Enterprise Core ENCOR 350-401 Official Cert Guide",
-            "Cisco Press: CCNP Enterprise Advanced Routing ENARSI 300-410 Official Cert Guide"
-        ]
-    },
-    "2": {
-        "title": "Week 2: Wireless Network Design and Route Maps",
-        "reading": [
-            "Wireless deployment models: centralized, distributed, controller-less, controller-based, cloud, remote branch",
-            "Troubleshoot route maps for any routing protocol (attributes, tagging, filtering)",
-            "Location services in WLAN design",
-            "Client density considerations"
-        ],
-        "labs": [
-            "Lab 3: Wireless Controller Configuration",
-            "Lab 4: Troubleshooting Route Maps in OSPF and BGP"
-        ],
-        "tips": [
-            "Testa olika trådlösa distributionsmodeller och förstå deras användningsområden.",
-            "Implementera och felsök route maps i olika routingprotokoll och observera hur filtrering och tagging påverkar routing."
-        ],
-        "resources": [
-            "Cisco Dokumentation: Wireless Network Design Guide",
-            "Cisco Dokumentation: Route Maps Configuration and Troubleshooting Guide"
-        ]
-    },
-    "3": {
-        "title": "Week 3: SD-WAN and Loop Prevention Mechanisms",
-        "reading": [
-            "SD-WAN control and data planes elements",
-            "Benefits and limitations of SD-WAN solutions",
-            "Troubleshoot loop prevention mechanisms (filtering, tagging, split horizon, route poisoning)"
-        ],
-        "labs": [
-            "Lab 5: SD-WAN Deployment and Control Plane Setup",
-            "Lab 6: Troubleshooting Loop Prevention Mechanisms in EIGRP and OSPF"
-        ],
-        "tips": [
-            "Implementera en grundläggande SD-WAN-topologi och förstå kontroll- och dataplanernas roller.",
-            "Testa loop prevention-mekanismer i olika routingprotokoll och observera effekterna."
-        ],
-        "resources": [
-            "Cisco Dokumentation: SD-WAN Configuration Guide",
-            "Cisco Live Sessions: Loop Prevention Techniques in Dynamic Routing"
-        ]
-    },
-    "4": {
-        "title": "Week 4: QoS Configurations and Redistribution Troubleshooting",
-        "reading": [
-            "QoS components and policies",
-            "Hardware and software switching mechanisms: CEF, CAM, TCAM, FIB, RIB, and adjacency tables",
-            "Troubleshoot redistribution between any routing protocols or routing sources"
-        ],
-        "labs": [
-            "Lab 7: QoS Classification and Marking Configuration",
-            "Lab 8: Troubleshooting Redistribution between EIGRP, OSPF, and BGP"
-        ],
-        "tips": [
-            "Labba på att implementera QoS-policyer för att hantera nätverksflöden.",
-            "Simulera redistribution mellan flera routingprotokoll och felsök vanliga problem."
-        ],
-        "resources": [
-            "Cisco Press: QoS for IP/MPLS Networks",
-            "Cisco Dokumentation: Redistribution Configuration and Troubleshooting Guide"
-        ]
-    },
-    "5": {
-        "title": "Week 5: Device Virtualization and Summarization Troubleshooting",
-        "reading": [
-            "Hypervisor types (Type 1 and 2), virtual machines, virtual switching",
-            "VRF, GRE, and IPsec tunneling",
-            "Troubleshoot manual and auto-summarization with any routing protocol"
-        ],
-        "labs": [
-            "Lab 9: Configuring and Verifying VRF Instances",
-            "Lab 10: Troubleshooting Summarization in EIGRP and OSPF"
-        ],
-        "tips": [
-            "Labba på att skapa VRF-inställningar och observera hur de påverkar routningen.",
-            "Implementera manuell och automatisk summarization och felsök eventuella problem."
-        ],
-        "resources": [
-            "Cisco Dokumentation: GRE and IPsec Configuration Guide",
-            "Cisco Live Sessions: Route Summarization Best Practices"
-        ]
-    },
-    "6": {
-        "title": "Week 6: Layer 2 Troubleshooting and Policy-Based Routing",
-        "reading": [
-            "Troubleshooting static and dynamic 802.1q trunking protocols",
-            "Troubleshooting EtherChannels",
-            "Configuring and verifying policy-based routing"
-        ],
-        "labs": [
-            "Lab 11: Trunk Configuration and Troubleshooting",
-            "Lab 12: Configuring and Verifying Policy-Based Routing"
-        ],
-        "tips": [
-            "Labba med både statisk och dynamisk trunkning, och felsök vanliga trunk-problem.",
-            "Implementera policy-baserad routning för att styra specifika trafikströmmar."
-        ],
-        "resources": [
-            "Cisco Press: Spanning Tree Protocols Implementation and Best Practices",
-            "Cisco Dokumentation: Policy-Based Routing Configuration Guide"
-        ]
-    },
-    "7": {
-        "title": "Week 7: EIGRP Troubleshooting and VRF-Lite Configuration",
-        "reading": [
-            "Troubleshoot EIGRP (classic and named mode, VRF and global)",
-            "Configuring and verifying VRF-Lite"
-        ],
-        "labs": [
-            "Lab 13: EIGRP Troubleshooting in Classic and Named Mode",
-            "Lab 14: Configuring and Verifying VRF-Lite"
-        ],
-        "tips": [
-            "Labba på att konfigurera och felsöka EIGRP i både klassiskt och namngivet läge, samt i VRF-miljöer.",
-            "Implementera VRF-Lite och observera hur det segmenterar nätverkstrafik."
-        ],
-        "resources": [
-            "Cisco Dokumentation: EIGRP Configuration Guide",
-            "Cisco Press: CCNP Enterprise Advanced Routing ENARSI Official Cert Guide"
-        ]
-    },
-    "8": {
-        "title": "Week 8: OSPF Troubleshooting and Bidirectional Forwarding Detection",
-        "reading": [
-            "Troubleshoot OSPF (v2/v3)",
-            "Describe Bidirectional Forwarding Detection (BFD)"
-        ],
-        "labs": [
-            "Lab 15: OSPF Troubleshooting with Different Area Types",
-            "Lab 16: Configuring and Verifying BFD for Fast Failure Detection"
-        ],
-        "tips": [
-            "Träna på att felsöka OSPF i olika scenarier, inklusive komplexa area-typer som NSSA och Totally Stub.",
-            "Implementera BFD för snabbare länkfel detektering och observera hur det påverkar routingprotokoll."
-        ],
-        "resources": [
-            "Cisco Dokumentation: OSPF Configuration and Troubleshooting Guide",
-            "Cisco Dokumentation: BFD Configuration Guide"
-        ]
-    },
-    "9": {
-        "title": "Week 9: BGP Troubleshooting and MPLS Fundamentals",
-        "reading": [
-            "Troubleshoot BGP (Internal and External, unicast, and VRF-Lite)",
-            "MPLS operations: LSR, LDP, label switching, LSP"
-        ],
-        "labs": [
-            "Lab 17: BGP Path Selection and Route Reflector Configuration",
-            "Lab 18: MPLS Label Switching and LDP Configuration"
-        ],
-        "tips": [
-            "Labba med att felsöka BGP-sessioner, både interna och externa, och observera hur path selection sker.",
-            "Simulera MPLS med LDP och observera hur etiketter hanteras för olika trafikströmmar."
-        ],
-        "resources": [
-            "Cisco Dokumentation: BGP Configuration and Troubleshooting Guide",
-            "Cisco Dokumentation: MPLS Configuration Guide"
-        ]
-    },
-    "10": {
-        "title": "Week 10: DMVPN Configuration and Router Security Features",
-        "reading": [
-            "Configure and verify DMVPN (single hub)",
-            "Troubleshoot router security features: IPv4 ACLs, IPv6 traffic filter, uRPF"
-        ],
-        "labs": [
-            "Lab 19: DMVPN Single Hub Configuration",
-            "Lab 20: Configuring Router Security Features and Felsökning"
-        ],
-        "tips": [
-            "Implementera en enkel DMVPN-konfiguration och observera hur NHRP och mGRE interagerar.",
-            "Labba på att konfigurera och felsöka säkerhetsfunktioner som ACL:er och uRPF."
-        ],
-        "resources": [
-            "Cisco Dokumentation: DMVPN Configuration Guide",
-            "Cisco Dokumentation: Router Security Configuration Guide"
-        ]
-    },
-    "11": {
-        "title": "Week 11: Control Plane Policing and First Hop Security",
-        "reading": [
-            "Troubleshoot control plane policing (CoPP)",
-            "Describe IPv6 First Hop security features: RA guard, DHCP guard, ND inspection/snooping, source guard"
-        ],
-        "labs": [
-            "Lab 21: Configuring CoPP for Router Protection",
-            "Lab 22: Configuring IPv6 First Hop Security Features"
-        ],
-        "tips": [
-            "Testa CoPP-konfigurationer för att skydda kontrollplanet på routrar mot överbelastningsattacker.",
-            "Implementera och labba med olika IPv6 säkerhetsfunktioner som RA Guard och ND Inspection."
-        ],
-        "resources": [
-            "Cisco Dokumentation: CoPP Configuration Guide",
-            "Cisco Dokumentation: IPv6 Security Features Guide"
-        ]
-    },
-    "12": {
-        "title": "Week 12: Troubleshooting Device Management and Network Assurance",
-        "reading": [
-            "Troubleshoot device management: Console, VTY, Telnet, SSH, HTTPS",
-            "Troubleshoot network problems using Cisco DNA Center assurance"
-        ],
-        "labs": [
-            "Lab 23: Device Management Troubleshooting",
-            "Lab 24: Cisco DNA Center Assurance Configuration and Troubleshooting"
-        ],
-        "tips": [
-            "Labba på att felsöka enheter via olika åtkomstmetoder som SSH och Telnet.",
-            "Implementera och labba med Cisco DNA Center Assurance för att övervaka och felsöka nätverk."
-        ],
-        "resources": [
-            "Cisco Dokumentation: Device Management and Troubleshooting Guide",
-            "Cisco Dokumentation: Cisco DNA Center Assurance Best Practices"
-        ]
-    },
-    "13": {
-        "title": "Week 15: Restart The Studdy plan Script... Or add more stuff",
-        "reading": [],
-        "labs": [],
-        "tips": [],
-        "resources": []
-    }
+    "weeks": [
+        {
+            "week": 1,
+            "exam": "ENARSI",
+            "reading": "Läs ENARSI grundläggande ämnen.",
+            "labs": "Genomför grundläggande ENARSI konfigurationsövningar.",
+            "tips": "Förstå de viktigaste skillnaderna mellan ENCOR och ENARSI ämnen.",
+            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+        },
+        {
+            "week": 2,
+            "exam": "ENCOR",
+            "topics": [
+                {
+                    "topic": "Enterprise Network Design and QoS",
+                    "reading": [
+                        "Hög nivå nätverksdesign: 2-tier, 3-tier, fabric, och molnlösningar.",
+                        "High availability tekniker som redundans, FHRP, och SSO.",
+                        "Tolkning av QoS-konfigurationer."
+                    ],
+                    "labs": [
+                        "Lab 3: Designa ett hög tillgänglighetsnätverk med HSRP.",
+                        "Lab 4: Konfigurera och verifiera QoS-policies."
+                    ],
+                    "tips": "Förstå nätverksdesignmodeller och QoS-komponenter.",
+                    "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                }
+            ]
+        },
+        {
+            "week": 3,
+            "exam": "ENARSI",
+            "reading": "Fördjupa dig i routing och switching ämnen.",
+            "labs": "Praktisera avancerade routingkonfigurationer.",
+            "tips": "Öva på att konfigurera dynamiska routingprotokoll.",
+            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+        },
+        {
+            "week": 4,
+            "exam": "ENCOR",
+            "topics": [
+                {
+                    "topic": "SD-WAN och SD-Access",
+                    "reading": [
+                        "Förklara arbetsprinciper för Cisco SD-WAN och SD-Access."
+                    ],
+                    "labs": [
+                        "Lab 7: Konfigurera en SD-WAN topologi.",
+                        "Lab 8: Integrera SD-Access med traditionella nätverk."
+                    ],
+                    "tips": "Förstå kontroll- och dataplanen i SD-WAN.",
+                    "resources": "Cisco Press: Software-Defined Access och SD-WAN Fundamentals"
+                }
+            ]
+        },
+        {
+            "week": 5,
+            "exam": "ENARSI",
+            "reading": "Läs om OSPF och BGP fördjupning.",
+            "labs": "Utför OSPF och BGP-labbövningar.",
+            "tips": "Öva på konfiguration och felsökning.",
+            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+        },
+        {
+            "week": 6,
+            "exam": "ENCOR",
+            "topics": [
+                {
+                    "topic": "Wireless Network Design och Troubleshooting",
+                    "reading": [
+                        "Trådlös nätverksdesign.",
+                        "Felsökning av WLAN-konfigurationer."
+                    ],
+                    "labs": [
+                        "Lab 11: Konfigurera en Wireless LAN Controller.",
+                        "Lab 12: Felsökning av klientanslutningar."
+                    ],
+                    "tips": "Lär dig olika trådlösa modeller.",
+                    "resources": "Cisco Wireless Network Design Guide"
+                }
+            ]
+        },
+        {
+            "week": 7,
+            "exam": "ENARSI",
+            "topics": [
+                {
+                    "topic": "EIGRP Troubleshooting",
+                    "reading": [
+                        "Granska EIGRP neighbor-relations och autentisering.",
+                        "Studera Loop-free path selections och Load balancing."
+                    ],
+                    "labs": [
+                        "Lab 1: Konfigurera och felsök EIGRP neighbor-relations.",
+                        "Lab 2: Implementera EIGRP stubs och load balancing."
+                    ],
+                    "tips": "Se till att förstå EIGRP metric calculations.",
+                    "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 8,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Network Virtualization",
+                            "reading": [
+                                "Lär dig om VRF, GRE, och IPsec-tunnlar.",
+                                "Studera LISP och VXLAN-koncepten."
+                            ],
+                            "labs": [
+                                "Lab 3: Implementera och verifiera GRE-tunnlar.",
+                                "Lab 4: Konfigurera och verifiera VRF-Lite."
+                            ],
+                            "tips": "Fokusera på hur virtualisering fungerar på både Layer 2 och Layer 3.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 9,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "OSPF Troubleshooting",
+                            "reading": [
+                                "Studera OSPF neighbor-relations och autentisering.",
+                                "Lär dig om OSPF area types och router typer."
+                            ],
+                            "labs": [
+                                "Lab 5: Konfigurera OSPFv2 i ett multi-area nätverk.",
+                                "Lab 6: Felsök OSPF adjacencies och loop prevention."
+                            ],
+                            "tips": "Förstå skillnader mellan OSPF LSA-typer.",
+                            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 10,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "IP Services",
+                            "reading": [
+                                "Studera NTP, PTP, och multicast-protokoll.",
+                                "Förstå first-hop redundancy protocols (HSRP, VRRP)."
+                            ],
+                            "labs": [
+                                "Lab 7: Konfigurera HSRP och VRRP.",
+                                "Lab 8: Implementera och verifiera NTP-konfigurationer."
+                            ],
+                            "tips": "Fokusera på multicast-routing och redundans.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 11,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "BGP Troubleshooting",
+                            "reading": [
+                                "Studera BGP neighbor-relations och autentisering.",
+                                "Lär dig om BGP path selection och route policies."
+                            ],
+                            "labs": [
+                                "Lab 9: Konfigurera eBGP mellan direktanslutna grannar.",
+                                "Lab 10: Implementera BGP path manipulation."
+                            ],
+                            "tips": "Förstå BGP best-path selection process.",
+                            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 12,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Network Automation och Programmability",
+                            "reading": [
+                                "Studera grunderna i Python scripts och JSON.",
+                                "Förstå NETCONF och RESTCONF."
+                            ],
+                            "labs": [
+                                "Lab 11: Använda Python för att automatisera nätverkskonfigurationer.",
+                                "Lab 12: Implementera RESTCONF för att hämta nätverksdata."
+                            ],
+                            "tips": "Bekanta dig med Cisco DNA Center APIs.",
+                            "resources": "Cisco Press: Network Programmability Fundamentals"
+                        }
+                    ]
+                },
+                {
+                    "week": 13,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "MPLS och L3VPN",
+                            "reading": [
+                                "Studera MPLS operations och LDP.",
+                                "Lär dig om MPLS L3VPN design och funktion."
+                            ],
+                            "labs": [
+                                "Lab 13: Konfigurera en MPLS Layer 3 VPN.",
+                                "Lab 14: Verifiera MPLS trafik."
+                            ],
+                            "tips": "Förstå LSR och etikettväxlingsprocessen.",
+                            "resources": "Cisco Press: MPLS Fundamentals"
+                        }
+                    ]
+                },
+                {
+                    "week": 14,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Advanced Layer 2",
+                            "reading": [
+                                "Granska Spanning Tree Protocol och dess varianter.",
+                                "Förstå EtherChannel konfigurationer."
+                            ],
+                            "labs": [
+                                "Lab 15: Implementera och verifiera RSTP och MST.",
+                                "Lab 16: Konfigurera och verifiera EtherChannel."
+                            ],
+                            "tips": "Bekanta dig med STP optimeringar som BPDU guard.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 15,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "DMVPN Troubleshooting",
+                            "reading": [
+                                "Lär dig om DMVPN arkitektur och NHRP.",
+                                "Studera mGRE och IPsec integration."
+                            ],
+                            "labs": [
+                                "Lab 17: Konfigurera en DMVPN single hub topologi.",
+                                "Lab 18: Felsök DMVPN tunnlar."
+                            ],
+                            "tips": "Förstå skillnaderna mellan DMVPN faser.",
+                            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 16,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Network Security",
+                            "reading": [
+                                "Studera AAA, ACLs, och CoPP.",
+                                "Förstå Cisco TrustSec och MACsec."
+                            ],
+                            "labs": [
+                                "Lab 19: Implementera AAA på Cisco IOS-enheter.",
+                                "Lab 20: Konfigurera och verifiera CoPP."
+                            ],
+                            "tips": "Bekanta dig med olika autentiserings- och auktoriseringstekniker.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 17,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "Device Management Troubleshooting",
+                            "reading": [
+                                "Studera SNMP v2c och v3 konfiguration.",
+                                "Förstå loggning och felsökning med debugs."
+                            ],
+                            "labs": [
+                                "Lab 21: Implementera och verifiera SNMP.",
+                                "Lab 22: Använda syslog för felsökning."
+                            ],
+                            "tips": "Använd Cisco DNA Center för övervakning.",
+                            "resources": "Cisco Press: CCNP ENARSI 300-410 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 18,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Application Aware Networking",
+                            "reading": [
+                                "Lär dig om QoS och application visibility.",
+                                "Studera App-ID och Cisco DNA Center Assurance."
+                            ],
+                            "labs": [
+                                "Lab 23: Implementera QoS policy.",
+                                "Lab 24: Använd Cisco DNA Center Assurance."
+                            ],
+                            "tips": "Bekanta dig med NBAR och AVC.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+                {
+                    "week": 19,
+                    "exam": "ENARSI",
+                    "topics": [
+                        {
+                            "topic": "IPv6 First Hop Security",
+                            "reading": [
+                                "Studera RA Guard och DHCP Guard.",
+                                "Förstå Neighbor Discovery snooping."
+                            ],
+                            "labs": [
+                                "Lab 25: Implementera RA Guard.",
+                                "Lab 26: Konfigurera IPv6 DHCP Guard."
+                            ],
+                            "tips": "Bekanta dig med IPv6 First Hop Security konfigurationer.",
+                            "resources": "Cisco Press: IPv6 Fundamentals"
+                        }
+                    ]
+                },
+                {
+                    "week": 20,
+                    "exam": "ENCOR",
+                    "topics": [
+                        {
+                            "topic": "Network Monitoring",
+                            "reading": [
+                                "Studera Flexible NetFlow och IPSLA.",
+                                "Förstå SPAN, RSPAN, och ERSPAN."
+                            ],
+                            "labs": [
+                                "Lab 27: Implementera Flexible NetFlow.",
+                                "Lab 28: Konfigurera ERSPAN över ett WAN."
+                            ],
+                            "tips": "Förstå olika sätt att övervaka nätverkstrafik.",
+                            "resources": "Cisco Press: CCNP och CCIE Enterprise Core ENCOR 350-401 Official Cert Guide"
+                        }
+                    ]
+                },
+        {
+            "week": 21,
+            "exam": "ENARSI",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 22,
+            "exam": "ENCOR",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 23,
+            "exam": "ENARSI",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 24,
+            "exam": "ENCOR",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 25,
+            "exam": "ENARSI",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 26,
+            "exam": "ENCOR",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 27,
+            "exam": "ENARSI",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 28,
+            "exam": "ENCOR",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 29,
+            "exam": "ENARSI",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        },
+        {
+            "week": 30,
+            "exam": "ENCOR",
+            "message": "Fortsätt med respektive blueprint för denna vecka."
+        }
+    ]
 }
