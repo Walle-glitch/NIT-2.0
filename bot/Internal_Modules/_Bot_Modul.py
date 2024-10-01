@@ -11,6 +11,9 @@ import json
 import os
 import _Bot_Config
 from discord.ui import Button, View
+from datetime import datetime, timedelta
+
+from _Bot_Config import GUILD_ID, LATE_NIGHT_ROLE_ID, ACTIVE_USERS_FILE
 
 ################  Global Refs ################
 
@@ -456,6 +459,90 @@ async def fetch_and_post_jobs(bot, job_channel_id):
             color=discord.Color.blue()
         )
         await channel.send(embed=embed)
+
+
+####################################################
+
+# Kolla om filen existerar, annars skapa en ny fil
+if not os.path.exists("Json_Files"):
+    os.makedirs("Json_Files")
+
+if not os.path.isfile(ACTIVE_USERS_FILE):
+    with open(ACTIVE_USERS_FILE, 'w') as file:
+        json.dump({}, file)
+
+
+def is_late_night():
+    """Kolla om det är mellan 00:01 och 05:00"""
+    current_time = datetime.now().time()
+    return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
+
+
+def load_active_users():
+    """Ladda aktiva användare från JSON-filen"""
+    with open(ACTIVE_USERS_FILE, 'r') as file:
+        return json.load(file)
+
+
+def save_active_users(active_users):
+    """Spara aktiva användare till JSON-filen"""
+    with open(ACTIVE_USERS_FILE, 'w') as file:
+        json.dump(active_users, file)
+
+
+async def add_role(member, role):
+    """Lägg till LateNightCrew rollen till medlemmen"""
+    if role not in member.roles:
+        await member.add_roles(role)
+        print(f"Lagt till LateNightCrew-roll för {member.name}")
+
+
+async def remove_role(member, role):
+    """Ta bort LateNightCrew rollen från medlemmen"""
+    if role in member.roles:
+        await member.remove_roles(role)
+        print(f"Tagit bort LateNightCrew-roll från {member.name}")
+
+
+@tasks.loop(minutes=1)
+async def monitor_activity(bot):
+    """Hanterar loopen för att övervaka användaraktiviteten"""
+    guild = bot.get_guild(GUILD_ID)
+    role = guild.get_role(LATE_NIGHT_ROLE_ID)
+    active_users = load_active_users()
+    current_time = datetime.now()
+
+    for user_id, last_active_str in list(active_users.items()):
+        last_active = datetime.fromisoformat(last_active_str)
+        member = guild.get_member(int(user_id))
+
+        if member and is_late_night():
+            # Lägg till roll om den inte redan finns
+            await add_role(member, role)
+        elif member and (current_time - last_active) > timedelta(hours=14):
+            # Ta bort roll om 14 timmar har gått
+            await remove_role(member, role)
+            del active_users[user_id]
+
+    # Uppdatera JSON-filen
+    save_active_users(active_users)
+
+    # Rensa filen om klockan är efter 05:00
+    if not is_late_night():
+        with open(ACTIVE_USERS_FILE, 'w') as file:
+            json.dump({}, file)
+
+
+async def track_activity(message):
+    """Spåra användaraktivitet"""
+    if message.author.bot:
+        return
+
+    if is_late_night():
+        active_users = load_active_users()
+        active_users[message.author.id] = datetime.now().isoformat()
+        save_active_users(active_users)
+
 
 ################# Role Assignments #################
 

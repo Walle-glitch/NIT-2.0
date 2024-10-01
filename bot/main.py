@@ -23,10 +23,12 @@ import _External_Media
 import _Auction
 import _Bot_Config
 import _Slash_Commands
+import discord
+from _Bot_Modul import monitor_activity, track_activity
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/09/29.1"  # Global version number variable
+version_nr = "Current Version is 24/10/01.1"  # Global version number variable
 
 # Roles with access to "Sudo commands"
 BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
@@ -84,6 +86,7 @@ async def on_ready():
     print("Global commands synced.")
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
+    monitor_activity.start(bot)
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
@@ -94,6 +97,10 @@ async def on_ready():
     # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
 
+@bot.event
+async def on_message(message):
+    await track_activity(message)
+    await bot.process_commands(message)
 
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
