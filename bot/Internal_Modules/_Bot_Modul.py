@@ -13,8 +13,6 @@ import _Bot_Config
 from discord.ui import Button, View
 from datetime import datetime, timedelta
 
-from _Bot_Config import GUILD_ID, LATE_NIGHT_ROLE_ID, ACTIVE_USERS_FILE
-
 ################  Global Refs ################
 
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File()  # File where roles are saved
@@ -24,6 +22,9 @@ EXCLUDED_ROLES = _Bot_Config._Excluded_Roles()  # Roles that cannot be assigned 
 STATIC_ROLES = _Bot_Config._Static_Roles()  # Static role names and their IDs
 LOG_TO_CHANNEL_ID = _Bot_Config._Log_To_Channel_ID()  # The Discord channel ID where logs are sent
 ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()  # Admin Channel ID
+GUILD_ID = _Bot_Config._GUILD_ID()
+LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
+ACTIVE_USERS_FILE = _Bot_Config._ACTIVE_USERS_FILE()
 
 ######### Utility Functions for Logging #########
 
@@ -464,8 +465,8 @@ async def fetch_and_post_jobs(bot, job_channel_id):
 ####################################################
 
 # Kolla om filen existerar, annars skapa en ny fil
-if not os.path.exists("Json_Files"):
-    os.makedirs("Json_Files")
+if not os.path.exists("/home/bot/NIT-2.0/bot/Json_Files"):
+    os.makedirs("/home/bot/NIT-2.0/bot/Json_Files")
 
 if not os.path.isfile(ACTIVE_USERS_FILE):
     with open(ACTIVE_USERS_FILE, 'w') as file:
