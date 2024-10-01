@@ -11,6 +11,7 @@ import os  # For interacting with the operating system, like file paths
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
 import asyncio 
+from datetime import datetime, timedelta
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
@@ -28,16 +29,19 @@ from _Bot_Modul import monitor_activity, track_activity
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/10/01.1"  # Global version number variable
+version_nr = "Current Version is 24/10/01.3"  # Global version number variable
 
-# Roles with access to "Sudo commands"
+# Roles with access 
 BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
 ADMIN_ROLE_NAME =  _Bot_Config._Admin_Role_Name()
 MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
+LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
 
 # Definiera roller som kräver lösenord
 PASSWORD_PROTECTED_ROLES = _Bot_Config._protected_Poles()
+
+GUILD_ID = _Bot_Config._GUILD_ID()
 
 # Channel IDs
 XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
@@ -54,7 +58,7 @@ PODCAST_CHANNEL_ID = _Bot_Config._Podcast_Channel_ID()
 # File Management 
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File() # File where roles are stored
 EXCLUDED_ROLES = _Bot_Config._Excluded_Roles() # Roles that cannot be assigned via reactions
-
+ACTIVE_USERS_FILE = _Bot_Config._ACTIVE_USERS_FILE()
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 intents = discord.Intents.all()
@@ -475,36 +479,89 @@ async def job_posting_loop():
         await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
     except Exception as e:
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
-'''
-# Welcome Message
-@bot.event
-async def on_member_join(member):
-    """
-    Sends a greeting message in the server's designated welcome channel and a private message to new members.
-    Also logs errors to a specific channel if unable to send a DM.
-    """
-    # Fetch the welcome channel using the global variable
-    welcome_channel = bot.get_channel(GEN_CHANNEL_ID)
-    if welcome_channel:
-        await welcome_channel.send(f"Welcome to the server, {member.mention}! 🎉 Please check your DM for more info!")
 
-    # Attempt to send a private message to the new member
-    try:
-        await member.send(
-            "Hello and welcome! 🎉\n\n"
-            "Here's some information to get you started:\n"
-            "- Make sure to read the rules and set your Start year with the command !addrole NIT_24 in the server\n"
-            "- You can introduce yourself in the Skit-snack channel.\n"
-            "- If you have any questions, feel free to ask a moderator(Privilege 10) or admin (Privilege 15).\n\n"
-            "Enjoy your time here!"
-        )
 
-    except discord.Forbidden:
-        # Log error to the log channel
-        log_channel = bot.get_channel(LOG_CHANNEL_ID)
-        if log_channel:
-            await log_channel.send(f"Could not send DM to {member.mention}. They might have DMs disabled.")
-'''
+####################################################
+
+# Kolla om filen existerar, annars skapa en ny fil
+if not os.path.exists("/home/bot/NIT-2.0/bot/Json_Files"):
+    os.makedirs("/home/bot/NIT-2.0/bot/Json_Files")
+
+if not os.path.isfile(ACTIVE_USERS_FILE):
+    with open(ACTIVE_USERS_FILE, 'w') as file:
+        json.dump({}, file)
+
+
+def is_late_night():
+    """Kolla om det är mellan 00:01 och 05:00"""
+    current_time = datetime.now().time()
+    return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
+
+
+def load_active_users():
+    """Ladda aktiva användare från JSON-filen"""
+    with open(ACTIVE_USERS_FILE, 'r') as file:
+        return json.load(file)
+
+
+def save_active_users(active_users):
+    """Spara aktiva användare till JSON-filen"""
+    with open(ACTIVE_USERS_FILE, 'w') as file:
+        json.dump(active_users, file)
+
+
+async def add_role(member, role):
+    """Lägg till LateNightCrew rollen till medlemmen"""
+    if role not in member.roles:
+        await member.add_roles(role)
+        print(f"Lagt till LateNightCrew-roll för {member.name}")
+
+
+async def remove_role(member, role):
+    """Ta bort LateNightCrew rollen från medlemmen"""
+    if role in member.roles:
+        await member.remove_roles(role)
+        print(f"Tagit bort LateNightCrew-roll från {member.name}")
+
+
+@tasks.loop(minutes=1)
+async def monitor_activity(bot):
+    """Hanterar loopen för att övervaka användaraktiviteten"""
+    guild = bot.get_guild(GUILD_ID)
+    role = guild.get_role(LATE_NIGHT_ROLE_ID)
+    active_users = load_active_users()
+    current_time = datetime.now()
+
+    for user_id, last_active_str in list(active_users.items()):
+        last_active = datetime.fromisoformat(last_active_str)
+        member = guild.get_member(int(user_id))
+
+        if member and is_late_night():
+            # Lägg till roll om den inte redan finns
+            await add_role(member, role)
+        elif member and (current_time - last_active) > timedelta(hours=14):
+            # Ta bort roll om 14 timmar har gått
+            await remove_role(member, role)
+            del active_users[user_id]
+
+    # Uppdatera JSON-filen
+    save_active_users(active_users)
+
+    # Rensa filen om klockan är efter 05:00
+    if not is_late_night():
+        with open(ACTIVE_USERS_FILE, 'w') as file:
+            json.dump({}, file)
+
+
+async def track_activity(message):
+    """Spåra användaraktivitet"""
+    if message.author.bot:
+        return
+
+    if is_late_night():
+        active_users = load_active_users()
+        active_users[message.author.id] = datetime.now().isoformat()
+        save_active_users(active_users)
 
 # XP Levels Handling
 @bot.event
