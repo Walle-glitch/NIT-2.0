@@ -25,7 +25,6 @@ import _Auction
 import _Bot_Config
 import _Slash_Commands
 import discord
-from _Bot_Modul import monitor_activity, track_activity
 
 ###########################################_Global_Variables_##########################################
 
