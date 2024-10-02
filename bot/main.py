@@ -113,17 +113,30 @@ async def on_message(message):
     await bot.process_commands(message)
 
 @bot.event
+async def on_message(message):
+    # Logga alla inkommande meddelanden
+    if message.author.bot:
+        return  # Vi vill inte logga botens egna meddelanden
+
+    logger.info(f"Inkommande meddelande från {message.author}: {message.content}")
+    
+    # Processera kommandon om meddelandet är ett kommando
+    await bot.process_commands(message)
+
+@bot.event
 async def on_command(ctx):
+    # Logga varje gång ett kommando körs
     logger.info(f"Användare {ctx.author} körde kommandot: {ctx.command}")
+
 
 @bot.event
 async def on_command_error(ctx, error):
+    # Logga alla fel som inträffar med kommandon
     logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
+
 
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
-
-#    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 
 ###########################################_All_User_Commands_##########################################
