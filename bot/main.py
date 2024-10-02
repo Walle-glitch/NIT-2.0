@@ -27,6 +27,7 @@ import _Auction
 import _Bot_Config
 import _Slash_Commands
 from logging_setup import setup_logging
+from activity_tracker import setup_file, track_activity
 
 ###########################################_Global_Variables_##########################################
 
@@ -75,6 +76,9 @@ logger = setup_logging()
 
 bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
 
+# Kör setup för filer
+setup_file()
+
 ##################_BOT_BOOT_##################
 
 # Create a function that sends messages to both server logs and a Discord channel
@@ -88,6 +92,12 @@ async def log_to_channel(bot, message):
     else:
         print("Log channel not found")
 
+    # logger.info(f"Användare {ctx.author} använde kommandot XX.")
+
+
+# Load module that contain bot Slash commands
+_Slash_Commands.setup(bot)
+
 @bot.event
 async def on_ready():
     await log_to_channel(bot, f'Logged in as {bot.user}')
@@ -96,7 +106,6 @@ async def on_ready():
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
     weekly_study_plan_CCNA.start()
-    monitor_activity.start(bot)
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
@@ -128,16 +137,16 @@ async def on_command(ctx):
     # Logga varje gång ett kommando körs
     logger.info(f"Användare {ctx.author} körde kommandot: {ctx.command}")
 
-
 @bot.event
 async def on_command_error(ctx, error):
     # Logga alla fel som inträffar med kommandon
     logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
 
-
-# Load module that contain bot Slash commands
-_Slash_Commands.setup(bot)
-
+@bot.event
+async def on_message(message):
+    """Hantera inkommande meddelanden och spåra aktivitet"""
+    await track_activity(message, bot)
+    await bot.process_commands(message)
 
 ###########################################_All_User_Commands_##########################################
 #############################_Utilities_Commands_#############################
@@ -165,7 +174,6 @@ async def resuser_command(ctx):
         await _Bot_Modul.send_resource_embed(ctx)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # Version Command
 @bot.command()
@@ -174,7 +182,6 @@ async def version(ctx):
         await ctx.send(version_nr)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # Git Repository Command
 @bot.command()
@@ -183,7 +190,6 @@ async def git(ctx):
         await ctx.send('https://github.com/Walle-glitch/NIT-2.0.git')
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # About Command
 @bot.command()
@@ -202,7 +208,6 @@ async def about(ctx):
         await ctx.send(reply)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 #############################_Open_AI_Commands_#############################
 
@@ -216,8 +221,6 @@ async def ai_command(ctx, *, question=None):
         await _Open_AI.handle_ai_session(ctx, question)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
-
 
 #############################_Network_Commands_#############################
 
@@ -234,7 +237,6 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 #############################_Study_Commands_#############################
 
@@ -271,17 +273,16 @@ async def game_stop(ctx):
         await ctx.send("Game stopped.")
     else:
         await ctx.send("No game is currently running.")
-    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 @bot.event
 async def on_message(message):
     # Process commands first
     await bot.process_commands(message)
-    
+    logger.info(f"Bot game process_commands ")
     # Check if a game is running and if we are waiting for an answer
     if _Games.current_question is not None and message.content and message.author != bot.user:
         await _Games.process_answer(message)
-    logger.info(f"Bot game On messege")
+        logger.info(f"Bot game On messege urrent_question ")
 
 ##############_RFC_##############
 
@@ -529,79 +530,6 @@ async def job_posting_loop():
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
 
 ####################################################
-
-# Kolla om filen existerar, annars skapa en ny fil
-if not os.path.exists("/home/bot/NIT-2.0/bot/Json_Files"):
-    os.makedirs("/home/bot/NIT-2.0/bot/Json_Files")
-
-if not os.path.isfile(ACTIVE_USERS_FILE):
-    with open(ACTIVE_USERS_FILE, 'w') as file:
-        json.dump({}, file)
-
-def is_late_night():
-    """Kolla om det är mellan 00:01 och 05:00"""
-    current_time = datetime.now().time()
-    return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
-
-def load_active_users():
-    """Ladda aktiva användare från JSON-filen"""
-    with open(ACTIVE_USERS_FILE, 'r') as file:
-        return json.load(file)
-
-def save_active_users(active_users):
-    """Spara aktiva användare till JSON-filen"""
-    with open(ACTIVE_USERS_FILE, 'w') as file:
-        json.dump(active_users, file)
-
-async def add_role(member, role):
-    """Lägg till LateNightCrew rollen till medlemmen"""
-    if role not in member.roles:
-        await member.add_roles(role)
-        print(f"Lagt till LateNightCrew-roll för {member.name}")
-
-async def remove_role(member, role):
-    """Ta bort LateNightCrew rollen från medlemmen"""
-    if role in member.roles:
-        await member.remove_roles(role)
-        print(f"Tagit bort LateNightCrew-roll från {member.name}")
-
-@tasks.loop(minutes=1)
-async def monitor_activity(bot):
-    """Hanterar loopen för att övervaka användaraktiviteten"""
-    guild = bot.get_guild(GUILD_ID)
-    role = guild.get_role(LATE_NIGHT_ROLE_ID)
-    active_users = load_active_users()
-    current_time = datetime.now()
-
-    for user_id, last_active_str in list(active_users.items()):
-        last_active = datetime.fromisoformat(last_active_str)
-        member = guild.get_member(int(user_id))
-
-        if member and is_late_night():
-            # Lägg till roll om den inte redan finns
-            await add_role(member, role)
-        elif member and (current_time - last_active) > timedelta(hours=14):
-            # Ta bort roll om 14 timmar har gått
-            await remove_role(member, role)
-            del active_users[user_id]
-
-    # Uppdatera JSON-filen
-    save_active_users(active_users)
-
-    # Rensa filen om klockan är efter 05:00
-    if not is_late_night():
-        with open(ACTIVE_USERS_FILE, 'w') as file:
-            json.dump({}, file)
-
-async def track_activity(message):
-    """Spåra användaraktivitet"""
-    if message.author.bot:
-        return
-
-    if is_late_night():
-        active_users = load_active_users()
-        active_users[message.author.id] = datetime.now().isoformat()
-        save_active_users(active_users)
 
 # XP Levels Handling
 @bot.event
