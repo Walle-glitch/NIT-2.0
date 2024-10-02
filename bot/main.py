@@ -12,6 +12,7 @@ import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
 import asyncio 
 from datetime import datetime, timedelta
+import logging
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
@@ -25,6 +26,7 @@ import _External_Media
 import _Auction
 import _Bot_Config
 import _Slash_Commands
+from logging_setup import setup_logging
 
 ###########################################_Global_Variables_##########################################
 
@@ -68,6 +70,8 @@ intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 intents.messages = True
+# Sätt upp loggern
+logger = setup_logging()
 
 bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
 
@@ -108,8 +112,19 @@ async def on_message(message):
     await track_activity(message)
     await bot.process_commands(message)
 
+@bot.event
+async def on_command(ctx):
+    logger.info(f"Användare {ctx.author} körde kommandot: {ctx.command}")
+
+@bot.event
+async def on_command_error(ctx, error):
+    logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
+
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
+
+#    logger.info(f"Användare {ctx.author} använde kommandot XX.")
+
 
 ###########################################_All_User_Commands_##########################################
 #############################_Utilities_Commands_#############################
@@ -137,6 +152,7 @@ async def resuser_command(ctx):
         await _Bot_Modul.send_resource_embed(ctx)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # Version Command
 @bot.command()
@@ -145,6 +161,7 @@ async def version(ctx):
         await ctx.send(version_nr)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # Git Repository Command
 @bot.command()
@@ -153,6 +170,7 @@ async def git(ctx):
         await ctx.send('https://github.com/Walle-glitch/NIT-2.0.git')
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 # About Command
 @bot.command()
@@ -171,6 +189,7 @@ async def about(ctx):
         await ctx.send(reply)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 #############################_Open_AI_Commands_#############################
 
@@ -184,6 +203,7 @@ async def ai_command(ctx, *, question=None):
         await _Open_AI.handle_ai_session(ctx, question)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 
 #############################_Network_Commands_#############################
@@ -201,6 +221,7 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 #############################_Study_Commands_#############################
 
@@ -227,6 +248,7 @@ async def game(ctx):
     view.add_item(network_button)
     
     await ctx.send("Choose a game mode:", view=view)
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 @bot.command()
 async def game_stop(ctx):
@@ -236,6 +258,7 @@ async def game_stop(ctx):
         await ctx.send("Game stopped.")
     else:
         await ctx.send("No game is currently running.")
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
 
 @bot.event
 async def on_message(message):
@@ -245,6 +268,7 @@ async def on_message(message):
     # Check if a game is running and if we are waiting for an answer
     if _Games.current_question is not None and message.content and message.author != bot.user:
         await _Games.process_answer(message)
+    logger.info(f"Bot game On messege")
 
 ##############_RFC_##############
 
@@ -700,6 +724,9 @@ async def test(ctx):
 async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
+
+
+
 
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################
