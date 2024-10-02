@@ -11,8 +11,7 @@ import os  # For interacting with the operating system, like file paths
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
 import asyncio 
-from datetime import datetime, timedelta
-import logging
+from datetime import datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
@@ -38,12 +37,9 @@ BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
 ADMIN_ROLE_NAME =  _Bot_Config._Admin_Role_Name()
 MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
-LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
 
 # Definiera roller som kräver lösenord
 PASSWORD_PROTECTED_ROLES = _Bot_Config._protected_Poles()
-
-GUILD_ID = _Bot_Config._GUILD_ID()
 
 # Channel IDs
 XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()

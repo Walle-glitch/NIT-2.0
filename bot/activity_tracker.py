@@ -2,11 +2,16 @@ import os
 import json
 from datetime import datetime, timedelta
 import logging
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+
+import _Bot_Config
 
 # Definiera filvägar och konstanter
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
-GUILD_ID = 123456789  # Ange din guild ID här
-LATE_NIGHT_ROLE_ID = 987654321  # Ange rollen ID här
+GUILD_ID = _Bot_Config._GUILD_ID()
+LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
 
 # Setup logging (importera från logging_setup)
 logger = logging.getLogger(__name__)
