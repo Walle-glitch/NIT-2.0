@@ -23,7 +23,7 @@ import _CCNP_Study_Plan
 import _CCNA_Study_Plan
 import _External_Media
 import _Auction
-import _Bot_Config
+import _Bot_Config # type: ignore
 import _Slash_Commands
 from logging_setup import setup_logging
 from activity_tracker import setup_file, track_activity

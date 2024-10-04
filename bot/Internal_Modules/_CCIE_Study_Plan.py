@@ -2,7 +2,7 @@
 import discord
 import json
 import os
-import _Bot_Config
+import _Bot_Config # type: ignore
 
 # Path to the current week and study plan JSON files
 CURRENT_WEEK_CCNP = _Bot_Config._Current_Week_CCIE()

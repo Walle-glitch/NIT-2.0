@@ -8,7 +8,7 @@ import sys  # System-specific parameters and functions
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
-import _Bot_Config 
+import _Bot_Config  # type: ignore
 
 # Global variables
 GITHUB_TOKEN = _Bot_Config._GITHUB_TOKEN()  # Replace with your GitHub token

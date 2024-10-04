@@ -1,7 +1,7 @@
 import discord
 import json
 import os
-import _Bot_Config
+import _Bot_Config # type: ignore
 
 # Path to the media channels JSON file
 MEDIA_FILE = _Bot_Config._Media_File()

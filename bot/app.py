@@ -7,7 +7,7 @@ import sys  # System-specific parameters and functions
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
-import _Bot_Config
+import _Bot_Config # type: ignore
 from main import bot # Imports the bot instance from the main.py file to run it
 
 app = Flask(__name__)

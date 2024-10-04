@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 from uuid import uuid4
-import _Bot_Config
+import _Bot_Config # type: ignore
 
 AUCTIONS_FILE = _Bot_Config._Auctions_File()
 active_auctions = {}

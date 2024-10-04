@@ -7,7 +7,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
-import _Bot_Config
+import _Bot_Config # type: ignore
 
 # Global variables to keep track of current game state
 current_question = None

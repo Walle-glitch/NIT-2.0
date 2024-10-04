@@ -9,7 +9,7 @@ from discord.ext import tasks
 import random
 import json
 import os
-import _Bot_Config
+import _Bot_Config # type: ignore
 from discord.ui import Button, View
 from datetime import datetime
 

@@ -1,6 +1,6 @@
 import openai
 import asyncio
-import _Bot_Config
+import _Bot_Config # type: ignore
 
 # Set your OpenAI API key here
 openai.api_key = _Bot_Config._Open_AI_Token()
