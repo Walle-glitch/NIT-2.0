@@ -114,11 +114,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    await track_activity(message)
-    await bot.process_commands(message)
-
-@bot.event
-async def on_message(message):
     # Logga alla inkommande meddelanden
     if message.author.bot:
         return  # Vi vill inte logga botens egna meddelanden

@@ -7,6 +7,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
 import _Bot_Config
+from _get_server_time import _get_server_time  # Importera funktionen som hämtar serverns tid
 
 # Definiera filvägar och konstanter
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
@@ -44,13 +45,15 @@ async def add_role(member, role):
     """Lägg till LateNightCrew rollen till medlemmen"""
     if role not in member.roles:
         await member.add_roles(role)
-        logger.info(f"Lagt till LateNightCrew-roll för {member.name}")
+        current_time = _get_server_time()  # Använd serverns tid
+        logger.info(f"{current_time} Lagt till LateNightCrew-roll för {member.name}")
 
 async def remove_role(member, role):
     """Ta bort LateNightCrew rollen från medlemmen"""
     if role in member.roles:
         await member.remove_roles(role)
-        logger.info(f"Tagit bort LateNightCrew-roll från {member.name}")
+        current_time = _get_server_time()  # Använd serverns tid
+        logger.info(f"{current_time} Tagit bort LateNightCrew-roll från {member.name}")
 
 async def track_activity(message, bot):
     """Spåra användaraktivitet och hantera roller"""
@@ -89,4 +92,3 @@ async def track_activity(message, bot):
     if not is_late_night():
         with open(ACTIVE_USERS_FILE, 'w') as file:
             json.dump({}, file)
-
