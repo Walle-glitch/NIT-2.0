@@ -115,25 +115,19 @@ async def on_message(message):
     # Logga alla inkommande meddelanden
     if message.author.bot:
         return  # Vi vill inte logga botens egna meddelanden
-
     logger.info(f"Inkommande meddelande från {message.author}: {message.content}")
-    
-    # Processera kommandon om meddelandet är ett kommando
-    await bot.process_commands(message)
+    await bot.process_commands(message) # Processera kommandon om meddelandet är ett kommando
 
 @bot.event
-async def on_command(ctx):
-    # Logga varje gång ett kommando körs
+async def on_command(ctx): # Logga varje gång ett kommando körs
     logger.info(f"Användare {ctx.author} körde kommandot: {ctx.command}")
 
 @bot.event
-async def on_command_error(ctx, error):
-    # Logga alla fel som inträffar med kommandon
+async def on_command_error(ctx, error): # Logga alla fel som inträffar med kommandon
     logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
 
 @bot.event
-async def on_message(message):
-    """Hantera inkommande meddelanden och spåra aktivitet"""
+async def on_message(message): # Hantera inkommande meddelanden och spåra aktivitet
     await track_activity(message, bot)
     await bot.process_commands(message)
 
@@ -208,12 +202,8 @@ Ping section Start
 Just for fun, Like a user test command
 '''
 
-@bot.command()
+@bot.command() # Performs a ping test to a given IP address. If no IP address is specified. it defaults to 8.8.8.8.
 async def ping(ctx, ip: str = "8.8.8.8"):
-    """
-    Performs a ping test to a given IP address. If no IP address is specified,
-    it defaults to 8.8.8.8.
-    """
     try:
         result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
         await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
@@ -260,12 +250,11 @@ async def ask_chatgpt(question, conversation_history):
         return f"An error occurred: {str(e)}"
 
 async def handle_ai_session(ctx, initial_question):
-    """
-    Handles a session where the user can interact with ChatGPT.
-    
-    :param ctx: The context in which the command was invoked.
-    :param initial_question: The initial question the user asked.
-    """
+
+    # Handles a session where the user can interact with ChatGPT.
+    # :param ctx: The context in which the command was invoked.
+    # :param initial_question: The initial question the user asked.
+   
     user_id = ctx.author.id
     conversation_history = []
     questions_asked = 0  # Counter for the number of questions in the session
@@ -319,7 +308,7 @@ current_game_type = None
 
 # Helper Functions to Load Questions
 def load_network_questions():
-    """Loads network questions from the JSON file."""
+    # Loads network questions from the JSON file.
     try:
         with open("questions.json", "r") as f:
             return json.load(f)
@@ -327,7 +316,7 @@ def load_network_questions():
         return []
 
 def generate_subnet_question():
-    """Generates a random subnet-related question."""
+    # Generates a random subnet-related question.
     ip = ipaddress.IPv4Address(random.randint(0, 2**32 - 1))
     prefix_length = random.randint(16, 30)
     network = ipaddress.IPv4Network(f"{ip}/{prefix_length}", strict=False)
@@ -346,8 +335,7 @@ def generate_subnet_question():
     
     return question, correct_answer
 
-def generate_network_question():
-    """Generates a random network-related question from the loaded JSON file."""
+def generate_network_question(): # Generates a random network-related question from the loaded JSON file.
     questions = load_network_questions()
     if questions:
         question_data = random.choice(questions)
@@ -358,8 +346,7 @@ def generate_network_question():
     else:
         return "No network questions found.", [], 0
 
-def reset_game():
-    """Reset the game state."""
+def reset_game(): # Reset the game state.
     global current_question, correct_answer, current_game_type, game_initiator
     current_question = None
     correct_answer = None
@@ -367,8 +354,7 @@ def reset_game():
     game_initiator = None
 
 # Game Logic
-async def start_game(ctx, game_type):
-    """Start the game with selected type (subnet or network)."""
+async def start_game(ctx, game_type): # Start the game with selected type (subnet or network).
     global current_question, correct_answer, current_game_type, game_initiator
 
     if game_initiator is not None:
@@ -390,8 +376,7 @@ async def start_game(ctx, game_type):
         correct_answer = correct_index  # Correct index for the network question
         await ctx.send(f"Network question:\n{current_question}")
 
-async def process_answer(message):
-    """Process the answer provided by the user."""
+async def process_answer(message): # Process the answer provided by the user.
     global current_question, correct_answer, current_game_type, game_initiator
 
     if message.author != game_initiator:
@@ -416,8 +401,7 @@ async def process_answer(message):
 
 # Commands and Events
 @bot.command()
-async def game(ctx):
-    """Starts the game and prompts the user to choose a mode."""
+async def game(ctx): # Starts the game and prompts the user to choose a mode.
     view = discord.ui.View()
     
     subnet_button = discord.ui.Button(label="Subnet", style=discord.ButtonStyle.primary)
@@ -440,8 +424,7 @@ async def game(ctx):
     await ctx.send("Choose a game mode:", view=view)
 
 @bot.command()
-async def game_stop(ctx):
-    """Stops the running game."""
+async def game_stop(ctx): # Stops the running game. 
     if game_initiator is None:
         await ctx.send("No game is currently running.")
     else:
@@ -449,8 +432,7 @@ async def game_stop(ctx):
         await ctx.send("Game stopped.")
 
 @bot.event
-async def on_message(message):
-    """Listen for answers and commands."""
+async def on_message(message): # Listen for answers and commands."""
     if message.author == bot.user:
         return  # Ignore bot's own messages
 
@@ -504,11 +486,8 @@ def load_roles():
         print(f"Failed to load roles: {str(e)}")
         return {}
 
-@bot.command()
-async def addrole(ctx, role_name: str = None):
-    """
-    Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
-    """
+@bot.command()      # Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
+async def addrole(ctx, role_name: str = None): 
     roles = load_roles()
 
     if role_name is None:
@@ -565,11 +544,10 @@ async def addrole(ctx, role_name: str = None):
 
 ######_Remove_Role_#####
 
-@bot.command()
+@bot.command()  # Removes a specific role from the user running the command. Lists available roles if none specified or role not found.
+
 async def removerole(ctx, role_name: str = None):
-    """
-    Removes a specific role from the user running the command. Lists available roles if none specified or role not found.
-    """
+
     roles = load_roles()
     
     if role_name is None:
