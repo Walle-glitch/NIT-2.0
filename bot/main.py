@@ -307,6 +307,27 @@ current_question = None
 correct_answer = None
 current_game_type = None
 
+@bot.event
+async def on_message(message):
+    """Listen for answers and commands."""
+    if message.author == bot.user:
+        return  # Ignore bot's own messages
+
+    logger.debug(f"Received message from {message.author}: {message.content}")
+    
+    # First, process any commands (e.g., !game, !gamestop)
+    await bot.process_commands(message)
+    
+    # Check if a game is running and if the user who initiated the game is responding
+    if current_question is not None:
+        if message.author == game_initiator:
+            logger.debug(f"{message.author} is the game initiator, processing their answer.")
+            await process_answer(message)
+        else:
+            logger.info(f"Ignoring message from {message.author} because they did not start the game.")
+    else:
+        logger.debug(f"No game is currently running, message from {message.author} ignored.")
+
 # Helper Functions to Load Questions
 def load_network_questions():
     """Loads network questions from the JSON file."""
@@ -384,10 +405,7 @@ async def process_answer(message):
     global current_question, correct_answer, current_game_type, game_initiator
 
     logger.debug(f"Processing answer from {message.author}: {message.content}")
-
-    if message.author != game_initiator:
-        logger.info(f"Ignoring answer from {message.author} (not the game initiator).")
-        return  # Only the initiator can answer
+    logger.debug(f"Expected answer: {correct_answer} | Current game type: {current_game_type}")
 
     if current_game_type == 'subnet':
         if message.content.strip() == correct_answer:
@@ -395,7 +413,7 @@ async def process_answer(message):
             logger.info(f"Correct answer by {message.author}")
         else:
             await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
-            logger.info(f"Wrong answer by {message.author}")
+            logger.info(f"Wrong answer by {message.author}: {message.content} (expected: {correct_answer})")
     elif current_game_type == 'network':
         try:
             selected_option = int(message.content) - 1
@@ -456,19 +474,6 @@ async def game_stop(ctx):
         reset_game()
         await ctx.send("Game stopped.")
         logger.info(f"Game stopped by {ctx.author}")
-
-@bot.event
-async def on_message(message):
-    """Listen for answers and commands."""
-    if message.author == bot.user:
-        return  # Ignore bot's own messages
-
-    await bot.process_commands(message)
-
-    if current_question is not None and message.author == game_initiator:
-        await process_answer(message)
-    else:
-        logger.debug(f"Message ignored from {message.author}: {message.content}")
 
 '''
 GET an RFC section: 
