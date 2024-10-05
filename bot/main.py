@@ -94,22 +94,28 @@ _Slash_Commands.setup(bot)
 @bot.event
 async def on_ready():
     await log_to_channel(bot, f'Logged in as {bot.user}')
+    logger.error(f"Bot Logged in") 
     await bot.tree.sync() # Synchronize global application commands
-    await log_to_channel(bot, "Global commands synced.") 
+    await log_to_channel(bot, "Global commands synced.")
+    logger.error(f"Global commands synced.")  
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
     weekly_study_plan_CCNA.start()
     await log_to_channel(bot, "Study plans active")
+    logger.error(f"Study plans active") 
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
+    logger.error(f"Processing historical data, notifications are disabled. This Will take a while...") 
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
+    logger.error(f"Finished processing historical data, notifications are now enabled.")
     # Start scheduled tasks when the bot is ready
     update_roles.start()
     await log_to_channel(bot, "Roles active")
     check_welcome_message.start()
     # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
+    logger.error(f"All Boot Events are now completed")
 
 @bot.event
 async def on_message(message):
