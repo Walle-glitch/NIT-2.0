@@ -52,6 +52,7 @@ TICKET_CATEGORY_ID = _Bot_Config._Ticket_Category_ID()
 GEN_CHANNEL_ID = _Bot_Config._Gen_Channel_ID()
 YOUTUBE_CHANNEL_ID = _Bot_Config._YouTube_Channel_ID()
 PODCAST_CHANNEL_ID = _Bot_Config._Podcast_Channel_ID()
+Net_questions = _Bot_Config._Question_File()
 
 # File Management 
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File() # File where roles are stored
@@ -308,15 +309,17 @@ current_game_type = None
 
 # Helper Functions to Load Questions
 def load_network_questions():
-    # Loads network questions from the JSON file.
+    """Loads network questions from the JSON file."""
     try:
-        with open("questions.json", "r") as f:
+        with open(Net_questions, "r") as f:
+            logger.debug("Loaded network questions from JSON file.")
             return json.load(f)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        logger.error(f"Error loading questions: {e}")
         return []
 
 def generate_subnet_question():
-    # Generates a random subnet-related question.
+    """Generates a random subnet-related question."""
     ip = ipaddress.IPv4Address(random.randint(0, 2**32 - 1))
     prefix_length = random.randint(16, 30)
     network = ipaddress.IPv4Network(f"{ip}/{prefix_length}", strict=False)
@@ -331,41 +334,41 @@ def generate_subnet_question():
         correct_answer = str(network.broadcast_address)
     else:
         question = f"How many hosts can be in the subnet {network}?"
-        correct_answer = str(network.num_addresses - 2)  # Subtract network and broadcast addresses
+        correct_answer = str(network.num_addresses - 2)
     
+    logger.debug(f"Generated subnet question: {question}, Correct answer: {correct_answer}")
     return question, correct_answer
 
-def generate_network_question(): # Generates a random network-related question from the loaded JSON file.
+def generate_network_question():
+    """Generates a random network-related question from the loaded JSON file."""
     questions = load_network_questions()
     if questions:
         question_data = random.choice(questions)
         question = question_data["question"]
         options = question_data["options"]
         correct_index = question_data["correct_option_index"]
+        logger.debug(f"Generated network question: {question}, Correct index: {correct_index}")
         return question, options, correct_index
     else:
+        logger.warning("No network questions available in the JSON file.")
         return "No network questions found.", [], 0
 
-def reset_game(): # Reset the game state.
-    global current_question, correct_answer, current_game_type, game_initiator
-    current_question = None
-    correct_answer = None
-    current_game_type = None
-    game_initiator = None
-
 # Game Logic
-async def start_game(ctx, game_type): # Start the game with selected type (subnet or network).
+async def start_game(ctx, game_type):
+    """Start the game with selected type (subnet or network)."""
     global current_question, correct_answer, current_game_type, game_initiator
 
     if game_initiator is not None:
         await ctx.send(f"{game_initiator} already started a game. Please stop it first.")
+        logger.warning(f"{ctx.author} tried to start a game, but {game_initiator} already has a game running.")
         return
 
     game_initiator = ctx.author
     current_game_type = game_type
     current_question = None
     correct_answer = None
-    
+    logger.info(f"Game started by {game_initiator} with type: {game_type}")
+
     if game_type == "subnet":
         current_question, correct_answer = generate_subnet_question()
         await ctx.send(f"Subnet question: {current_question}")
@@ -373,35 +376,54 @@ async def start_game(ctx, game_type): # Start the game with selected type (subne
         question, options, correct_index = generate_network_question()
         options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
         current_question = f"{question}\n\n{options_str}"
-        correct_answer = correct_index  # Correct index for the network question
+        correct_answer = correct_index
         await ctx.send(f"Network question:\n{current_question}")
 
-async def process_answer(message): # Process the answer provided by the user.
+async def process_answer(message):
+    """Process the answer provided by the user."""
     global current_question, correct_answer, current_game_type, game_initiator
 
+    logger.debug(f"Processing answer from {message.author}: {message.content}")
+
     if message.author != game_initiator:
+        logger.info(f"Ignoring answer from {message.author} (not the game initiator).")
         return  # Only the initiator can answer
 
     if current_game_type == 'subnet':
         if message.content.strip() == correct_answer:
             await message.channel.send(f"Correct! The answer was {correct_answer}.")
+            logger.info(f"Correct answer by {message.author}")
         else:
             await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
+            logger.info(f"Wrong answer by {message.author}")
     elif current_game_type == 'network':
         try:
             selected_option = int(message.content) - 1
             if selected_option == correct_answer:
                 await message.channel.send("Correct!")
+                logger.info(f"Correct answer by {message.author}")
             else:
                 await message.channel.send(f"Wrong answer. The correct answer was option {correct_answer + 1}.")
+                logger.info(f"Wrong answer by {message.author}")
         except ValueError:
             await message.channel.send("Please respond with the option number (1, 2, 3, etc.).")
+            logger.warning(f"Invalid input from {message.author}: {message.content}")
 
     reset_game()
 
+def reset_game():
+    """Reset the game state."""
+    global current_question, correct_answer, current_game_type, game_initiator
+    logger.info("Game state reset.")
+    current_question = None
+    correct_answer = None
+    current_game_type = None
+    game_initiator = None
+
 # Commands and Events
 @bot.command()
-async def game(ctx): # Starts the game and prompts the user to choose a mode.
+async def game(ctx):
+    """Starts the game and prompts the user to choose a mode."""
     view = discord.ui.View()
     
     subnet_button = discord.ui.Button(label="Subnet", style=discord.ButtonStyle.primary)
@@ -421,18 +443,23 @@ async def game(ctx): # Starts the game and prompts the user to choose a mode.
     view.add_item(subnet_button)
     view.add_item(network_button)
     
+    logger.info(f"{ctx.author} initiated game selection.")
     await ctx.send("Choose a game mode:", view=view)
 
 @bot.command()
-async def game_stop(ctx): # Stops the running game. 
+async def game_stop(ctx):
+    """Stops the running game."""
     if game_initiator is None:
         await ctx.send("No game is currently running.")
+        logger.info(f"{ctx.author} tried to stop a game, but no game is running.")
     else:
         reset_game()
         await ctx.send("Game stopped.")
+        logger.info(f"Game stopped by {ctx.author}")
 
 @bot.event
-async def on_message(message): # Listen for answers and commands."""
+async def on_message(message):
+    """Listen for answers and commands."""
     if message.author == bot.user:
         return  # Ignore bot's own messages
 
@@ -440,6 +467,8 @@ async def on_message(message): # Listen for answers and commands."""
 
     if current_question is not None and message.author == game_initiator:
         await process_answer(message)
+    else:
+        logger.debug(f"Message ignored from {message.author}: {message.content}")
 
 '''
 GET an RFC section: 
@@ -486,7 +515,7 @@ def load_roles():
         print(f"Failed to load roles: {str(e)}")
         return {}
 
-@bot.command()      # Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
+@bot.command() # Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
 async def addrole(ctx, role_name: str = None): 
     roles = load_roles()
 
