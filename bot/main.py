@@ -13,11 +13,11 @@ import subprocess  # For running system commands
 import asyncio 
 import ipaddress
 import random
+import openai
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
 import _Bot_Modul
-import _Open_AI
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan
 import _CCNA_Study_Plan
@@ -137,8 +137,12 @@ async def on_message(message):
     await track_activity(message, bot)
     await bot.process_commands(message)
 
-###########################################_All_User_Commands_##########################################
-#############################_Utilities_Commands_#############################
+''''
+Auction Command
+Lets users set up an acution for there no longer needed stuff. 
+
+Still has some issues to figure out. //2024.10.05
+'''
 
 # Sell command to start an auction
 @bot.command(name="Sell")
@@ -156,7 +160,11 @@ async def sell(ctx, item_name: str = None, start_price: int = None, buy_now_pric
 # Load auctions when bot starts
 _Auction.load_auctions()
 
-# Resource command
+''''
+Resource Command
+Lets students collect the varius information and tips for diferent resourses. 
+'''
+
 @bot.command(name="r")
 async def resuser_command(ctx):
     try:
@@ -164,15 +172,20 @@ async def resuser_command(ctx):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Version Command
+''''
+Version section
+'''
 @bot.command()
 async def version(ctx):
     try:
         await ctx.send(version_nr)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+''''
+about section
+Just for fun, Like a user test command
+'''
 
-# About Command
 @bot.command()
 async def about(ctx):
     try:
@@ -190,20 +203,10 @@ async def about(ctx):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-#############################_Open_AI_Commands_#############################
-
-@bot.command(name="AI")
-async def ai_command(ctx, *, question=None):
-    try:
-        if question is None:
-            await ctx.send("Please provide a question after the command: `!AI \"Question\"`")
-            return
-        
-        await _Open_AI.handle_ai_session(ctx, question)
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
-#############################_Network_Commands_#############################
+''''
+Ping section Start
+Just for fun, Like a user test command
+'''
 
 @bot.command()
 async def ping(ctx, ip: str = "8.8.8.8"):
@@ -219,44 +222,109 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-#############################_Study_Commands_#############################
+''''
+AI section START
+    Sends a question to ChatGPT and returns the response.
+    
+    :param question: The user's question to ChatGPT.
+    :param conversation_history: The conversation history to maintain context.
+    :return: The response from ChatGPT or an error message if something goes wrong.
+'''
+
+# Set your OpenAI API key here
+openai.api_key = _Bot_Config._Open_AI_Token()
+
+# Maximum tokens per response and max questions per session
+MAX_TOKENS = 150
+MAX_QUESTIONS_PER_SESSION = 5
+
+async def ask_chatgpt(question, conversation_history):
+
+    try:
+        # Add user's question to the conversation history
+        conversation_history.append({"role": "user", "content": question})
+
+        # Call the OpenAI API to get a response
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # You can use another model if preferred
+            messages=conversation_history,
+            max_tokens=MAX_TOKENS  # Limit the number of tokens in the response
+        )
+        
+        # Extract the answer and add it to the conversation history
+        answer = response['choices'][0]['message']['content']
+        conversation_history.append({"role": "assistant", "content": answer})
+
+        return answer
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
+
+async def handle_ai_session(ctx, initial_question):
+    """
+    Handles a session where the user can interact with ChatGPT.
+    
+    :param ctx: The context in which the command was invoked.
+    :param initial_question: The initial question the user asked.
+    """
+    user_id = ctx.author.id
+    conversation_history = []
+    questions_asked = 0  # Counter for the number of questions in the session
+
+    # Ask the initial question
+    answer = await ask_chatgpt(initial_question, conversation_history)
+    await ctx.send(answer)
+    questions_asked += 1
+
+    # Wait for follow-up questions
+    while questions_asked < MAX_QUESTIONS_PER_SESSION:
+        try:
+            # Wait for the next message from the user
+            message = await ctx.bot.wait_for('message', check=lambda m: m.author.id == user_id, timeout=300)
+            
+            # End session if the user sends the stop command
+            if message.content.strip().lower() == "/ai-stop":
+                await ctx.send("AI session ended.")
+                break
+
+            # Handle the next question and increment the counter
+            answer = await ask_chatgpt(message.content, conversation_history)
+            await message.channel.send(answer)
+            questions_asked += 1
+
+        except asyncio.TimeoutError:
+            await ctx.send("AI session ended due to inactivity.")
+            break
+
+@bot.command(name="AI")
+async def ai_command(ctx, *, question=None):
+    try:
+        if question is None:
+            await ctx.send("Please provide a question after the command: `!AI \"Question\"`")
+            return
+        
+        await handle_ai_session(ctx, question)
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
 
 ''''
 Game section Start
 '''
 
-# Global variables for game management
+# Game state variables
 game_task = None
 game_initiator = None
 current_question = None
 correct_answer = None
 current_game_type = None
-question_timeout_task = None
 
-# Load JSON data for questions and user scores
-QUESTION_FILE = "questions.json"  # Adjust the file path
-SCORE_FILE = "scores.json"  # Adjust the file path
-
+# Helper Functions to Load Questions
 def load_network_questions():
     """Loads network questions from the JSON file."""
-    if os.path.exists(QUESTION_FILE):
-        with open(QUESTION_FILE, "r") as f:
+    try:
+        with open("questions.json", "r") as f:
             return json.load(f)
-    else:
-        raise FileNotFoundError(f"{QUESTION_FILE} not found!")
-
-def load_user_scores():
-    """Loads user scores from the JSON file."""
-    if not os.path.exists(SCORE_FILE):
-        with open(SCORE_FILE, "w") as f:
-            json.dump({}, f)  # Create an empty JSON file
-    with open(SCORE_FILE, "r") as f:
-        return json.load(f)
-
-def save_user_scores(scores):
-    """Saves the updated user scores to the JSON file."""
-    with open(SCORE_FILE, "w") as f:
-        json.dump(scores, f, indent=4)
+    except FileNotFoundError:
+        return []
 
 def generate_subnet_question():
     """Generates a random subnet-related question."""
@@ -281,143 +349,75 @@ def generate_subnet_question():
 def generate_network_question():
     """Generates a random network-related question from the loaded JSON file."""
     questions = load_network_questions()
-    question_data = random.choice(questions)
-    question = question_data["question"]
-    options = question_data["options"]
-    correct_index = question_data["correct_option_index"]
-    return question, options, correct_index
-
-def check_subnet_answer(user_answer, correct_answer):
-    """Checks if the user's answer for subnet question is correct."""
-    return user_answer.strip() == correct_answer
-
-def check_network_answer(selected_option_index, correct_option_index):
-    """Checks if the selected answer for network question is correct."""
-    return selected_option_index == correct_option_index
-
-async def start_game(ctx, game_type):
-    """Starts a game based on the selected game type."""
-    global current_question, correct_answer, current_game_type, game_initiator, game_task, question_timeout_task
-
-    if game_task and not game_task.done():
-        await ctx.send("A game is already in progress. Please finish it first.")
-        return
-
-    game_initiator = ctx.author  # Track the user who started the game
-    current_game_type = game_type
-
-    if game_type == 'subnet':
-        current_question, correct_answer = generate_subnet_question()
-        await ctx.send(f"Subnet question: {current_question}")
-    elif game_type == 'network':
-        question, options, correct_index = generate_network_question()
-        options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
-        current_question = f"{question}\n\n{options_str}"
-        correct_answer = correct_index  # Store the correct answer index
-        await ctx.send(f"Network question:\n{current_question}")
-    
-    # Cancel any existing timeout tasks
-    if question_timeout_task and not question_timeout_task.done():
-        question_timeout_task.cancel()
-
-    game_task = asyncio.create_task(run_game(ctx))
-
-async def run_game(ctx):
-    """Runs the game loop until the user stops it with !game_stop or after 5 minutes of inactivity."""
-    global question_timeout_task
-
-    while True:
-        question_timeout_task = asyncio.create_task(question_timeout(ctx))
-        try:
-            await question_timeout_task
-        except asyncio.CancelledError:
-            pass  # Timeout task was cancelled, continue to the next question
-
-async def question_timeout(ctx):
-    """Stops the game after 5 minutes of inactivity."""
-    await asyncio.sleep(300)  # 5 minutes timeout
-    await ctx.send("Game ended due to inactivity.")
-    reset_game()
-
-async def process_answer(message):
-    """Processes the answer from the game initiator only."""
-    global current_question, correct_answer, current_game_type, game_initiator, question_timeout_task
-
-    if message.author != game_initiator:
-        return  # Ignore messages from users who didn't start the game
-
-    if current_question is None or current_game_type is None:
-        return
-
-    # Handle Subnet question
-    if current_game_type == 'subnet':
-        if check_subnet_answer(message.content, correct_answer):
-            await message.channel.send(f"Correct! The answer is {correct_answer}.")
-            await show_score_comparison(message.channel, message.author.id, 10)  # 10 points for correct answer
-        else:
-            await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
-        await next_question(message)
-
-    # Handle Network question
-    elif current_game_type == 'network':
-        try:
-            selected_option = int(message.content) - 1
-            if check_network_answer(selected_option, correct_answer):
-                await message.channel.send("Correct!")
-                await show_score_comparison(message.channel, message.author.id, 10)
-            else:
-                await message.channel.send(f"Wrong answer. The correct option was {correct_answer + 1}.")
-            await next_question(message)
-        except ValueError:
-            await message.channel.send("Please respond with the option number (1, 2, 3, etc.).")
-
-async def next_question(message):
-    """Asks the next question."""
-    global current_game_type
-    if current_game_type == 'subnet':
-        await start_game(message.channel, 'subnet')
-    elif current_game_type == 'network':
-        await start_game(message.channel, 'network')
+    if questions:
+        question_data = random.choice(questions)
+        question = question_data["question"]
+        options = question_data["options"]
+        correct_index = question_data["correct_option_index"]
+        return question, options, correct_index
+    else:
+        return "No network questions found.", [], 0
 
 def reset_game():
-    """Resets the game state."""
-    global current_question, correct_answer, current_game_type, game_task, game_initiator, question_timeout_task
+    """Reset the game state."""
+    global current_question, correct_answer, current_game_type, game_initiator
     current_question = None
     correct_answer = None
     current_game_type = None
     game_initiator = None
-    if game_task and not game_task.done():
-        game_task.cancel()
-        game_task = None
-    if question_timeout_task and not question_timeout_task.done():
-        question_timeout_task.cancel()
 
-def update_user_score(user_id, points):
-    """Updates the score for the user and saves it to a JSON file."""
-    scores = load_user_scores()
-    
-    previous_score = scores.get(str(user_id), 0)
-    
-    # Update user's score
-    scores[str(user_id)] = previous_score + points
-    
-    # Save the updated scores back to the file
-    save_user_scores(scores)
-    
-    return previous_score, scores[str(user_id)]
+# Game Logic
+async def start_game(ctx, game_type):
+    """Start the game with selected type (subnet or network)."""
+    global current_question, correct_answer, current_game_type, game_initiator
 
-async def show_score_comparison(ctx, user_id, new_points):
-    """Shows the score comparison between the previous and current score."""
-    previous_score, new_score = update_user_score(user_id, new_points)
-    
-    if previous_score == 0:
-        await ctx.send(f"Your current score is {new_score} points. This is your first game!")
-    else:
-        await ctx.send(f"Your previous score was {previous_score} points, and now your score is {new_score} points.")
+    if game_initiator is not None:
+        await ctx.send(f"{game_initiator} already started a game. Please stop it first.")
+        return
 
+    game_initiator = ctx.author
+    current_game_type = game_type
+    current_question = None
+    correct_answer = None
+    
+    if game_type == "subnet":
+        current_question, correct_answer = generate_subnet_question()
+        await ctx.send(f"Subnet question: {current_question}")
+    elif game_type == "network":
+        question, options, correct_index = generate_network_question()
+        options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
+        current_question = f"{question}\n\n{options_str}"
+        correct_answer = correct_index  # Correct index for the network question
+        await ctx.send(f"Network question:\n{current_question}")
+
+async def process_answer(message):
+    """Process the answer provided by the user."""
+    global current_question, correct_answer, current_game_type, game_initiator
+
+    if message.author != game_initiator:
+        return  # Only the initiator can answer
+
+    if current_game_type == 'subnet':
+        if message.content.strip() == correct_answer:
+            await message.channel.send(f"Correct! The answer was {correct_answer}.")
+        else:
+            await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
+    elif current_game_type == 'network':
+        try:
+            selected_option = int(message.content) - 1
+            if selected_option == correct_answer:
+                await message.channel.send("Correct!")
+            else:
+                await message.channel.send(f"Wrong answer. The correct answer was option {correct_answer + 1}.")
+        except ValueError:
+            await message.channel.send("Please respond with the option number (1, 2, 3, etc.).")
+
+    reset_game()
+
+# Commands and Events
 @bot.command()
 async def game(ctx):
-    """Starts the game and prompts the user to select a game type."""
+    """Starts the game and prompts the user to choose a mode."""
     view = discord.ui.View()
     
     subnet_button = discord.ui.Button(label="Subnet", style=discord.ButtonStyle.primary)
@@ -441,29 +441,27 @@ async def game(ctx):
 
 @bot.command()
 async def game_stop(ctx):
-    """Command to stop the running game."""
-    if game_task:
+    """Stops the running game."""
+    if game_initiator is None:
+        await ctx.send("No game is currently running.")
+    else:
         reset_game()
         await ctx.send("Game stopped.")
-    else:
-        await ctx.send("No game is currently running.")
 
 @bot.event
 async def on_message(message):
-    """Process incoming messages and handle game answers."""
+    """Listen for answers and commands."""
     if message.author == bot.user:
-        return
+        return  # Ignore bot's own messages
 
     await bot.process_commands(message)
-    
+
     if current_question is not None and message.author == game_initiator:
         await process_answer(message)
 
 '''
-Game section END 
+GET an RFC section: 
 '''
-
-##############_RFC_##############
 
 @bot.command()
 async def rfc(ctx, rfc_number: str = None):
