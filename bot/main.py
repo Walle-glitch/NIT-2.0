@@ -221,6 +221,10 @@ async def ping(ctx, ip: str = "8.8.8.8"):
 
 #############################_Study_Commands_#############################
 
+''''
+Game section Start
+'''
+
 # Global variables for game management
 game_task = None
 game_initiator = None
@@ -293,7 +297,7 @@ def check_network_answer(selected_option_index, correct_option_index):
 
 async def start_game(ctx, game_type):
     """Starts a game based on the selected game type."""
-    global current_question, correct_answer, current_game_type, game_initiator, game_task
+    global current_question, correct_answer, current_game_type, game_initiator, game_task, question_timeout_task
 
     if game_task and not game_task.done():
         await ctx.send("A game is already in progress. Please finish it first.")
@@ -312,6 +316,10 @@ async def start_game(ctx, game_type):
         correct_answer = correct_index  # Store the correct answer index
         await ctx.send(f"Network question:\n{current_question}")
     
+    # Cancel any existing timeout tasks
+    if question_timeout_task and not question_timeout_task.done():
+        question_timeout_task.cancel()
+
     game_task = asyncio.create_task(run_game(ctx))
 
 async def run_game(ctx):
@@ -333,7 +341,7 @@ async def question_timeout(ctx):
 
 async def process_answer(message):
     """Processes the answer from the game initiator only."""
-    global current_question, correct_answer, current_game_type, game_initiator
+    global current_question, correct_answer, current_game_type, game_initiator, question_timeout_task
 
     if message.author != game_initiator:
         return  # Ignore messages from users who didn't start the game
@@ -442,9 +450,18 @@ async def game_stop(ctx):
 
 @bot.event
 async def on_message(message):
+    """Process incoming messages and handle game answers."""
+    if message.author == bot.user:
+        return
+
     await bot.process_commands(message)
-    if game_initiator and current_question:
+    
+    if current_question is not None and message.author == game_initiator:
         await process_answer(message)
+
+'''
+Game section END 
+'''
 
 ##############_RFC_##############
 
