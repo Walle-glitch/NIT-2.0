@@ -1,3 +1,66 @@
+# Module _Games.py 
+# call commands in main.py 
+'''
+this is the comands in main.py
+@bot.event
+async def on_message(message):
+    """Hantera inkommande meddelanden och spåra aktivitet"""
+    await track_activity(message, bot)
+    await bot.process_commands(message)
+
+
+@bot.command()
+async def game(ctx):
+    view = View()
+    
+    subnet_button = Button(label="Subnet", style=discord.ButtonStyle.primary)
+    network_button = Button(label="Network Questions", style=discord.ButtonStyle.secondary)
+    
+    # Lägg till callbacks för knapparna
+    async def subnet_callback(interaction: discord.Interaction):
+        await interaction.response.defer()
+        await _Games.start_game(ctx, 'subnet')
+
+    async def network_callback(interaction: discord.Interaction):
+        await interaction.response.defer()
+        await _Games.start_game(ctx, 'network')
+    
+    subnet_button.callback = subnet_callback
+    network_button.callback = network_callback
+    
+    view.add_item(subnet_button)
+    view.add_item(network_button)
+    
+    await ctx.send("Choose a game mode:", view=view)
+    logger.info(f"Användare {ctx.author} använde kommandot XX.")
+
+@bot.command()
+async def game_stop(ctx):
+    """Command to stop a running game."""
+    if _Games.game_task:
+        _Games.reset_game()
+        await ctx.send("Game stopped.")
+    else:
+        await ctx.send("No game is currently running.")
+
+@bot.event
+async def on_message(message):
+    # Process commands first
+    await bot.process_commands(message)
+    logger.info(f"Bot game process_commands ")
+    # Check if a game is running and if we are waiting for an answer
+    if _Games.current_question is not None and message.content and message.author != bot.user:
+        await _Games.process_answer(message)
+        logger.info(f"Bot game On messege current_question ")
+
+!!!! Current issue "!game issue #11" User can initiate the game and choose Network Q or subnet, they get the first question. 
+    Bot does not react to Input as an awnser. 
+
+    !!!! Changes i want done, Only listen to the user that initiated the !game command. Track that user for respons. 
+    !!!! Move all this logic to main.py, so i can delete _game.py module.
+    !!!! fix issue of bot not responding. 
+    !!!! make the Questins continius until user uses the !gamestop command or after 5 minuts inactivity.  
+''' 
 import ipaddress
 import random
 import asyncio
