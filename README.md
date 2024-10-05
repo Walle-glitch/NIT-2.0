@@ -6,7 +6,6 @@ NIT-BOT is a versatile Discord bot designed for various network-related function
 ## Features
 
 ### Networking & System Utilities
-- **BGP Configuration:** Configure BGP neighbors on a router with ease.
 - **Subnet Game:** Engage in a subnetting quiz to test and improve your networking knowledge.
 - **Ping Command:** Perform a network ping test to check connectivity.
 - **RFC Retrieval:** Fetch and display information about RFCs by specifying their number.

@@ -21,12 +21,11 @@ import _Games
 import _CCIE_Study_Plan
 import _CCNP_Study_Plan
 import _CCNA_Study_Plan
-import _External_Media
 import _Auction
 import _Bot_Config # type: ignore
 import _Slash_Commands
-from logging_setup import setup_logging
-from activity_tracker import setup_file, track_activity
+from _logging_setup import setup_logging
+from _activity_tracker import setup_file, track_activity
 
 ###########################################_Global_Variables_##########################################
 
@@ -88,9 +87,6 @@ async def log_to_channel(bot, message):
     else:
         print("Log channel not found")
 
-    # logger.info(f"Användare {ctx.author} använde kommandot XX.")
-
-
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
 
@@ -98,16 +94,18 @@ _Slash_Commands.setup(bot)
 async def on_ready():
     await log_to_channel(bot, f'Logged in as {bot.user}')
     await bot.tree.sync() # Synchronize global application commands
-    print("Global commands synced.")
+    await log_to_channel(bot, "Global commands synced.") 
     weekly_study_plan_CCIE.start()  
     weekly_study_plan_CCNP.start()
     weekly_study_plan_CCNA.start()
+    await log_to_channel(bot, "Study plans active")
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     # Start scheduled tasks when the bot is ready
-    update_roles.start()  
+    update_roles.start()
+    await log_to_channel(bot, "Roles active")
     check_welcome_message.start()
     # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
@@ -174,14 +172,6 @@ async def version(ctx):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Git Repository Command
-@bot.command()
-async def git(ctx):
-    try:
-        await ctx.send('https://github.com/Walle-glitch/NIT-2.0.git')
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
 # About Command
 @bot.command()
 async def about(ctx):
@@ -191,10 +181,10 @@ async def about(ctx):
             'It is public on GitHub and anyone is free to contribute to it,' 
             'either for fun or other (non-malicious) projects.\n' 
             'The server it is hosted on is at my home,' 
-            'so it is behind a normal (NAT Gateway).\n'
+            'so it is behind a normal NAT Gateway.\n'
             '\n' 
             'Contact Walle/Nicklas for more info.'
-            'Use /git for the link to the GitHub repo.\n'
+            'https://github.com/Walle-glitch/NIT-2.0.git\n'
         )
         await ctx.send(reply)
     except Exception as e:
@@ -298,61 +288,6 @@ async def rfc(ctx, rfc_number: str = None):
         await ctx.send(result)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-
-###########################################_Below this line_###########################################
-#############################################_Media_Stuff_#############################################
-
-@bot.command()
-async def add_youtube(ctx, channel: str = None):
-    if channel:
-        added = _External_Media.add_channel("youtube", channel)
-        if added:
-            await ctx.send(f'YouTube channel "{channel}" added successfully.')
-        else:
-            await ctx.send(f'YouTube channel "{channel}" is already added.')
-    else:
-        await _External_Media.display_instructions("youtube", bot, ctx)
-
-@bot.command()
-async def remove_youtube(ctx, channel: str = None):
-    if channel:
-        removed = _External_Media.remove_channel("youtube", channel)
-        if removed:
-            await ctx.send(f'YouTube channel "{channel}" removed successfully.')
-        else:
-            await ctx.send(f'YouTube channel "{channel}" not found in the list.')
-    else:
-        await _External_Media.display_active_channels("youtube", bot, ctx)
-
-@bot.command()
-async def add_pod(ctx, channel: str = None):
-    if channel:
-        added = _External_Media.add_channel("podcast", channel)
-        if added:
-            await ctx.send(f'Podcast "{channel}" added successfully.')
-        else:
-            await ctx.send(f'Podcast "{channel}" is already added.')
-    else:
-        await _External_Media.display_instructions("podcast", bot, ctx)
-
-@bot.command()
-async def remove_pod(ctx, channel: str = None):
-    if channel:
-        removed = _External_Media.remove_channel("podcast", channel)
-        if removed:
-            await ctx.send(f'Podcast "{channel}" removed successfully.')
-        else:
-            await ctx.send(f'Podcast "{channel}" not found in the list.')
-    else:
-        await _External_Media.display_active_channels("podcast", bot, ctx)
-
-@tasks.loop(hours=1)  # Weekly loop for fetching latest YouTube content
-async def fetch_youtube_content():
-    await _External_Media.fetch_latest_content("youtube", bot, YOUTUBE_CHANNEL_ID)
-
-@tasks.loop(hours=1)  # Weekly loop for fetching latest podcast content
-async def fetch_podcast_content():
-    await _External_Media.fetch_latest_content("podcast", bot, PODCAST_CHANNEL_ID)
 
 ###########################################_Below this line_###########################################
 ###########################################_Role_Assignment_###########################################
@@ -623,7 +558,6 @@ async def test(ctx):
     test_commands = [
         ("version", None),
         ("h", None),
-        ("git", None),
         ("hello", None),
         ("about", None),
         ("ping", "8.8.8.8"),
@@ -656,8 +590,6 @@ async def test(ctx):
 async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
-
-
 
 
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
