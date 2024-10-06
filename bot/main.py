@@ -131,6 +131,43 @@ async def on_command_error(ctx, error):
 
 
 ###############
+''' 
+Module Reloding function
+'''
+# Create a dictionary mapping module names to their imports
+modules = {
+    "Role_Management": Role_Management,
+    "XP_Handler": XP_Handler,
+    "Member_Moderation": _Member_Moderation,
+    "Game": _Game,
+    "Bot_Modul": _Bot_Modul,
+    "Cisco_Study_Plans": _Cisco_Study_Plans,
+    "Auction": _Auction,
+    "Slash_Commands": _Slash_Commands,
+    "Activity_Tracking": _Activity_Tracking,
+    "logging_setup": setup_logging
+}
+
+@bot.command()
+@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
+async def reload_module(ctx, module_name: str = None):
+    """Reloads a specified module. If no argument is provided, lists all available modules."""
+    try:
+        if module_name is None:
+            # List all available modules if no module name is provided
+            available_modules = ', '.join(modules.keys())
+            await ctx.send(f"Available modules: {available_modules}")
+        elif module_name in modules:
+            # Reload the specified module
+            reload(modules[module_name])
+            await ctx.send(f"Module '{module_name}' has been reloaded.")
+            logger.info(f"Module '{module_name}' reloaded.")
+        else:
+            await ctx.send(f"Module '{module_name}' not found. Use the command without arguments to list available modules.")
+            logger.warning(f"Module '{module_name}' not found.")
+    except Exception as e:
+        await ctx.send(f"Failed to reload module '{module_name}': {str(e)}")
+        logger.error(f"Failed to reload module '{module_name}': {str(e)}")
 
 ''''
 Auction Command
@@ -305,14 +342,6 @@ Game section Start
 # Extensive logging is used for tracking and debugging game events and user interactions.
 '''
 
-# Reload Game module command
-@bot.command()
-async def reload_game(ctx):
-    """Reload the Game module without restarting the bot."""
-    importlib.reload(_Game)
-    await ctx.send("Game module reloaded successfully.")
-    print("Game module reloaded.")
-
 # Start game command
 @bot.command()
 async def game(ctx):
@@ -353,7 +382,6 @@ GET an RFC section:
  
     Retrieves and displays information about an RFC based on the number.
     :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
-
 '''
 
 @bot.command()
@@ -373,20 +401,9 @@ async def rfc(ctx, rfc_number: str = None):
 
 '''
 Role managment section:
-
-
 '''
 
 XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
-
-@bot.event
-async def on_ready():
-    print(f"Bot {bot.user.name} is online.")
-    update_roles.start()
-    channel = bot.get_channel(XP_UPDATE_CHANNEL_ID)
-    if channel:
-        view = Role_Management.create_role_buttons_view()  # Create role buttons view
-        await channel.send("Click the buttons to assign yourself a role:", view=view)  # Send buttons in the channel
 
 # Task to periodically update roles
 @tasks.loop(hours=1)
@@ -438,7 +455,6 @@ async def removerole(ctx, role_name: str = None):
 
     await Role_Management.remove_role(ctx, role_name)
 
-
 '''
 #LateNightCrew role assignment. 
 '''
@@ -449,18 +465,7 @@ async def on_message(message):
     await _Activity_Tracking.track_activity(message, bot)
     await bot.process_commands(message)
 
-@bot.command()
-@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
-async def reload_module(ctx, module_name: str):
-    """Reloads a specified module."""
-    try:
-        if module_name == "Activity_Tracking":
-            reload(_Activity_Tracking)
-            await ctx.send(f"{module_name} module has been reloaded.")
-        else:
-            await ctx.send("Module not found.")
-    except Exception as e:
-        await ctx.send(f"Failed to reload {module_name}: {str(e)}")
+
 
 ###########################################_Study_Plan_Loops_###########################################
 
@@ -558,14 +563,6 @@ Section below is for member moderation
 
 # Set the Admin Channel ID
 _Member_Moderation.set_admin_channel_id(_Bot_Config._Admin_Channel_ID())
-
-# Reload Member Moderation Module Command
-@bot.command(name="reload_moderation")
-async def reload_moderation_module(ctx):
-    """Reloads the member moderation module."""
-    importlib.reload(_Member_Moderation)
-    await ctx.send("Member Moderation module reloaded successfully.")
-    print("Member Moderation module reloaded.")
 
 # Kick Command
 @bot.command(name="kick")
