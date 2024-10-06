@@ -482,11 +482,10 @@ async def game_stop(ctx):
 
 '''
 GET an RFC section: 
-    """
+ 
     Retrieves and displays information about an RFC based on the number.
-    
     :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
-    """
+
 '''
 
 @bot.command()
