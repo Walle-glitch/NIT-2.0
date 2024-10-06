@@ -4,58 +4,33 @@
 
 import discord  # Main Discord library for building bots
 from discord.ext import commands, tasks  # Commands and tasks extension for Discord
-from discord.ui import Button, View
 from datetime import datetime #, timedelta  # For handling date and time operations
-import json  # For handling JSON data
 import os  # For interacting with the operating system, like file paths
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
 import asyncio 
-import ipaddress
-import random
+import importlib
+from importlib import reload
 import openai
+import logging
 
+# Local module imports
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
-
-import _Bot_Modul
+import _Role_Management as Role_Management  # Importing role management module
+import _XP_Handler as XP_Handler  # Import your module
+import _Member_Moderation 
+import _Game
+import _Bot_Modul 
 import _Cisco_Study_Plans 
 import _Auction
 import _Bot_Config # type: ignore
 import _Slash_Commands
 from _logging_setup import setup_logging
-from _activity_tracker import setup_file, track_activity
+import _Activity_Tracking  # The activity tracking module
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/10/05.1"  # Global version number variable
-
-# Roles with access 
-BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
-ADMIN_ROLE_NAME =  _Bot_Config._Admin_Role_Name()
-MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
-MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
-
-# Definiera roller som kräver lösenord
-PASSWORD_PROTECTED_ROLES = _Bot_Config._protected_Poles()
-
-# Channel IDs
-XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
-JOB_CHANNEL_ID = _Bot_Config._Job_Channel_ID()
-CCIE_STUDY_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
-CCNP_STUDY_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
-CCNA_STUDY_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
-WELCOME_CHANNEL_ID = _Bot_Config._Welcome_Channel_ID()
-LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
-TICKET_CATEGORY_ID = _Bot_Config._Ticket_Category_ID()
-GEN_CHANNEL_ID = _Bot_Config._Gen_Channel_ID()
-YOUTUBE_CHANNEL_ID = _Bot_Config._YouTube_Channel_ID()
-PODCAST_CHANNEL_ID = _Bot_Config._Podcast_Channel_ID()
-Net_questions = _Bot_Config._Question_File()
-
-# File Management 
-ROLE_JSON_FILE = _Bot_Config._Role_Json_File() # File where roles are stored
-EXCLUDED_ROLES = _Bot_Config._Excluded_Roles() # Roles that cannot be assigned via reactions
-ACTIVE_USERS_FILE = _Bot_Config._ACTIVE_USERS_FILE()
+version_nr = "Current Version is 24/10/06.1M"  # Global version number variable
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -65,17 +40,18 @@ intents.reactions = True  # Enable reaction events
 intents.guilds = True  # Access to server information, including roles
 intents.members = True  # Access to members for role assignment
 intents.messages = True
-# Sätt upp loggern
-logger = setup_logging()
+
+
+logger = logging.getLogger(__name__) # Setup logging
 
 bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
-
-# Kör setup för filer
-setup_file()
 
 ##################_BOT_BOOT_##################
 
 # Create a function that sends messages to both server logs and a Discord channel
+
+LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
+
 async def log_to_channel(bot, message):
     print(message)  # Print to server logs
 
@@ -101,19 +77,21 @@ async def on_ready():
     weekly_study_plan_CCNA.start()
     await log_to_channel(bot, "Study plans active")
     logger.error(f"Study plans active") 
+    _Activity_Tracking.setup_file()
     # setup_rich_presence()  # Try setting up Rich Presence
     await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
     logger.error(f"Processing historical data, notifications are disabled. This Will take a while...") 
-    await _Bot_Modul.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+    # Process historical data only if XP data is empty
+    if not xp_data:
+        await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)    
     await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
     logger.error(f"Finished processing historical data, notifications are now enabled.")
     # Start scheduled tasks when the bot is ready
-    update_roles.start()
+    update_roles.start() # Used in Role managment section
     await log_to_channel(bot, "Roles active")
-    check_welcome_message.start()
-    # Find a specific channel to post the welcome message or ensure it's updated
     await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
     logger.error(f"All Boot Events are now completed")
+ 
 
 @bot.event
 async def on_message(message):
@@ -130,11 +108,6 @@ async def on_command(ctx): # Logga varje gång ett kommando körs
 @bot.event
 async def on_command_error(ctx, error): # Logga alla fel som inträffar med kommandon
     logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
-
-@bot.event
-async def on_message(message): # Hantera inkommande meddelanden och spåra aktivitet
-    await track_activity(message, bot)
-    await bot.process_commands(message)
 
 ''''
 Auction Command
@@ -309,175 +282,49 @@ Game section Start
 # Extensive logging is used for tracking and debugging game events and user interactions.
 '''
 
-# Game state variables
-game_task = None
-game_initiator = None     # Track the user who initiated the game
-current_question = None
-correct_answer = None
-current_game_type = None  # Track the game type
-game_active = False       # Flag to keep track of the game state
-
-
-#### Helper Functions to Load Questions ###
-
-def load_network_questions(): # "Loads network questions from the JSON file.
-    try:
-        with open(Net_questions, "r") as f:
-            logger.debug("Loaded network questions from JSON file.")
-            return json.load(f)
-    except FileNotFoundError as e:
-        logger.error(f"Error loading questions: {e}")
-        return []
-
-def generate_subnet_question(): # Generates a random subnet-related question."""
-    ip = ipaddress.IPv4Address(random.randint(0, 2**32 - 1))
-    prefix_length = random.randint(16, 30)
-    network = ipaddress.IPv4Network(f"{ip}/{prefix_length}", strict=False)
-    
-    question_type = random.choice(["network", "broadcast", "hosts"])
-    
-    if question_type == "network":
-        question = f"What is the network address for {network}?"
-        correct_answer = str(network.network_address)
-    elif question_type == "broadcast":
-        question = f"What is the broadcast address for {network}?"
-        correct_answer = str(network.broadcast_address)
-    else:
-        question = f"How many hosts can be in the subnet {network}?"
-        correct_answer = str(network.num_addresses - 2)
-    
-    logger.debug(f"Generated subnet question: {question}, Correct answer: {correct_answer}")
-    return question, correct_answer
-
-def generate_network_question(): # Generates a random network-related question from the loaded JSON file.
-    questions = load_network_questions()
-    if questions:
-        question_data = random.choice(questions)
-        question = question_data["question"]
-        options = question_data["options"]
-        correct_index = question_data["correct_option_index"]
-        logger.debug(f"Generated network question: {question}, Correct index: {correct_index}")
-        return question, options, correct_index
-    else:
-        logger.warning("No network questions available in the JSON file.")
-        return "No network questions found.", [], 0
-
-# Game Logic
-async def start_game(ctx, game_type): # Starts a game based on the selected game type and continues until timeout or game stop."""
-    global current_question, correct_answer, current_game_type, game_initiator, game_active
-    
-    if game_active:
-        await ctx.send("A game is already in progress. Please finish it first.")
-        return
-
-    current_game_type = game_type
-    game_initiator = ctx.author  # Track the user who started the game
-    game_active = True  # Mark game as active
-
-    await ctx.send(f"Game started by {game_initiator.mention}! Answer the questions or use !game_stop to end.")
-
-    # Start the continuous game loop
-    while game_active:
-        # Generate and ask the next question
-        await ask_next_question(ctx)
-
-        # Wait for user response
-        def check(m):
-            return m.author == game_initiator and m.channel == ctx.channel
-
-        try:
-            user_response = await bot.wait_for('message', check=check, timeout=300)  # 5 minutes timeout
-            await process_answer(ctx, user_response)
-        except asyncio.TimeoutError:
-            await ctx.send(f"Time's up, {game_initiator.mention}! The game has ended due to inactivity.")
-            reset_game()
-            break  # Exit the loop after timeout
-
-async def ask_next_question(ctx): # Generates and sends the next question based on the current game type."""
-    global current_question, correct_answer, current_game_type
-
-    if current_game_type == 'subnet':
-        current_question, correct_answer = generate_subnet_question()
-        await ctx.send(f"Subnet question: {current_question}")
-    elif current_game_type == 'network':
-        question, options, correct_index = generate_network_question()
-        options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
-        current_question = f"{question}\n\n{options_str}"
-        correct_answer = correct_index
-        await ctx.send(f"Network question:\n{current_question}")
-
-async def process_answer(ctx, message):
-    """Processes the answer from the user."""
-    global current_question, correct_answer, current_game_type
-
-    user_answer = message.content.strip()
-    logger.debug(f"Processing answer from {message.author}: {user_answer}")
-
-    if current_game_type == 'subnet':
-        if user_answer == correct_answer:
-            await ctx.send(f"Correct! The answer was {correct_answer}.")
-            logger.info(f"Correct answer by {message.author}")
-        else:
-            await ctx.send(f"Wrong answer. The correct answer is {correct_answer}.")
-            logger.info(f"Wrong answer by {message.author}")
-    elif current_game_type == 'network':
-        try:
-            selected_option = int(user_answer) - 1
-            if selected_option == correct_answer:
-                await ctx.send("Correct!")
-                logger.info(f"Correct answer by {message.author}")
-            else:
-                await ctx.send(f"Wrong answer. The correct option was {correct_answer + 1}.")
-                logger.info(f"Wrong answer by {message.author}")
-        except ValueError:
-            await ctx.send("Please respond with the option number (1, 2, 3, etc.).")
-            logger.warning(f"Invalid input from {message.author}: {message.content}")
-
-def reset_game():
-    """Resets the game state."""
-    global current_question, correct_answer, current_game_type, game_initiator, game_active
-    current_question = None
-    correct_answer = None
-    current_game_type = None
-    game_initiator = None
-    game_active = False  # Mark game as inactive
-    logger.info("Game state has been reset.")
-
-# Commands and Events
+# Reload Game module command
 @bot.command()
-async def game(ctx): # Starts the game and prompts the user to choose a mode.
+async def reload_game(ctx):
+    """Reload the Game module without restarting the bot."""
+    importlib.reload(_Game)
+    await ctx.send("Game module reloaded successfully.")
+    print("Game module reloaded.")
+
+# Start game command
+@bot.command()
+async def game(ctx):
+    """Starts the game and prompts the user to choose a mode."""
     view = discord.ui.View()
-    
+
     subnet_button = discord.ui.Button(label="Subnet", style=discord.ButtonStyle.primary)
     network_button = discord.ui.Button(label="Network Questions", style=discord.ButtonStyle.secondary)
-    
+
     async def subnet_callback(interaction: discord.Interaction):
         await interaction.response.defer()
-        await start_game(ctx, 'subnet')
+        await _Game.start_game(ctx, 'subnet', bot)
 
     async def network_callback(interaction: discord.Interaction):
         await interaction.response.defer()
-        await start_game(ctx, 'network')
-    
+        await _Game.start_game(ctx, 'network', bot)
+
     subnet_button.callback = subnet_callback
     network_button.callback = network_callback
-    
+
     view.add_item(subnet_button)
     view.add_item(network_button)
-    
-    logger.info(f"{ctx.author} initiated game selection.")
+
     await ctx.send("Choose a game mode:", view=view)
 
+# Stop game command
 @bot.command()
 async def game_stop(ctx):
     """Command to stop the game."""
-    global game_active
-    if game_active:
-        reset_game()
+    if _Game.game_active:
+        _Game.reset_game()
         await ctx.send("Game stopped.")
     else:
         await ctx.send("No game is currently running.")
-
+        
 '''
 GET an RFC section: 
  
@@ -501,125 +348,100 @@ async def rfc(ctx, rfc_number: str = None):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-###########################################_Below this line_###########################################
-###########################################_Role_Assignment_###########################################
+'''
+Role managment section:
 
+
+'''
+
+XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
+
+@bot.event
+async def on_ready():
+    print(f"Bot {bot.user.name} is online.")
+    update_roles.start()
+    channel = bot.get_channel(XP_UPDATE_CHANNEL_ID)
+    if channel:
+        view = Role_Management.create_role_buttons_view()  # Create role buttons view
+        await channel.send("Click the buttons to assign yourself a role:", view=view)  # Send buttons in the channel
+
+# Task to periodically update roles
 @tasks.loop(hours=1)
 async def update_roles():
     try:    
-        await _Bot_Modul.fetch_and_save_roles(bot)
+        await Role_Management.fetch_and_save_roles(bot)
     except Exception as e:
-        await log_to_channel(bot, f"An error occurred: {str(e)}")
+        print(f"An error occurred: {str(e)}")
 
-def load_roles():
-    try:
-        with open(ROLE_JSON_FILE, 'r') as file:
-            roles = json.load(file)
-        return roles
-    except Exception as e:
-        print(f"Failed to load roles: {str(e)}")
-        return {}
-
-@bot.command() # Assigns a specific role to the user running the command. Lists available roles if none specified or role not found.
-async def addrole(ctx, role_name: str = None): 
-    roles = load_roles()
-
+# Command to assign a role
+@bot.command()
+async def addrole(ctx, role_name: str = None):
+    """Command to add a role to the user."""
     if role_name is None:
-        # Filtrera roller som inte finns i EXCLUDED_ROLES
-        available_roles = [role for role in roles.keys() if role not in EXCLUDED_ROLES]
+        roles = Role_Management.load_roles()
+        available_roles = [role for role in roles.keys() if role not in Role_Management.EXCLUDED_ROLES]
+        
         if not available_roles:
             await ctx.send("No roles available for assignment.")
             return
-
-        # Skapa en embed med rollerna
+        
         embed = discord.Embed(title="Available Roles", description="Here are the roles you can assign:", color=discord.Color.blue())
         for role in available_roles:
             embed.add_field(name=f'"{role}"', value=f'Assign with `!addrole "{role}"`', inline=False)
-
+        
         await ctx.send(embed=embed)
         return
 
-    if role_name not in roles:
-        await ctx.send(f"Role '{role_name}' could not be found.")
-        return
+    await Role_Management.assign_role(ctx, role_name)
 
-    role = discord.utils.get(ctx.guild.roles, name=role_name)
-    if role is None:
-        await ctx.send(f"Role '{role_name}' could not be found on this server.")
-        return
-
-    # Kontrollera om rollen är lösenordsskyddad
-    if role_name in PASSWORD_PROTECTED_ROLES:
-        await ctx.author.send(f"The role '{role_name}' requires a password. Please respond with the password within 60 seconds, The pasword can be found on Canvas in the descussion thread.:")
-
-        try:
-            # Vänta på att användaren skickar lösenordet i DM
-            msg = await bot.wait_for('message', timeout=60.0, check=lambda m: m.author == ctx.author and isinstance(m.channel, discord.DMChannel))
-
-            # Kontrollera om lösenordet är korrekt
-            if msg.content != PASSWORD_PROTECTED_ROLES[role_name]:
-                await ctx.author.send("Incorrect password. Role assignment canceled.")
-                return
-
-        except asyncio.TimeoutError:
-            await ctx.author.send("You took too long to respond. Role assignment canceled.")
-            return
-
-    if role in ctx.author.roles:
-        embed = discord.Embed(title="Role Already Assigned", description=f"You already have the role **{role_name}**.", color=discord.Color.orange())
-    else:
-        try:
-            await ctx.author.add_roles(role)
-            embed = discord.Embed(title="Role Assigned", description=f"The role **{role_name}** has been assigned to you!", color=discord.Color.green())
-        except discord.Forbidden:
-            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to assign this role.", color=discord.Color.red())
-
-    await ctx.send(embed=embed)
-
-######_Remove_Role_#####
-
-@bot.command()  # Removes a specific role from the user running the command. Lists available roles if none specified or role not found.
-
+# Command to remove a role
+@bot.command()
 async def removerole(ctx, role_name: str = None):
-
-    roles = load_roles()
-    
+    """Command to remove a role from the user."""
     if role_name is None:
-        # Filtrera roller som inte finns i EXCLUDED_ROLES
-        available_roles = [role for role in roles.keys() if role not in EXCLUDED_ROLES]
+        roles = Role_Management.load_roles()
+        available_roles = [role for role in roles.keys() if role not in Role_Management.EXCLUDED_ROLES]
+
         if not available_roles:
             await ctx.send("No roles available for removal.")
             return
         
-        # Skapa en embed med rollerna
         embed = discord.Embed(title="Available Roles", description="Here are the roles you can remove:", color=discord.Color.blue())
         for role in available_roles:
             embed.add_field(name=role, value=f'Remove with `!removerole "{role}"`', inline=False)
         
         await ctx.send(embed=embed)
         return
-    
-    if role_name not in roles:
-        await ctx.send(f"Role '{role_name}' could not be found.")
-        return
 
-    role = discord.utils.get(ctx.guild.roles, name=role_name)
-    if role is None:
-        await ctx.send(f"Role '{role_name}' could not be found on this server.")
-        return
+    await Role_Management.remove_role(ctx, role_name)
 
-    if role not in ctx.author.roles:
-        embed = discord.Embed(title="Role Not Found", description=f"You do not have the role **{role_name}**.", color=discord.Color.orange())
-    else:
-        try:
-            await ctx.author.remove_roles(role)
-            embed = discord.Embed(title="Role Removed", description=f"The role **{role_name}** has been removed from you.", color=discord.Color.green())
-        except discord.Forbidden:
-            embed = discord.Embed(title="Error", description="I do not have sufficient permissions to remove this role.", color=discord.Color.red())
-    
-    await ctx.send(embed=embed)
+
+'''
+#LateNightCrew role assignment. 
+'''
+
+@bot.event
+async def on_message(message):
+    """Handles incoming messages and tracks user activity."""
+    await _Activity_Tracking.track_activity(message, bot)
+    await bot.process_commands(message)
+
+@bot.command()
+@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
+async def reload_module(ctx, module_name: str):
+    """Reloads a specified module."""
+    try:
+        if module_name == "Activity_Tracking":
+            reload(_Activity_Tracking)
+            await ctx.send(f"{module_name} module has been reloaded.")
+        else:
+            await ctx.send("Module not found.")
+    except Exception as e:
+        await ctx.send(f"Failed to reload {module_name}: {str(e)}")
 
 ###########################################_Study_Plan_Loops_###########################################
+
+CCIE_STUDY_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
 
 @tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCIE():
@@ -630,6 +452,8 @@ async def weekly_study_plan_CCIE():
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
+CCNP_STUDY_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
+
 @tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
@@ -638,6 +462,8 @@ async def weekly_study_plan_CCNP():
             await _Cisco_Study_Plans._CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
+
+CCNA_STUDY_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
 
 @tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCNA():
@@ -649,6 +475,9 @@ async def weekly_study_plan_CCNA():
             await log_to_channel(bot, f"An error occurred during the CCNA study plan: {str(e)}")
 
 # Command to manually fetch and post jobs
+
+JOB_CHANNEL_ID = _Bot_Config._Job_Channel_ID()
+
 @bot.command()
 async def post_jobs(ctx):
     try:
@@ -665,78 +494,91 @@ async def job_posting_loop():
 
 ####################################################
 
-# XP Levels Handling
+XP_FILE = _Bot_Config._XP_File()  # File for storing all User XP
+XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
+
+# Load XP data and skip historical data processing if file has content
+xp_data = XP_Handler.load_xp_data()
+
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
-
     try:
-        await _Bot_Modul.handle_xp(message, XP_UPDATE_CHANNEL_ID)
+        await XP_Handler.handle_xp(message, XP_UPDATE_CHANNEL_ID)
     except Exception as e:
-        await log_to_channel(bot, f"An error occurred while handling XP: {str(e)}")
+        print(f"An error occurred while handling XP: {str(e)}")
     await bot.process_commands(message)
 
 @bot.event
 async def on_reaction_add(reaction, user):
     try:
-        await _Bot_Modul.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
+        await XP_Handler.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
     except Exception as e:
-        await log_to_channel(bot, f"An error occurred while handling reaction XP: {str(e)}")
+        print(f"An error occurred while handling reaction XP: {str(e)}")
 
 # Command to show user's level and XP
 @bot.command()
 async def level(ctx, member: discord.Member = None):
+    if member is None:
+        member = ctx.author
     try:
-        if member is None:
-            member = ctx.author
-        await _Bot_Modul.show_level(ctx, member)
+        await XP_Handler.show_level(ctx, member)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-# Loop to check welcome message every hour
-@tasks.loop(hours=1)
-async def check_welcome_message():
-    try:
-        await _Bot_Modul.ensure_welcome_message(bot, WELCOME_CHANNEL_ID)
-    except Exception as e:
-        await log_to_channel(bot, f"An error occurred while checking the welcome message: {str(e)}")
 
 ###########################################_Admin_Commands_###########################################
+'''
+Section below is for member moderation
+'''
 
-def has_privileged_role(ctx):
-    roles = [role.name for role in ctx.author.roles]
-    return "Privilege 15" in roles or "Privilege 10" in roles
+# Set the Admin Channel ID
+_Member_Moderation.set_admin_channel_id(_Bot_Config._Admin_Channel_ID())
+
+# Reload Member Moderation Module Command
+@bot.command(name="reload_moderation")
+async def reload_moderation_module(ctx):
+    """Reloads the member moderation module."""
+    importlib.reload(_Member_Moderation)
+    await ctx.send("Member Moderation module reloaded successfully.")
+    print("Member Moderation module reloaded.")
 
 # Kick Command
 @bot.command(name="kick")
-@commands.check(has_privileged_role)
+@commands.check(_Member_Moderation.has_privileged_role)
 @commands.has_permissions(kick_members=True)
 async def kick_command(ctx, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.kick_user(ctx, user, reason)
+        await _Member_Moderation.kick_user(ctx, user, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
 # Ban Command
 @bot.command(name="ban")
-@commands.check(has_privileged_role)
+@commands.check(_Member_Moderation.has_privileged_role)
 @commands.has_permissions(ban_members=True)
 async def ban_command(ctx, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.ban_user(ctx, user, reason)
+        await _Member_Moderation.ban_user(ctx, user, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
 # Mute Command
 @bot.command(name="mute")
-@commands.check(has_privileged_role)
+@commands.check(_Member_Moderation.has_privileged_role)
 @commands.has_permissions(moderate_members=True)
 async def mute_command(ctx, duration: int, user: discord.Member, *, reason=None):
     try:
-        await _Bot_Modul.mute_user(ctx, user, duration, reason)
+        await _Member_Moderation.mute_user(ctx, user, duration, reason)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+
+'''
+Mantinence Commandes Only for Bot admin ! 
+'''
+
+BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
 
 # Reboot Command
 @bot.command(name="Reboot")
@@ -798,7 +640,6 @@ async def test(ctx):
 async def test_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to use this command.")
-
 
 ##################################_NO_CODE_BELOW_THIS_LINE_####################################
 ###########################################_Run_Bot_###########################################

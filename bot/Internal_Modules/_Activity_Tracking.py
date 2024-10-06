@@ -4,92 +4,85 @@ from datetime import datetime, timedelta
 import logging
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+import discord
 
-import _Bot_Config # type: ignore
+import _Bot_Config  # type: ignore
 import _Bot_Modul
 
-# Definiera filvägar och konstanter
+# File paths and constants
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
 GUILD_ID = _Bot_Config._GUILD_ID()
 LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
 get_server_time = _Bot_Modul._get_server_time()
 
-# Setup logging (importera från logging_setup)
+# Setup logging
 logger = logging.getLogger(__name__)
 
-# Kolla om filen existerar, annars skapa en ny fil
 def setup_file():
     if not os.path.exists("/home/bot/NIT-2.0/bot/Json_Files"):
         os.makedirs("/home/bot/NIT-2.0/bot/Json_Files")
-
+    
     if not os.path.isfile(ACTIVE_USERS_FILE):
         with open(ACTIVE_USERS_FILE, 'w') as file:
             json.dump({}, file)
 
 def is_late_night():
-    """Kolla om det är mellan 00:01 och 05:00"""
-    current_time = get_server_time
+    """Checks if the current time is between 00:01 and 05:00."""
+    current_time = get_server_time()
     return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
 
 def load_active_users():
-    """Ladda aktiva användare från JSON-filen"""
+    """Loads active users from the JSON file."""
     with open(ACTIVE_USERS_FILE, 'r') as file:
         return json.load(file)
 
 def save_active_users(active_users):
-    """Spara aktiva användare till JSON-filen"""
+    """Saves active users to the JSON file."""
     with open(ACTIVE_USERS_FILE, 'w') as file:
         json.dump(active_users, file)
 
 async def add_role(member, role):
-    """Lägg till LateNightCrew rollen till medlemmen"""
+    """Assigns the LateNightCrew role to the member."""
     if role not in member.roles:
         await member.add_roles(role)
-        current_time = get_server_time  # Använd serverns tid
-        logger.info(f"{current_time} Lagt till LateNightCrew-roll för {member.name}")
+        logger.info(f"{get_server_time()} Assigned LateNightCrew role to {member.name}")
 
 async def remove_role(member, role):
-    """Ta bort LateNightCrew rollen från medlemmen"""
+    """Removes the LateNightCrew role from the member."""
     if role in member.roles:
         await member.remove_roles(role)
-        current_time = get_server_time # Använd serverns tid
-        logger.info(f"{current_time} Tagit bort LateNightCrew-roll från {member.name}")
+        logger.info(f"{get_server_time()} Removed LateNightCrew role from {member.name}")
 
 async def track_activity(message, bot):
-    """Spåra användaraktivitet och hantera roller"""
+    """Tracks user activity and manages roles based on activity."""
     if message.author.bot:
         return
 
-    # Ladda guild och rollen
     guild = bot.get_guild(GUILD_ID)
     role = guild.get_role(LATE_NIGHT_ROLE_ID)
-
-    # Ladda aktiva användare
     active_users = load_active_users()
     current_time = datetime.now()
 
-    # Uppdatera aktivitet
+    # Update activity
     active_users[message.author.id] = current_time.isoformat()
     save_active_users(active_users)
 
-    # Hantera Late Night Crew-roll
+    # Handle LateNightCrew role
     if is_late_night():
         await add_role(message.author, role)
 
-    # Ta bort roll om användare varit inaktiva i mer än 14 timmar
+    # Remove role if inactive for more than 14 hours
     for user_id, last_active_str in list(active_users.items()):
         last_active = datetime.fromisoformat(last_active_str)
         member = guild.get_member(int(user_id))
-
         if member and (current_time - last_active) > timedelta(hours=14):
             await remove_role(member, role)
             del active_users[user_id]
 
-    # Uppdatera JSON-filen
+    # Update JSON file
     save_active_users(active_users)
 
-    # Rensa filen om klockan är efter 05:00
+    # Clear the file after 05:00
     if not is_late_night():
         with open(ACTIVE_USERS_FILE, 'w') as file:
             json.dump({}, file)

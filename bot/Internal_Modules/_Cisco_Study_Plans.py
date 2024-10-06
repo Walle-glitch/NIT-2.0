@@ -3,7 +3,6 @@ import json
 import os
 import _Bot_Config # type: ignore
 
-
 '''
 CCNA Study Plan: 
 '''
