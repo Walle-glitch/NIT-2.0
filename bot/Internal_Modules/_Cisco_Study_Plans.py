@@ -3,14 +3,13 @@ import json
 import os
 import _Bot_Config  # type: ignore
 
-
 class _CCNA_Study_Plan:
     @staticmethod
     def get_current_week():
-        current_week_file = _Bot_Config._Current_Week_CCNA()
-        if os.path.exists(current_week_file):
+        current_week_file_CCNA = _Bot_Config._Current_Week_CCNA()
+        if os.path.exists(current_week_file_CCNA):
             try:
-                with open(current_week_file, "r") as f:
+                with open(current_week_file_CCNA, "r") as f:
                     data = json.load(f)
                     return data.get("current_week", 1)
             except json.JSONDecodeError:
@@ -68,14 +67,13 @@ class _CCNA_Study_Plan:
         else:
             print("No study plan available for this week.")
 
-
 class _CCNP_Study_Plan:
     @staticmethod
     def get_current_week():
-        current_week_file = _Bot_Config._Current_Week_CCNP()
-        if os.path.exists(current_week_file):
+        current_week_file_CCNP = _Bot_Config._Current_Week_CCNP()
+        if os.path.exists(current_week_file_CCNP):
             try:
-                with open(current_week_file, "r") as f:
+                with open(current_week_file_CCNP, "r") as f:
                     data = json.load(f)
                     return data.get("current_week", 1)
             except json.JSONDecodeError:
@@ -137,10 +135,10 @@ class _CCNP_Study_Plan:
 class _CCIE_Study_Plan:
     @staticmethod
     def get_current_week():
-        current_week_file = _Bot_Config._Current_Week_CCIE()
-        if os.path.exists(current_week_file):
+        current_week_file_CCIE = _Bot_Config._Current_Week_CCIE()
+        if os.path.exists(current_week_file_CCIE):
             try:
-                with open(current_week_file, "r") as f:
+                with open(current_week_file_CCIE, "r") as f:
                     data = json.load(f)
                     return data.get("current_week", 1)
             except json.JSONDecodeError:
