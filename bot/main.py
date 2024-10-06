@@ -313,30 +313,10 @@ current_question = None
 correct_answer = None
 current_game_type = None
 
-@bot.event
-async def on_message(message):
-    """Listen for answers and commands."""
-    if message.author == bot.user:
-        return  # Ignore bot's own messages
 
-    logger.debug(f"Received message from {message.author}: {message.content}")
-    
-    # First, process any commands (e.g., !game, !gamestop)
-    await bot.process_commands(message)
-    
-    # Check if a game is running and if the user who initiated the game is responding
-    if current_question is not None:
-        if message.author == game_initiator:
-            logger.debug(f"{message.author} is the game initiator, processing their answer.")
-            await process_answer(message)
-        else:
-            logger.info(f"Ignoring message from {message.author} because they did not start the game.")
-    else:
-        logger.debug(f"No game is currently running, message from {message.author} ignored.")
+#### Helper Functions to Load Questions ###
 
-# Helper Functions to Load Questions
-def load_network_questions():
-    """Loads network questions from the JSON file."""
+def load_network_questions(): # "Loads network questions from the JSON file.
     try:
         with open(Net_questions, "r") as f:
             logger.debug("Loaded network questions from JSON file.")
@@ -366,8 +346,7 @@ def generate_subnet_question():
     logger.debug(f"Generated subnet question: {question}, Correct answer: {correct_answer}")
     return question, correct_answer
 
-def generate_network_question():
-    """Generates a random network-related question from the loaded JSON file."""
+def generate_network_question(): # Generates a random network-related question from the loaded JSON file.
     questions = load_network_questions()
     if questions:
         question_data = random.choice(questions)
@@ -382,72 +361,75 @@ def generate_network_question():
 
 # Game Logic
 async def start_game(ctx, game_type):
-    """Start the game with selected type (subnet or network)."""
+    """Starts a game based on the selected game type."""
     global current_question, correct_answer, current_game_type, game_initiator
-
-    if game_initiator is not None:
-        await ctx.send(f"{game_initiator} already started a game. Please stop it first.")
-        logger.warning(f"{ctx.author} tried to start a game, but {game_initiator} already has a game running.")
-        return
-
-    game_initiator = ctx.author
+    
     current_game_type = game_type
-    current_question = None
-    correct_answer = None
-    logger.info(f"Game started by {game_initiator} with type: {game_type}")
+    game_initiator = ctx.author  # Track the user who started the game
 
-    if game_type == "subnet":
+    # Generate a question based on the game type
+    if game_type == 'subnet':
         current_question, correct_answer = generate_subnet_question()
         await ctx.send(f"Subnet question: {current_question}")
-    elif game_type == "network":
+    elif game_type == 'network':
         question, options, correct_index = generate_network_question()
         options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
         current_question = f"{question}\n\n{options_str}"
         correct_answer = correct_index
         await ctx.send(f"Network question:\n{current_question}")
 
-async def process_answer(message):
-    """Process the answer provided by the user."""
-    global current_question, correct_answer, current_game_type, game_initiator
+    # Use wait_for to capture the user's response
+    def check(m):
+        return m.author == game_initiator and m.channel == ctx.channel
 
-    logger.debug(f"Processing answer from {message.author}: {message.content}")
-    logger.debug(f"Expected answer: {correct_answer} | Current game type: {current_game_type}")
+    try:
+        user_response = await bot.wait_for('message', check=check, timeout=300)  # 5 minutes timeout
+        await process_answer(ctx, user_response)
+    except asyncio.TimeoutError:
+        await ctx.send(f"Time's up, {game_initiator.mention}! The correct answer was {correct_answer}.")
+        reset_game()
+
+async def process_answer(ctx, message):
+    """Processes the answer from the user."""
+    global current_question, correct_answer, current_game_type
+
+    user_answer = message.content.strip()
+    logger.debug(f"Processing answer from {message.author}: {user_answer}")
 
     if current_game_type == 'subnet':
-        if message.content.strip() == correct_answer:
-            await message.channel.send(f"Correct! The answer was {correct_answer}.")
+        if user_answer == correct_answer:
+            await ctx.send(f"Correct! The answer was {correct_answer}.")
             logger.info(f"Correct answer by {message.author}")
         else:
-            await message.channel.send(f"Wrong answer. The correct answer is {correct_answer}.")
-            logger.info(f"Wrong answer by {message.author}: {message.content} (expected: {correct_answer})")
+            await ctx.send(f"Wrong answer. The correct answer is {correct_answer}.")
+            logger.info(f"Wrong answer by {message.author}")
     elif current_game_type == 'network':
         try:
-            selected_option = int(message.content) - 1
+            selected_option = int(user_answer) - 1
             if selected_option == correct_answer:
-                await message.channel.send("Correct!")
+                await ctx.send("Correct!")
                 logger.info(f"Correct answer by {message.author}")
             else:
-                await message.channel.send(f"Wrong answer. The correct answer was option {correct_answer + 1}.")
+                await ctx.send(f"Wrong answer. The correct option was {correct_answer + 1}.")
                 logger.info(f"Wrong answer by {message.author}")
         except ValueError:
-            await message.channel.send("Please respond with the option number (1, 2, 3, etc.).")
+            await ctx.send("Please respond with the option number (1, 2, 3, etc.).")
             logger.warning(f"Invalid input from {message.author}: {message.content}")
 
     reset_game()
 
 def reset_game():
-    """Reset the game state."""
+    """Resets the game state."""
     global current_question, correct_answer, current_game_type, game_initiator
-    logger.info("Game state reset.")
     current_question = None
     correct_answer = None
     current_game_type = None
     game_initiator = None
+    logger.info("Game state has been reset.")
 
 # Commands and Events
 @bot.command()
-async def game(ctx):
-    """Starts the game and prompts the user to choose a mode."""
+async def game(ctx): # Starts the game and prompts the user to choose a mode.
     view = discord.ui.View()
     
     subnet_button = discord.ui.Button(label="Subnet", style=discord.ButtonStyle.primary)
@@ -471,8 +453,7 @@ async def game(ctx):
     await ctx.send("Choose a game mode:", view=view)
 
 @bot.command()
-async def game_stop(ctx):
-    """Stops the running game."""
+async def game_stop(ctx): #tops the running game.
     if game_initiator is None:
         await ctx.send("No game is currently running.")
         logger.info(f"{ctx.author} tried to stop a game, but no game is running.")
@@ -483,26 +464,24 @@ async def game_stop(ctx):
 
 '''
 GET an RFC section: 
-'''
-
-@bot.command()
-async def rfc(ctx, rfc_number: str = None):
     """
     Retrieves and displays information about an RFC based on the number.
     
     :param rfc_number: RFC number to fetch. If none is provided, an error message is displayed.
     """
+'''
+
+@bot.command()
+async def rfc(ctx, rfc_number: str = None):
     try:
         if rfc_number is None:
             await ctx.send("Error: No RFC number provided. Please provide an RFC number after the command.")
             return
-
         try:
             rfc_number = int(rfc_number)
             result = _Bot_Modul.get_rfc(rfc_number)
         except ValueError:
             result = "Error: Invalid RFC number. Please provide a valid integer."
-
         await ctx.send(result)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
