@@ -9,13 +9,13 @@ import os  # For interacting with the operating system, like file paths
 import sys  # System-specific parameters and functions
 import subprocess  # For running system commands
 import asyncio 
-import importlib
 from importlib import reload
 import openai
 import logging
 
 # Local module imports
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
+from _Cisco_Study_Plans import _CCNA_Study_Plan, _CCNP_Study_Plan, _CCIE_Study_Plan
 import _Role_Management as Role_Management  # Importing role management module
 import _XP_Handler as XP_Handler  # Import your module
 import _Member_Moderation 
@@ -470,35 +470,30 @@ async def on_message(message):
 ###########################################_Study_Plan_Loops_###########################################
 
 CCIE_STUDY_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
-
-@tasks.loop(hours=24)  # run every 24th H
-async def weekly_study_plan_CCIE():
-    # Kontrollera att det är söndag innan den postar veckans tips
-    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
-        try:
-            await _Cisco_Study_Plans._CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
-        except Exception as e:
-            await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
-
 CCNP_STUDY_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
-
-@tasks.loop(hours=24)  # run every 24th H
-async def weekly_study_plan_CCNP():
-    # Kontrollera att det är söndag innan den postar veckans tips
-    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
-        try:
-            await _Cisco_Study_Plans._CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
-        except Exception as e:
-            await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
-
 CCNA_STUDY_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
 
 @tasks.loop(hours=24)  # run every 24th H
-async def weekly_study_plan_CCNA():
-    # Kontrollera att det är söndag innan den postar veckans tips
-    if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
+async def weekly_study_plan_CCIE():
+    if datetime.now().weekday() == 6:  # Check if it's Sunday
         try:
-            await _Cisco_Study_Plans._CCNA_Study_Plan.post_weekly_goal_CCNA(bot, CCNA_STUDY_CHANNEL_ID)
+            await _CCIE_Study_Plan.post_weekly_goal(bot, CCIE_STUDY_CHANNEL_ID)
+        except Exception as e:
+            await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
+
+@tasks.loop(hours=24)  # run every 24th H
+async def weekly_study_plan_CCNP():
+    if datetime.now().weekday() == 6:  # Check if it's Sunday
+        try:
+            await _CCNP_Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
+        except Exception as e:
+            await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
+
+@tasks.loop(hours=24)  # run every 24th H
+async def weekly_study_plan_CCNA():
+    if datetime.now().weekday() == 6:  # Check if it's Sunday
+        try:
+            await _CCNA_Study_Plan.post_weekly_goal(bot, CCNA_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNA study plan: {str(e)}")
 
@@ -599,6 +594,21 @@ Mantinence Commandes Only for Bot admin !
 '''
 
 BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
+
+@bot.command()
+@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
+async def git_pull(ctx):
+    """Executes git pull on the server."""
+    try:
+        # Execute the git pull command
+        result = subprocess.run(['git', 'pull'], capture_output=True, text=True, check=True)
+        
+        # Send the output back to the Discord channel
+        await ctx.send(f"Git pull successful:\n```\n{result.stdout}\n```")
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"Git pull failed:\n```\n{e.stderr}\n```")
+    except Exception as e:
+        await ctx.send(f"An error occurred while trying to perform git pull: {str(e)}")
 
 # Reboot Command
 @bot.command(name="Reboot")
