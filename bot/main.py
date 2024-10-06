@@ -486,7 +486,7 @@ async def weekly_study_plan_CCNP():
     if datetime.now().weekday() == 6:  # Sunday
         try:
             logger.info("Fetching CCNP study plan...")
-            await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
+            await _CCNP_Study_Plan.post_weekly_goal(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
             logger.error(f"An error occurred during the CCNP study plan: {str(e)}")
