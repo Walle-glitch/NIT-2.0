@@ -30,84 +30,124 @@ import _Activity_Tracking  # The activity tracking module
 
 ###########################################_Global_Variables_##########################################
 
-version_nr = "Current Version is 24/10/06.1M"  # Global version number variable
+version_nr = "Current Version is 24/10/06.1M"
+
+###########################################_Logging_Setup_##############################################
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
 intents = discord.Intents.all()
 intents.message_content = True
-intents.reactions = True  # Enable reaction events
-intents.guilds = True  # Access to server information, including roles
-intents.members = True  # Access to members for role assignment
+intents.reactions = True
+intents.guilds = True
+intents.members = True
 intents.messages = True
 
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-logger = logging.getLogger(__name__) # Setup logging
-
-bot = commands.Bot(command_prefix="!", intents=intents) # Command Prefix 
-
-##################_BOT_BOOT_##################
-
-# Create a function that sends messages to both server logs and a Discord channel
+##################_LOG_TO_CHANNEL_##################
 
 LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
 
 async def log_to_channel(bot, message):
-    print(message)  # Print to server logs
-
-    # Fetch the Discord channel
+    """Log messages to a specified Discord channel."""
+    print(message)  # Print to server logs for safety
     log_channel = bot.get_channel(LOG_CHANNEL_ID)
-    if log_channel:
-        await log_channel.send(message)  # Send the message to the Discord channel
-    else:
-        print("Log channel not found")
+    if log_channel is None:
+        logger.error(f"Log channel with ID {LOG_CHANNEL_ID} not found.")
+        return
+    try:
+        await log_channel.send(message)
+    except Exception as e:
+        logger.error(f"Failed to send log to channel: {str(e)}")
+
+##################_BOT_BOOT_##################
+
+@bot.event
+async def on_ready():
+    """Called when the bot is ready and logged in."""
+    await log_to_channel(bot, f'Logged in as {bot.user}')
+    logger.info("Bot logged in")
+    
+    try:
+        await bot.tree.sync()  # Sync global application commands
+        await log_to_channel(bot, "Global commands synced.")
+        logger.info("Global commands synced.")
+    except Exception as e:
+        await log_to_channel(bot, f"Failed to sync commands: {str(e)}")
+        logger.error(f"Failed to sync commands: {str(e)}")
+    
+    # Start study plans
+    weekly_study_plan_CCIE.start()
+    weekly_study_plan_CCNP.start()
+    weekly_study_plan_CCNA.start()
+    await log_to_channel(bot, "Study plans active.")
+    logger.info("Study plans active.")
+    
+    # Setup activity tracking file
+    _Activity_Tracking.setup_file()
+    
+    # Handle XP data processing if file is empty
+    try:
+        if not xp_data:  # Ensure `xp_data` is defined
+            await log_to_channel(bot, "Processing historical data, this may take a while...")
+            await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+            await log_to_channel(bot, "Finished processing historical data.")
+            logger.info("Finished processing historical data.")
+    except NameError:
+        logger.error("xp_data is not defined")
+    
+    # Start role management tasks
+    update_roles.start()
+    await log_to_channel(bot, "Roles active.")
+    await log_to_channel(bot, "All boot events completed.")
+    logger.info("All boot events completed.")
 
 # Load module that contain bot Slash commands
 _Slash_Commands.setup(bot)
 
-@bot.event
-async def on_ready():
-    await log_to_channel(bot, f'Logged in as {bot.user}')
-    logger.error(f"Bot Logged in") 
-    await bot.tree.sync() # Synchronize global application commands
-    await log_to_channel(bot, "Global commands synced.")
-    logger.error(f"Global commands synced.")  
-    weekly_study_plan_CCIE.start()  
-    weekly_study_plan_CCNP.start()
-    weekly_study_plan_CCNA.start()
-    await log_to_channel(bot, "Study plans active")
-    logger.error(f"Study plans active") 
-    _Activity_Tracking.setup_file()
-    # setup_rich_presence()  # Try setting up Rich Presence
-    await log_to_channel(bot, "Processing historical data, notifications are disabled. This Will take a while...") # Disable notifications for historical data processing
-    logger.error(f"Processing historical data, notifications are disabled. This Will take a while...") 
-    # Process historical data only if XP data is empty
-    if not xp_data:
-        await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)    
-    await log_to_channel(bot, "Finished processing historical data, notifications are now enabled.") # Re-enable notifications after processing is done
-    logger.error(f"Finished processing historical data, notifications are now enabled.")
-    # Start scheduled tasks when the bot is ready
-    update_roles.start() # Used in Role managment section
-    await log_to_channel(bot, "Roles active")
-    await log_to_channel(bot, "All Boot Events are now completed") # Re-enable notifications after processing is done
-    logger.error(f"All Boot Events are now completed")
- 
+##################_EVENT_HANDLERS_##################
 
 @bot.event
 async def on_message(message):
-    # Logga alla inkommande meddelanden
+    """Logs incoming messages and processes commands."""
     if message.author.bot:
-        return  # Vi vill inte logga botens egna meddelanden
-    logger.info(f"Inkommande meddelande från {message.author}: {message.content}")
-    await bot.process_commands(message) # Processera kommandon om meddelandet är ett kommando
+        return  # Ignore bot messages
+    logger.info(f"Incoming message from {message.author}: {message.content}")
+    await bot.process_commands(message)
 
 @bot.event
-async def on_command(ctx): # Logga varje gång ett kommando körs
-    logger.info(f"Användare {ctx.author} körde kommandot: {ctx.command}")
+async def on_command(ctx):
+    """Logs every command execution."""
+    logger.info(f"User {ctx.author} executed command: {ctx.command}")
 
 @bot.event
-async def on_command_error(ctx, error): # Logga alla fel som inträffar med kommandon
-    logger.error(f"Ett fel inträffade med kommandot {ctx.command}: {error}")
+async def on_command_error(ctx, error):
+    """Logs any command errors."""
+    logger.error(f"Error with command {ctx.command}: {error}")
+
+##################_MODULE_RELOAD_COMMAND_##################
+
+@bot.command()
+@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
+async def reload_module(ctx, module_name: str):
+    """Reloads a specified module."""
+    try:
+        if module_name == "Activity_Tracking":
+            reload(_Activity_Tracking)
+            await ctx.send(f"{module_name} module has been reloaded.")
+            logger.info(f"Module {module_name} reloaded.")
+        else:
+            await ctx.send("Module not found.")
+            logger.warning(f"Module {module_name} not found for reloading.")
+    except Exception as e:
+        await ctx.send(f"Failed to reload {module_name}: {str(e)}")
+        logger.error(f"Failed to reload {module_name}: {str(e)}")
+
+###############
 
 ''''
 Auction Command
