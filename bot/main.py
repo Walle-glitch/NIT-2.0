@@ -129,23 +129,6 @@ async def on_command_error(ctx, error):
     """Logs any command errors."""
     logger.error(f"Error with command {ctx.command}: {error}")
 
-##################_MODULE_RELOAD_COMMAND_##################
-
-@bot.command()
-@commands.has_role(_Bot_Config._Bot_Admin_Role_Name())  # Restrict to bot admin role
-async def reload_module(ctx, module_name: str):
-    """Reloads a specified module."""
-    try:
-        if module_name == "Activity_Tracking":
-            reload(_Activity_Tracking)
-            await ctx.send(f"{module_name} module has been reloaded.")
-            logger.info(f"Module {module_name} reloaded.")
-        else:
-            await ctx.send("Module not found.")
-            logger.warning(f"Module {module_name} not found for reloading.")
-    except Exception as e:
-        await ctx.send(f"Failed to reload {module_name}: {str(e)}")
-        logger.error(f"Failed to reload {module_name}: {str(e)}")
 
 ###############
 
