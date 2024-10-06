@@ -304,14 +304,20 @@ async def ai_command(ctx, *, question=None):
 
 ''''
 Game section Start
+# This section implements a continuous Q&A game with subnet and network modes.
+# Game state is tracked to allow multiple rounds until manually stopped or a timeout occurs.
+# Subnet questions are generated dynamically, while network questions are loaded from a JSON file.
+# User answers are processed with real-time feedback, and the game state is reset after stop or timeout.
+# Extensive logging is used for tracking and debugging game events and user interactions.
 '''
 
 # Game state variables
 game_task = None
-game_initiator = None
+game_initiator = None     # Track the user who initiated the game
 current_question = None
 correct_answer = None
-current_game_type = None
+current_game_type = None  # Track the game type
+game_active = False       # Flag to keep track of the game state
 
 
 #### Helper Functions to Load Questions ###
@@ -325,8 +331,7 @@ def load_network_questions(): # "Loads network questions from the JSON file.
         logger.error(f"Error loading questions: {e}")
         return []
 
-def generate_subnet_question():
-    """Generates a random subnet-related question."""
+def generate_subnet_question(): # Generates a random subnet-related question."""
     ip = ipaddress.IPv4Address(random.randint(0, 2**32 - 1))
     prefix_length = random.randint(16, 30)
     network = ipaddress.IPv4Network(f"{ip}/{prefix_length}", strict=False)
@@ -360,34 +365,48 @@ def generate_network_question(): # Generates a random network-related question f
         return "No network questions found.", [], 0
 
 # Game Logic
-async def start_game(ctx, game_type):
-    """Starts a game based on the selected game type."""
-    global current_question, correct_answer, current_game_type, game_initiator
+async def start_game(ctx, game_type): # Starts a game based on the selected game type and continues until timeout or game stop."""
+    global current_question, correct_answer, current_game_type, game_initiator, game_active
     
+    if game_active:
+        await ctx.send("A game is already in progress. Please finish it first.")
+        return
+
     current_game_type = game_type
     game_initiator = ctx.author  # Track the user who started the game
+    game_active = True  # Mark game as active
 
-    # Generate a question based on the game type
-    if game_type == 'subnet':
+    await ctx.send(f"Game started by {game_initiator.mention}! Answer the questions or use !game_stop to end.")
+
+    # Start the continuous game loop
+    while game_active:
+        # Generate and ask the next question
+        await ask_next_question(ctx)
+
+        # Wait for user response
+        def check(m):
+            return m.author == game_initiator and m.channel == ctx.channel
+
+        try:
+            user_response = await bot.wait_for('message', check=check, timeout=300)  # 5 minutes timeout
+            await process_answer(ctx, user_response)
+        except asyncio.TimeoutError:
+            await ctx.send(f"Time's up, {game_initiator.mention}! The game has ended due to inactivity.")
+            reset_game()
+            break  # Exit the loop after timeout
+
+async def ask_next_question(ctx): # Generates and sends the next question based on the current game type."""
+    global current_question, correct_answer, current_game_type
+
+    if current_game_type == 'subnet':
         current_question, correct_answer = generate_subnet_question()
         await ctx.send(f"Subnet question: {current_question}")
-    elif game_type == 'network':
+    elif current_game_type == 'network':
         question, options, correct_index = generate_network_question()
         options_str = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
         current_question = f"{question}\n\n{options_str}"
         correct_answer = correct_index
         await ctx.send(f"Network question:\n{current_question}")
-
-    # Use wait_for to capture the user's response
-    def check(m):
-        return m.author == game_initiator and m.channel == ctx.channel
-
-    try:
-        user_response = await bot.wait_for('message', check=check, timeout=300)  # 5 minutes timeout
-        await process_answer(ctx, user_response)
-    except asyncio.TimeoutError:
-        await ctx.send(f"Time's up, {game_initiator.mention}! The correct answer was {correct_answer}.")
-        reset_game()
 
 async def process_answer(ctx, message):
     """Processes the answer from the user."""
@@ -416,15 +435,14 @@ async def process_answer(ctx, message):
             await ctx.send("Please respond with the option number (1, 2, 3, etc.).")
             logger.warning(f"Invalid input from {message.author}: {message.content}")
 
-    reset_game()
-
 def reset_game():
     """Resets the game state."""
-    global current_question, correct_answer, current_game_type, game_initiator
+    global current_question, correct_answer, current_game_type, game_initiator, game_active
     current_question = None
     correct_answer = None
     current_game_type = None
     game_initiator = None
+    game_active = False  # Mark game as inactive
     logger.info("Game state has been reset.")
 
 # Commands and Events
@@ -453,14 +471,14 @@ async def game(ctx): # Starts the game and prompts the user to choose a mode.
     await ctx.send("Choose a game mode:", view=view)
 
 @bot.command()
-async def game_stop(ctx): #tops the running game.
-    if game_initiator is None:
-        await ctx.send("No game is currently running.")
-        logger.info(f"{ctx.author} tried to stop a game, but no game is running.")
-    else:
+async def game_stop(ctx):
+    """Command to stop the game."""
+    global game_active
+    if game_active:
         reset_game()
         await ctx.send("Game stopped.")
-        logger.info(f"Game stopped by {ctx.author}")
+    else:
+        await ctx.send("No game is currently running.")
 
 '''
 GET an RFC section: 
