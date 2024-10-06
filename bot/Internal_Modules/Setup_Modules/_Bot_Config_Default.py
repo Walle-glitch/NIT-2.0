@@ -9,9 +9,6 @@ mv _Bot_Config_Default.py _Bot_Config.py
 # Used in main.py
 
 
-
-
-
 # Roles with access to "Sudo commands"
 def _Bot_Admin_Role_Name():
     """Returns the name of the role that manages the bot."""

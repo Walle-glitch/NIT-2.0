@@ -18,9 +18,7 @@ import openai
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
 
 import _Bot_Modul
-import _CCIE_Study_Plan
-import _CCNP_Study_Plan
-import _CCNA_Study_Plan
+import _Cisco_Study_Plans 
 import _Auction
 import _Bot_Config # type: ignore
 import _Slash_Commands
@@ -623,30 +621,30 @@ async def removerole(ctx, role_name: str = None):
 
 ###########################################_Study_Plan_Loops_###########################################
 
-@tasks.loop(hours=24)  # Kör varje vecka (168 timmar = 7 dagar)
+@tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCIE():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
-            await _CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
+            await _Cisco_Study_Plans._CCIE_Study_Plan.post_weekly_goal_CCIE(bot, CCIE_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCIE study plan: {str(e)}")
 
-@tasks.loop(hours=24)  # Kör varje vecka (12 timme)
+@tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCNP():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
-            await _CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
+            await _Cisco_Study_Plans._CCNP_Study_Plan.post_weekly_goal_CCNP(bot, CCNP_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNP study plan: {str(e)}")
 
-@tasks.loop(hours=24)  # Kör varje vecka (12 timme)
+@tasks.loop(hours=24)  # run every 24th H
 async def weekly_study_plan_CCNA():
     # Kontrollera att det är söndag innan den postar veckans tips
     if datetime.now().weekday() == 6:  # Söndag (0 = Måndag, 6 = Söndag)
         try:
-            await _CCNA_Study_Plan.post_weekly_goal_CCNA(bot, CCNA_STUDY_CHANNEL_ID)
+            await _Cisco_Study_Plans._CCNA_Study_Plan.post_weekly_goal_CCNA(bot, CCNA_STUDY_CHANNEL_ID)
         except Exception as e:
             await log_to_channel(bot, f"An error occurred during the CCNA study plan: {str(e)}")
 
