@@ -373,8 +373,8 @@ async def game_stop(ctx):
     if _Game.game_active and ctx.author == _Game.game_initiator:
         _Game.reset_game()
         await ctx.send("Game stopped.")
-    elif ctx.author != _Game.game_initiator:
-        await ctx.send("Game can only be stoped by {_Game.game_initiator}")
+    elif ctx.author != _Game.game_initiator and _Game.game_active == True:
+        await ctx.send(f"Game can only be stoped by {_Game.game_initiator}")
     else:
         await ctx.send("No game is currently running.")
         
