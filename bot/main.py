@@ -45,6 +45,7 @@ intents.reactions = True
 intents.guilds = True
 intents.members = True
 intents.messages = True
+intents.presences = True  # Aktivera för att kunna spåra statusändringar
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -466,14 +467,14 @@ async def on_member_update(before, after):
     # Debug: visa användarens gamla och nya status
     logger.debug(f"Användarstatus för {after.name} ändrad från {before.status} till {after.status}")
 
+    # Track activity if status changes
     if before.status != after.status:
         logger.debug(f"Spårar aktivitet för användare {after.name} baserat på statusändring")
-        await _Activity_Tracking.track_activity(after, bot)
+        await _Activity_Tracking.track_activity(before, after, bot)
 
     # Debug: visa att eventet är processat
     logger.debug(f"Eventet för {after.name} processat")
     await bot.process_commands(after)
-
 
 ###########################################_Study_Plan_Loops_###########################################
 

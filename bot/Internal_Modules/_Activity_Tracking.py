@@ -70,9 +70,11 @@ async def remove_role(member, role):
         await member.remove_roles(role)
         logger.info(f"{_get_server_time()} Tog bort LateNightCrew-roll från {member.name}")
 
-async def track_activity(message, bot):
-    """Tracks user activity and manages roles based on activity."""
-    if message.author.bot:
+async def track_activity(before, after, bot):
+    """Tracks user activity based on status change and manages roles accordingly."""
+    
+    # Ignore bots
+    if after.bot:
         return
 
     try:
@@ -83,17 +85,19 @@ async def track_activity(message, bot):
         active_users = load_active_users()
         current_time = datetime.now()
 
-        # Debug: uppdatering av aktivitet
-        logger.debug(f"Användare {message.author.name} aktivitet uppdaterad: {current_time}")
-        active_users[message.author.id] = current_time.isoformat()
+        # Debug: uppdatering av aktivitet vid statusändring
+        logger.debug(f"Användare {after.name} status ändrad från {before.status} till {after.status} vid {current_time}")
+        
+        # Update the last active time based on status change
+        active_users[after.id] = current_time.isoformat()
         save_active_users(active_users)
 
         # Debug: LateNightCrew rollhantering
         if is_late_night():
-            logger.debug(f"Tilldelar LateNightCrew-roll till {message.author.name}")
-            await add_role(message.author, role)
+            logger.debug(f"Tilldelar LateNightCrew-roll till {after.name}")
+            await add_role(after, role)
 
-        # Ta bort roll om inaktiv i över 14 timmar
+        # Remove role if inactive for more than 14 hours
         for user_id, last_active_str in list(active_users.items()):
             last_active = datetime.fromisoformat(last_active_str)
             member = guild.get_member(int(user_id))
@@ -102,10 +106,10 @@ async def track_activity(message, bot):
                 await remove_role(member, role)
                 del active_users[user_id]
 
-        # Spara uppdaterade användare
+        # Save updated user activity
         save_active_users(active_users)
 
-        # Debug: Rensa filen efter 05:00
+        # Clear the file after 05:00
         if not is_late_night():
             logger.debug("Efter Late Night period, rensar active_users.json.")
             with open(ACTIVE_USERS_FILE, 'w') as file:
@@ -113,3 +117,4 @@ async def track_activity(message, bot):
 
     except Exception as e:
         logger.error(f"Fel vid spårning av aktivitet: {str(e)}")
+
