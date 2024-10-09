@@ -461,11 +461,19 @@ async def removerole(ctx, role_name: str = None):
 '''
 @bot.event
 async def on_member_update(before, after):
-    """Spåra användarens status och hantera LateNightCrew-rollen."""
+    """Spåra användarens status och hantera LateNightCrew-rollen med debug-loggning."""
+    
+    # Debug: visa användarens gamla och nya status
+    logger.debug(f"Användarstatus för {after.name} ändrad från {before.status} till {after.status}")
+
     if before.status != after.status:
+        logger.debug(f"Spårar aktivitet för användare {after.name} baserat på statusändring")
         await _Activity_Tracking.track_activity(after, bot)
 
+    # Debug: visa att eventet är processat
+    logger.debug(f"Eventet för {after.name} processat")
     await bot.process_commands(after)
+
 
 ###########################################_Study_Plan_Loops_###########################################
 
