@@ -459,12 +459,13 @@ async def removerole(ctx, role_name: str = None):
 '''
 #LateNightCrew role assignment. 
 '''
-
 @bot.event
-async def on_message(message):
-    """Handles incoming messages and tracks user activity."""
-    await _Activity_Tracking.track_activity(message, bot)
-    await bot.process_commands(message)
+async def on_member_update(before, after):
+    """Spåra användarens status och hantera LateNightCrew-rollen."""
+    if before.status != after.status:
+        await _Activity_Tracking.track_activity(after, bot)
+
+    await bot.process_commands(after)
 
 ###########################################_Study_Plan_Loops_###########################################
 
