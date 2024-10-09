@@ -1,14 +1,14 @@
 import os
 import json
 from datetime import datetime, timedelta
-import logging
-import sys
-import discord
-
 import _Bot_Config  # type: ignore
+from _logging_setup import setup_logging  # Importera logging-setup från logging_setup.py
+
+# Setup logging från logging_setup.py
+logger = setup_logging()
 
 def _get_server_time():
-    """Hämta den aktuella server-tiden och returnera i formatet HH:MM:SS (utan mikrosekunder)"""
+    """Hämta den aktuella server-tiden och returnera i formatet HH:MM:SS (utan mikrosekunder)."""
     server_time = datetime.now()
     formatted_time = server_time.strftime('%H:%M:%S')
     logger.debug(f"Server-tid hämtad: {formatted_time}")
@@ -18,12 +18,6 @@ def _get_server_time():
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
 GUILD_ID = _Bot_Config._GUILD_ID()
 LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
-get_server_time = _get_server_time()
-
-# Setup logging
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, filename=f'logs/log-{datetime.now().strftime("%Y-%m-%d")}.txt',
-                    format='%(asctime)s %(levelname)s: %(message)s')
 
 def setup_file():
     """Kolla om filen existerar, annars skapa en ny."""
@@ -41,7 +35,7 @@ def setup_file():
 
 def is_late_night():
     """Checks if the current time is between 00:01 and 05:00."""
-    current_time = datetime.now().time()  # Fixat här för att använda datetime objekt korrekt
+    current_time = datetime.now().time()
     logger.debug(f"Kollar om det är Late Night: {current_time}")
     return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
 
@@ -68,13 +62,13 @@ async def add_role(member, role):
     """Assigns the LateNightCrew role to the member."""
     if role not in member.roles:
         await member.add_roles(role)
-        logger.info(f"{get_server_time()} Tilldelade LateNightCrew-roll till {member.name}")
+        logger.info(f"{_get_server_time()} Tilldelade LateNightCrew-roll till {member.name}")
 
 async def remove_role(member, role):
     """Removes the LateNightCrew role from the member."""
     if role in member.roles:
         await member.remove_roles(role)
-        logger.info(f"{get_server_time()} Tog bort LateNightCrew-roll från {member.name}")
+        logger.info(f"{_get_server_time()} Tog bort LateNightCrew-roll från {member.name}")
 
 async def track_activity(message, bot):
     """Tracks user activity and manages roles based on activity."""

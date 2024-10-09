@@ -1,13 +1,11 @@
-# logging_setup.py
-
 import logging
 import os
 from datetime import datetime
 
 def setup_logging():
     # Skapa loggmappen om den inte existerar
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
+    if not os.path.exists('/home/bot/NIT-2.0/bot/logs'):
+        os.makedirs('/home/bot/NIT-2.0/bot/logs')
 
     # Sätt upp filnamn baserat på dagens datum
     log_filename = f'logs/log-{datetime.now().strftime("%Y-%m-%d")}.txt'
