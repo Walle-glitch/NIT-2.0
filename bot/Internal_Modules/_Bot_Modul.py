@@ -13,11 +13,7 @@ from datetime import datetime
 LOG_TO_CHANNEL_ID = _Bot_Config._Log_To_Channel_ID()  # The Discord channel ID where logs are sent
 ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()  # Admin Channel ID
 
-def _get_server_time():
-    """Hämta den aktuella server-tiden och returnera i formatet HH:MM:SS (utan mikrosekunder)"""
-    server_time = datetime.now()
-    formatted_time = server_time.strftime('%H:%M:%S')
-    return formatted_time
+
 
 
 ######### Utility Functions for Logging #########

@@ -129,7 +129,6 @@ async def on_command_error(ctx, error):
     """Logs any command errors."""
     logger.error(f"Error with command {ctx.command}: {error}")
 
-
 ###############
 ''' 
 Module Reloding function
@@ -371,9 +370,11 @@ async def game(ctx):
 @bot.command()
 async def game_stop(ctx):
     """Command to stop the game."""
-    if _Game.game_active:
+    if _Game.game_active and ctx.author == _Game.game_initiator:
         _Game.reset_game()
         await ctx.send("Game stopped.")
+    elif ctx.author != _Game.game_initiator:
+        await ctx.send("Game can only be stoped by {_Game.game_initiator}")
     else:
         await ctx.send("No game is currently running.")
         
@@ -464,8 +465,6 @@ async def on_message(message):
     """Handles incoming messages and tracks user activity."""
     await _Activity_Tracking.track_activity(message, bot)
     await bot.process_commands(message)
-
-
 
 ###########################################_Study_Plan_Loops_###########################################
 

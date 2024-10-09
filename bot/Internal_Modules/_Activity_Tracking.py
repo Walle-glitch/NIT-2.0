@@ -3,17 +3,21 @@ import json
 from datetime import datetime, timedelta
 import logging
 import sys
-
 import discord
 
 import _Bot_Config  # type: ignore
-import _Bot_Modul
+
+def _get_server_time():
+    """Hämta den aktuella server-tiden och returnera i formatet HH:MM:SS (utan mikrosekunder)"""
+    server_time = datetime.now()
+    formatted_time = server_time.strftime('%H:%M:%S')
+    return formatted_time
 
 # File paths and constants
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
 GUILD_ID = _Bot_Config._GUILD_ID()
 LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
-get_server_time = _Bot_Modul._get_server_time()
+get_server_time = _get_server_time()
 
 # Setup logging
 logger = logging.getLogger(__name__)
