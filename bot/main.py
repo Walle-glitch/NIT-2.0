@@ -36,6 +36,8 @@ version_nr = "Current Version is 24/10/06.1M"
 
 setup_logging()
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, filename=f'logs/log-{datetime.now().strftime("%Y-%m-%d")}.txt',
+                    format='%(asctime)s %(levelname)s: %(message)s')
 
 ###########################################_Bot_Set_Up_Stuff_##########################################
 
@@ -462,18 +464,23 @@ async def removerole(ctx, role_name: str = None):
 '''
 @bot.event
 async def on_member_update(before, after):
-    """Spåra användarens status och hantera LateNightCrew-rollen med debug-loggning."""
+    """Track user status and manage LateNightCrew role with debug logging."""
     
-    # Debug: visa användarens gamla och nya status
-    logger.debug(f"Användarstatus för {after.name} ändrad från {before.status} till {after.status}")
-
-    # Track activity if status changes
+    # Check if the status has changed
     if before.status != after.status:
-        logger.debug(f"Spårar aktivitet för användare {after.name} baserat på statusändring")
-        await _Activity_Tracking.track_activity(before, after, bot)
+        logger.debug(f"Status update: {after.name} changed from {before.status} to {after.status}")
 
-    # Debug: visa att eventet är processat
-    logger.debug(f"Eventet för {after.name} processat")
+        # Attempt to track activity
+        try:
+            logger.debug(f"Tracking activity for {after.name}")
+            await _Activity_Tracking.track_activity(before, after, bot)
+        except Exception as e:
+            logger.error(f"Error tracking activity: {str(e)}")
+
+    # Always log that the event has been processed
+    logger.debug(f"Member update event processed for {after.name}")
+
+    # Make sure to continue processing other bot commands
     await bot.process_commands(after)
 
 ###########################################_Study_Plan_Loops_###########################################
