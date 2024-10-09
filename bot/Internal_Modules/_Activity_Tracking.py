@@ -33,7 +33,7 @@ def setup_file():
 def is_late_night():
     """Checks if the current time is between 00:01 and 05:00."""
     current_time = get_server_time()
-    return current_time >= datetime.strptime("00:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
+    return current_time >= datetime.strptime("18:01", "%H:%M").time() and current_time <= datetime.strptime("05:00", "%H:%M").time()
 
 def load_active_users():
     """Loads active users from the JSON file."""
