@@ -51,6 +51,14 @@ intents.presences = True  # Aktivera för att kunna spåra statusändringar
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+##################_XP_DATA_##################
+
+XP_FILE = _Bot_Config._XP_File()  # File for storing all User XP
+XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
+
+# Load XP data and skip historical data processing if file has content
+xp_data = XP_Handler.load_xp_data()
+
 ##################_LOG_TO_CHANNEL_##################
 
 LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
@@ -534,12 +542,6 @@ async def job_posting_loop():
         await log_to_channel(bot, f"An error occurred during job posting: {str(e)}")
 
 ####################################################
-
-XP_FILE = _Bot_Config._XP_File()  # File for storing all User XP
-XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
-
-# Load XP data and skip historical data processing if file has content
-xp_data = XP_Handler.load_xp_data()
 
 @bot.event
 async def on_message(message):
