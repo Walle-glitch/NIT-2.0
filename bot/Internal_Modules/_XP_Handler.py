@@ -1,10 +1,11 @@
 import os
 import json
 import random
-import _Bot_Config # type: ignore
+import _Bot_Config  # type: ignore
 
 XP_FILE = _Bot_Config._XP_File()  # File for storing all User XP
 
+# Load XP data globally
 xp_data = {}
 
 def load_xp_data():
@@ -77,12 +78,16 @@ async def show_level(ctx, member):
         await ctx.send(f"{member.mention} has no XP data yet.")
 
 async def process_historical_data(bot, XP_UPDATE_CHANNEL_ID):
+    # Load XP data before processing
+    global xp_data
+    xp_data = load_xp_data()
+
     # Check if XP data is already loaded and skip processing if not empty
     if xp_data:
         print("XP file has content. Skipping historical data processing.")
         return
 
-    print("XP file is empty. Processing historical data.")
+    print("XP file is empty or new. Processing historical data.")
     for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
