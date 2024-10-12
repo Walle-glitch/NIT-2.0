@@ -556,27 +556,42 @@ XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
 
 @bot.event
 async def on_message(message):
+    """Triggered whenever a message is sent in a text channel."""
     if message.author.bot:
-        return
+        return  # Ignore bot messages
+
     try:
+        # Handle XP and LateNightCrew role management
         await XP_Handler.handle_xp(message, XP_UPDATE_CHANNEL_ID)
+        print(f"XP handled for {message.author.name}")
     except Exception as e:
         print(f"An error occurred while handling XP: {str(e)}")
+
+    # Ensure bot commands are processed
     await bot.process_commands(message)
 
 @bot.event
 async def on_reaction_add(reaction, user):
+    """Triggered whenever a reaction is added to a message."""
+    if user.bot:
+        return  # Ignore bot reactions
+
     try:
+        # Handle XP for reactions and LateNightCrew role management
         await XP_Handler.handle_reaction_xp(reaction.message, XP_UPDATE_CHANNEL_ID)
+        print(f"Reaction XP handled for {user.name}")
     except Exception as e:
         print(f"An error occurred while handling reaction XP: {str(e)}")
 
 @bot.command()
 async def level(ctx, member: discord.Member = None):
+    """Command to check a user's level and XP."""
     if member is None:
-        member = ctx.author
+        member = ctx.author  # Default to the command author if no member is specified
+    
     try:
         await XP_Handler.show_level(ctx, member)
+        print(f"Level command processed for {member.name}")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
