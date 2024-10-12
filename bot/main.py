@@ -102,26 +102,24 @@ async def on_ready():
     _Activity_Tracking.setup_file()
 
     # Ask the user whether to process historical data
-    channel = _Bot_Config._Log_Channel_ID()
-    
-    if channel:
-        await channel.send("Do you want to process historical data? Respond with 'yes' or 'no'.")
-        try:
-            def check(m):
-                return m.author != bot.user and m.channel == channel and m.content.lower() in ["yes", "no"]
+    await log_to_channel(bot, "Do you want to process historical data? Respond with 'yes' or 'no' in the log channel.")
+    try:
+        def check(m):
+            return m.author != bot.user and m.channel.id == LOG_CHANNEL_ID and m.content.lower() in ["yes", "no"]
 
-            msg = await bot.wait_for('message', check=check, timeout=60.0)  # Wait for 60 seconds
-            if msg.content.lower() == "yes":
-                await channel.send("Processing historical data, this may take a while...")
-                await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
-                await channel.send("Finished processing historical data.")
-                logger.info("Finished processing historical data.")
-            else:
-                await channel.send("Skipping historical data processing.")
-        except TimeoutError:
-            await channel.send("No response received. Skipping historical data processing.")
-            logger.info("Timeout waiting for user input. Skipping historical data processing.")
-    
+        msg = await bot.wait_for('message', check=check, timeout=60.0)  # Wait for 60 seconds
+        if msg.content.lower() == "yes":
+            await log_to_channel(bot, "Processing historical data, this may take a while...")
+            await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+            await log_to_channel(bot, "Finished processing historical data.")
+            logger.info("Finished processing historical data.")
+        else:
+            await log_to_channel(bot, "Skipping historical data processing.")
+            logger.info("Skipping historical data processing.")
+    except TimeoutError:
+        await log_to_channel(bot, "No response received. Skipping historical data processing.")
+        logger.info("Timeout waiting for user input. Skipping historical data processing.")
+
     # Start role management tasks
     update_roles.start()
     await log_to_channel(bot, "Roles active.")
