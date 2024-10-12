@@ -100,16 +100,27 @@ async def on_ready():
     
     # Setup activity tracking file
     _Activity_Tracking.setup_file()
+
+    # Ask the user whether to process historical data
+    channel = bot.get_channel(XP_UPDATE_CHANNEL_ID)
     
-    # Handle XP data processing if file is empty
-    try:
-        if not xp_data:  # Ensure `xp_data` is defined
-            await log_to_channel(bot, "Processing historical data, this may take a while...")
-            await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
-            await log_to_channel(bot, "Finished processing historical data.")
-            logger.info("Finished processing historical data.")
-    except NameError:
-        logger.error("xp_data is not defined")
+    if channel:
+        await channel.send("Do you want to process historical data? Respond with 'yes' or 'no'.")
+        try:
+            def check(m):
+                return m.author != bot.user and m.channel == channel and m.content.lower() in ["yes", "no"]
+
+            msg = await bot.wait_for('message', check=check, timeout=60.0)  # Wait for 60 seconds
+            if msg.content.lower() == "yes":
+                await channel.send("Processing historical data, this may take a while...")
+                await XP_Handler.process_historical_data(bot, XP_UPDATE_CHANNEL_ID)
+                await channel.send("Finished processing historical data.")
+                logger.info("Finished processing historical data.")
+            else:
+                await channel.send("Skipping historical data processing.")
+        except TimeoutError:
+            await channel.send("No response received. Skipping historical data processing.")
+            logger.info("Timeout waiting for user input. Skipping historical data processing.")
     
     # Start role management tasks
     update_roles.start()
@@ -415,8 +426,6 @@ async def rfc(ctx, rfc_number: str = None):
 Role managment section:
 '''
 
-XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
-
 # Task to periodically update roles
 @tasks.loop(hours=1)
 async def update_roles():
@@ -543,6 +552,10 @@ async def job_posting_loop():
 
 ####################################################
 
+# Boot Logic on top of file 
+
+XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
+
 @bot.event
 async def on_message(message):
     if message.author.bot:
@@ -560,7 +573,6 @@ async def on_reaction_add(reaction, user):
     except Exception as e:
         print(f"An error occurred while handling reaction XP: {str(e)}")
 
-# Command to show user's level and XP
 @bot.command()
 async def level(ctx, member: discord.Member = None):
     if member is None:
@@ -569,7 +581,6 @@ async def level(ctx, member: discord.Member = None):
         await XP_Handler.show_level(ctx, member)
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-
 
 ###########################################_Admin_Commands_###########################################
 '''
