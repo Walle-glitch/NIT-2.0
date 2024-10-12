@@ -10,7 +10,6 @@ LATE_NIGHT_ROLE_ID = _Bot_Config._LATE_NIGHT_ROLE_ID()
 GUILD_ID = _Bot_Config._GUILD_ID()
 ACTIVE_USERS_FILE = "/home/bot/NIT-2.0/bot/Json_Files/active_users.json"
 
-
 # Load XP data globally
 xp_data = {}
 
@@ -84,7 +83,7 @@ async def handle_xp(message, xp_update_channel_id, send_notifications=True):
 def is_late_night():
     """Checks if the current time is between 22:00 and 05:00."""
     current_time = datetime.now().time()
-    return current_time >= datetime.strptime("22:00", "%H:%M").time() or current_time <= datetime.strptime("05:00", "%H:%M").time()
+    return current_time >= datetime.strptime("20:00", "%H:%M").time() or current_time <= datetime.strptime("05:00", "%H:%M").time()
 
 def load_active_users():
     """Loads active users from the JSON file."""
