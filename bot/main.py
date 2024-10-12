@@ -102,7 +102,7 @@ async def on_ready():
     _Activity_Tracking.setup_file()
 
     # Ask the user whether to process historical data
-    channel = bot.get_channel(XP_UPDATE_CHANNEL_ID)
+    channel = _Bot_Config._Log_Channel_ID()
     
     if channel:
         await channel.send("Do you want to process historical data? Respond with 'yes' or 'no'.")
