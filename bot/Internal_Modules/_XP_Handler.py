@@ -79,7 +79,6 @@ async def handle_xp(message, xp_update_channel_id, send_notifications=True):
     # Check for level up
     await check_level_up(user, xp_update_channel_id, send_notifications)
 
-
 def is_late_night():
     """Checks if the current time is between 22:00 and 05:00."""
     current_time = datetime.now().time()
