@@ -280,26 +280,31 @@ async def hackz(ctx, target: str = "8.8.8.8"):
         await ctx.send(f"Nmap scan results for {target}:\n```\n{result.stdout}\n```")
         
         # Simulate the fake exploit process
-        await asyncio.sleep(10)
+        await asyncio.sleep(5)
         await ctx.send("Exploit found!")
         
         await asyncio.sleep(2)
         await ctx.send("Analyzing...")
         
-        await asyncio.sleep(1)
+        await asyncio.sleep(4)
         await ctx.send("Generating script...")
         
         await asyncio.sleep(5)
         await ctx.send("Starting hacking sequence...")
 
         # Simulate the hacking progress
-        for i in range(10):
-            progress = random.randint(0, 100)
-            await ctx.send(f"Hacking progress: {progress}%")
-            await asyncio.sleep(1)
+        progress = 0
+        while progress < 99:
+            increment = random.randint(1, 10)  # Slumpmässig ökning mellan 1 och 10 procent
+            progress += increment
+        if progress > 99:  # För att undvika att gå över 99%
+            progress = 99
+        await ctx.send(f"Hacking progress: {progress}%")
+        await asyncio.sleep(3)
+        await ctx.send(f"Hacking progress: 100%. Complete")
 
         # Fake interactive prompt
-        await ctx.send(f"Interactive prompt: `root@{target}:~#`")
+        await ctx.send(f"`root@{target}:~#`")
 
         # Wait for user input
         def check(m):
