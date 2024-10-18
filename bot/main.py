@@ -270,19 +270,8 @@ async def ping(ctx, ip: str = "8.8.8.8"):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
-
-@bot.command() 
-async def hackz(ctx, ip: str = "8.8.8.8"):
-    try:
-        result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
-        await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
-    except subprocess.CalledProcessError as e:
-        await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
-
 @bot.command()
-async def hack(ctx, target: str = "8.8.8.8"):
+async def hackz(ctx, target: str = "8.8.8.8"):
     await ctx.send(f"Starting Nmap scan on {target}...")
     
     try:
