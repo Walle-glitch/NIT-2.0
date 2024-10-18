@@ -269,7 +269,7 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
-
+'''
 @bot.command()
 async def hackz(ctx, target: str = "8.8.8.8"):
     await ctx.send(f"Starting Nmap scan on {target}...")
@@ -323,6 +323,7 @@ async def hackz(ctx, target: str = "8.8.8.8"):
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
 
+'''
 
 
 ''''
