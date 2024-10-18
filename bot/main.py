@@ -272,7 +272,7 @@ async def ping(ctx, ip: str = "8.8.8.8"):
 
 
 @bot.command() 
-async def hack(ctx, ip: str = "8.8.8.8"):
+async def hackz(ctx, ip: str = "8.8.8.8"):
     try:
         result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
         await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
