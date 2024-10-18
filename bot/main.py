@@ -299,10 +299,9 @@ async def hackz(ctx, target: str = "8.8.8.8"):
             progress += increment
             await ctx.send(f"Hacking progress: {progress}%")
             await asyncio.sleep(3)
-            
-            if progress > 99:  # För att undvika att gå över 99%
+            if progress >= 99:  # För att undvika att gå över 99%
                 progress = 99
-            await ctx.send(f"Hacking progress: {progress}%")
+        await ctx.send(f"Hacking progress: {progress}%")
 
         await ctx.send(f"Hacking progress: 100%. Complete")
 
