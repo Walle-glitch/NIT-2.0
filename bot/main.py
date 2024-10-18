@@ -12,6 +12,7 @@ import asyncio
 from importlib import reload
 import openai
 import logging
+import random
 
 # Local module imports
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
@@ -268,6 +269,65 @@ async def ping(ctx, ip: str = "8.8.8.8"):
         await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
     except Exception as e:
         await ctx.send(f"An error occurred: {str(e)}")
+
+
+@bot.command() 
+async def hack(ctx, ip: str = "8.8.8.8"):
+    try:
+        result = subprocess.run(["ping", "-c", "4", ip], capture_output=True, text=True)
+        await ctx.send(f"Ping results for {ip}:\n```\n{result.stdout}\n```")
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"ERROR:\n```\n{e.stderr}\n```")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+@bot.command()
+async def hack(ctx, target: str = "8.8.8.8"):
+    await ctx.send(f"Starting Nmap scan on {target}...")
+    
+    try:
+        # Run Nmap scan
+        result = subprocess.run(["nmap", target], capture_output=True, text=True)
+        await ctx.send(f"Nmap scan results for {target}:\n```\n{result.stdout}\n```")
+        
+        # Simulate the fake exploit process
+        await asyncio.sleep(10)
+        await ctx.send("Exploit found!")
+        
+        await asyncio.sleep(2)
+        await ctx.send("Analyzing...")
+        
+        await asyncio.sleep(1)
+        await ctx.send("Generating script...")
+        
+        await asyncio.sleep(5)
+        await ctx.send("Starting hacking sequence...")
+
+        # Simulate the hacking progress
+        for i in range(10):
+            progress = random.randint(0, 100)
+            await ctx.send(f"Hacking progress: {progress}%")
+            await asyncio.sleep(1)
+
+        # Fake interactive prompt
+        await ctx.send(f"Interactive prompt: `root@{target}:~#`")
+
+        # Wait for user input
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        try:
+            user_input = await bot.wait_for('message', check=check, timeout=15)
+            await ctx.send(f"Connection to {target} lost: {user_input.content}\nReason: Connection aborted.")
+        except asyncio.TimeoutError:
+            await ctx.send(f"Connection to {target} lost: No input detected.\nReason: Timeout.")
+
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"Error during Nmap scan:\n```\n{e.stderr}\n```")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+
 
 ''''
 AI section START
