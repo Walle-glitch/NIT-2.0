@@ -293,9 +293,10 @@ async def hackz(ctx, target: str = "8.8.8.8"):
 
         # Simulate the hacking progress
         progress = 0
-        while progress < 99:
+        i = 0
+        for i in progress(progress,100):
             increment = random.randint(1, 10)  # Slumpmässig ökning mellan 1 och 10 procent
-            progress += increment
+            progress += increment+i
             if progress > 99:  # För att undvika att gå över 99%
                 progress = 99
         await ctx.send(f"Hacking progress: {progress}%")
