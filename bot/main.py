@@ -278,13 +278,12 @@ async def hackz(ctx, target: str = "8.8.8.8"):
         # Run Nmap scan
         result = subprocess.run(["nmap", target], capture_output=True, text=True)
         await ctx.send(f"Nmap scan results for {target}:\n```\n{result.stdout}\n```")
-        
+        await asyncio.sleep(2)
+        await ctx.send("Analyzing...")     
+
         # Simulate the fake exploit process
         await asyncio.sleep(5)
         await ctx.send("Exploit found!")
-        
-        await asyncio.sleep(2)
-        await ctx.send("Analyzing...")
         
         await asyncio.sleep(4)
         await ctx.send("Generating script...")
@@ -297,8 +296,8 @@ async def hackz(ctx, target: str = "8.8.8.8"):
         while progress < 99:
             increment = random.randint(1, 10)  # Slumpmässig ökning mellan 1 och 10 procent
             progress += increment
-        if progress > 99:  # För att undvika att gå över 99%
-            progress = 99
+            if progress > 99:  # För att undvika att gå över 99%
+                progress = 99
         await ctx.send(f"Hacking progress: {progress}%")
         await asyncio.sleep(3)
         await ctx.send(f"Hacking progress: 100%. Complete")
