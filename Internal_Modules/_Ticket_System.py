@@ -98,7 +98,7 @@ async def close_ticket(interaction: discord.Interaction):
 
 # Optional background task for cleanup (e.g., auto-archive after inactivity)
 @tasks.loop(hours=24)
-async def cleanup_inactive_tickets(bot: discord.Bot):
+async def cleanup_inactive_tickets(bot):
     guild = bot.get_guild(GUILD_ID)
     category = guild.get_channel(TICKET_CATEGORY_ID)
     archive_cat = guild.get_channel(ARCHIVE_CATEGORY_ID)
