@@ -6,7 +6,6 @@ import logging
 from datetime import datetime
 import subprocess
 import asyncio
-
 import discord
 from discord.ext import commands, tasks
 import openai
@@ -24,7 +23,7 @@ import _Bot_Modul
 import _Auction
 import _Slash_Commands
 import _Activity_Tracking
-import _Ticket_System
+#import _Ticket_System
 from _logging_setup import setup_logging
 
 # Ensure required directories
@@ -116,7 +115,7 @@ async def on_reaction_add(reaction, user):
 
 # Setup slash commands
 _Slash_Commands.setup(bot)
-_Ticket_System.setup_ticketer(bot)
+#_Ticket_System.setup_ticketer(bot)
 
 # Load auctions
 _Auction.load_auctions()

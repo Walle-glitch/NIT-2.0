@@ -39,6 +39,13 @@ def _Mentor_Role_Name():
 # Channel IDs
 # ------------------
 
+def _Guild_ID():
+    """Returns Discord-guild (server) ID where late-night–rollen ska hanteras."""
+    return 1012026430470766813  # Ersätt med ditt faktiska guild-ID (heltal)
+
+def _Archive_Category_ID():
+    return 1012026430932127925  # Replace with actual category ID
+
 def _XP_Update_Channel_ID():
     return 1012067343452622949  # Replace with actual channel ID
 
@@ -98,6 +105,16 @@ def _Media_File():
 def _Current_Week_CCNP():
     return "./Json_Files/current_week_CCNP.json"
 
+# Lägg under övriga Study Plan–funktioner i _Bot_Config.py
+
+def _Current_Week_CCNA():
+    """Path to CCNA current-week JSON."""
+    return "./Json_Files/current_week_CCNA.json"
+
+def _Study_Plan_CCNA():
+    """Path to CCNA study-plan JSON."""
+    return "./Json_Files/CCNA_Study_Plan.json"
+
 def _Study_Plan_CCNP():
     return "./Json_Files/CCNP_Study_Plan.json"
 
@@ -116,6 +133,14 @@ def _Welcome_Message_File():
 def _XP_File():
     return "./Json_Files/xp_data.json"
 
+def _Question_File():
+    """Returns the path to the network questions JSON file."""
+    return "./Json_Files/network_questions.json"
+
+def _Ticket_Counter_File():
+    return "./Json_Files/Ticket_counter_file.json"
+
+
 # ------------------
 # Roles Configuration
 # ------------------
@@ -133,7 +158,7 @@ def _Static_Roles():
         "Arkiv-enjoyer": 1160861563083837511,
     }
 
-def _Protected_Roles():
+def _protected_Poles():
     """Static protected role IDs."""
     return {
         "NIT_25": 1386591861292138556,

@@ -1,34 +1,69 @@
 # Internal_Modules/_Role_Management.py
-"""
-Module for dynamic role assignment/removal in Discord via buttons or commands.
-"""
+
 import os
 import json
 import discord
 import asyncio
 from discord.ui import Button, View
-
+import logging
 import _Bot_Config  # type: ignore
-from _logging_setup import setup_logging
 
 # Initialize logger
-logger = setup_logging()
+logger = logging.getLogger(__name__)
 
-# Config values
-BOT_ADMIN_ROLE_NAME = _Bot_Config._Bot_Admin_Role_Name()
-ADMIN_ROLE_NAME = _Bot_Config._Admin_Role_Name()
-MOD_ROLE_NAME = _Bot_Config._Mod_Role_Name()
-MENTOR_ROLE_NAME = _Bot_Config._Mentor_Role_Name()
-
-STATIC_ROLES = _Bot_Config._Static_Roles()  # name->id mapping
-PASSWORD_PROTECTED_ROLES = _Bot_Config._Protected_Roles()  # name->password mapping
+# Configuration refs
 ROLE_JSON_FILE = _Bot_Config._Role_Json_File()
 EXCLUDED_ROLES = _Bot_Config._Excluded_Roles()
+STATIC_ROLES = _Bot_Config._Static_Roles()
+PASSWORD_PROTECTED_ROLES = _Bot_Config._protected_Poles()
 
-# Helper to load/save role JSON
+# Setup function to initialize JSON file and directories
+def setup(role_json_file: str):
+    """Ensure the roles JSON file and its directory exist."""
+    directory = os.path.dirname(role_json_file)
+    try:
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory, exist_ok=True)
+            logger.info(f"Created roles directory: {directory}")
+        if not os.path.isfile(role_json_file):
+            with open(role_json_file, 'w', encoding='utf-8') as f:
+                json.dump({}, f)
+            logger.info(f"Initialized roles file: {role_json_file}")
+    except Exception as e:
+        logger.error(f"Error setting up roles file: {e}")
 
-def load_roles() -> dict:
-    """Load persisted roles from JSON file."""
+# Button class for static roles
+class RoleButton(Button):
+    def __init__(self, label, style, role_id=None):
+        super().__init__(label=label, style=style)
+        self.role_id = role_id
+
+    async def callback(self, interaction: discord.Interaction):
+        role = interaction.guild.get_role(int(self.role_id)) if self.role_id else discord.utils.get(interaction.guild.roles, name=self.label)
+        if not role:
+            await interaction.response.send_message(f"Role '{self.label}' not found.", ephemeral=True)
+            return
+        if role in interaction.user.roles:
+            await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
+        else:
+            try:
+                await interaction.user.add_roles(role)
+                await interaction.response.send_message(f"Role {role.name} assigned.", ephemeral=True)
+            except discord.Forbidden:
+                await interaction.response.send_message("Insufficient permissions to assign role.", ephemeral=True)
+
+# Create view for buttons
+def create_role_buttons_view():
+    view = View(timeout=None)
+    for label, role_id in STATIC_ROLES.items():
+        if label in EXCLUDED_ROLES:
+            continue
+        style = discord.ButtonStyle.green
+        view.add_item(RoleButton(label=label, style=style, role_id=role_id))
+    return view
+
+# Load roles mapping from JSON
+def load_roles():
     try:
         with open(ROLE_JSON_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -36,110 +71,66 @@ def load_roles() -> dict:
         logger.error(f"Failed to load roles: {e}")
         return {}
 
-
-def save_roles(roles: dict):
-    """Save roles mapping to JSON file."""
+# Fetch and save roles from discord server
+async def fetch_and_save_roles(bot):
+    roles = {}
+    for guild in bot.guilds:
+        for role in guild.roles:
+            if role.name not in EXCLUDED_ROLES:
+                roles[role.name] = role.id
     try:
-        os.makedirs(os.path.dirname(ROLE_JSON_FILE), exist_ok=True)
         with open(ROLE_JSON_FILE, 'w', encoding='utf-8') as f:
             json.dump(roles, f, indent=4)
-        logger.debug("Roles saved to JSON.")
+        logger.info("Roles saved to JSON file.")
     except Exception as e:
         logger.error(f"Failed to save roles: {e}")
 
-# Button class for role assignment
-class RoleButton(Button):
-    def __init__(self, label: str, style: discord.ButtonStyle, role_id: int=None):
-        super().__init__(label=label, style=style)
-        self.role_id = role_id
-
-    async def callback(self, interaction: discord.Interaction):
-        guild = interaction.guild
-        user = interaction.user
-        # Find role by ID or by name
-        role = guild.get_role(self.role_id) if self.role_id else discord.utils.get(guild.roles, name=self.label)
-        if not role:
-            await interaction.response.send_message(f"Role {self.label} not found.", ephemeral=True)
-            return
-        if role in user.roles:
-            await interaction.response.send_message(f"You already have the role {role.name}.", ephemeral=True)
-        else:
-            try:
-                await user.add_roles(role)
-                await interaction.response.send_message(f"Assigned role {role.name}.", ephemeral=True)
-                logger.info(f"Assigned {role.name} to {user}")
-            except discord.Forbidden:
-                await interaction.response.send_message("Insufficient permissions.", ephemeral=True)
-                logger.warning(f"Permission denied assigning {role.name} to {user}")
-
-# Create a persistent view for buttons
-def create_role_buttons_view() -> View:
-    """Return a View containing buttons for static roles."""
-    view = View(timeout=None)
-    buttons = [
-        (name, discord.ButtonStyle.blurple) for name in STATIC_ROLES.keys()
-    ]
-    for name, style in buttons:
-        role_id = STATIC_ROLES.get(name)
-        view.add_item(RoleButton(label=name, style=style, role_id=role_id))
-    return view
-
-# Assign a role via command
+# Assign a role by command
 async def assign_role(ctx, role_name: str):
-    """Assign specified role by name, handling password if protected."""
     roles = load_roles()
     if role_name not in roles:
         await ctx.send(f"Role '{role_name}' not found.")
         return
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     if not role:
-        await ctx.send(f"Role '{role_name}' not on this server.")
+        await ctx.send(f"Role '{role_name}' not present on server.")
         return
-    # Check password if protected
+    # Password-protection if needed
     if role_name in PASSWORD_PROTECTED_ROLES:
-        password = PASSWORD_PROTECTED_ROLES[role_name]
-        await ctx.author.send(f"Enter password for '{role_name}':")
+        await ctx.author.send(f"Role '{role_name}' requires a password. Reply with password.")
         try:
-            msg = await ctx.bot.wait_for(
-                'message', check=lambda m: m.author==ctx.author and isinstance(m.channel, discord.DMChannel), timeout=60
-            )
-            if msg.content != password:
-                await ctx.author.send("Incorrect password.")
+            msg = await ctx.bot.wait_for('message', check=lambda m: m.author == ctx.author and isinstance(m.channel, discord.DMChannel), timeout=60)
+            if msg.content != PASSWORD_PROTECTED_ROLES[role_name]:
+                await ctx.author.send("Incorrect password. Operation cancelled.")
                 return
         except asyncio.TimeoutError:
-            await ctx.author.send("Timed out.")
+            await ctx.author.send("No response. Operation cancelled.")
             return
-    # Assign
+    # Assign or notify
     try:
-        await ctx.author.add_roles(role)
-        await ctx.send(embed=discord.Embed(
-            title="Role Assigned", description=f"{role_name} added.", color=discord.Color.green()
-        ))
-        logger.info(f"{ctx.author} assigned {role_name}")
+        if role in ctx.author.roles:
+            await ctx.send(f"You already have the role {role_name}.")
+        else:
+            await ctx.author.add_roles(role)
+            await ctx.send(f"Role {role_name} assigned.")
     except discord.Forbidden:
-        await ctx.send("Cannot assign role.")
-        logger.warning(f"Failed to assign {role_name} to {ctx.author}")
+        await ctx.send("Insufficient permissions to assign role.")
 
-# Remove a role via command
+# Remove a role by command
 async def remove_role(ctx, role_name: str):
-    """Remove specified role from user."""
     roles = load_roles()
     if role_name not in roles:
         await ctx.send(f"Role '{role_name}' not found.")
         return
     role = discord.utils.get(ctx.guild.roles, name=role_name)
     if not role:
-        await ctx.send(f"Role '{role_name}' not on this server.")
-        return
-    if role not in ctx.author.roles:
-        await ctx.send(f"You do not have {role_name}.")
+        await ctx.send(f"Role '{role_name}' not present on server.")
         return
     try:
-        await ctx.author.remove_roles(role)
-        await ctx.send(embed=discord.Embed(
-            title="Role Removed", description=f"{role_name} removed.", color=discord.Color.red()
-        ))
-        logger.info(f"Removed {role_name} from {ctx.author}")
+        if role not in ctx.author.roles:
+            await ctx.send(f"You do not have the role {role_name}.")
+        else:
+            await ctx.author.remove_roles(role)
+            await ctx.send(f"Role {role_name} removed.")
     except discord.Forbidden:
-        await ctx.send("Cannot remove role.")
-        logger.warning(f"Failed to remove {role_name} from {ctx.author}")
+        await ctx.send("Insufficient permissions to remove role.")

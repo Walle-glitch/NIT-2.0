@@ -20,7 +20,7 @@ LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
 ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()
 
 # --------------- Logging Utility ---------------
-async def log_to_channel(bot: discord.Bot, message: str):
+async def log_to_channel(bot, message: str):
     """Send message to log channel and server console."""
     logger.info(message)
     channel = bot.get_channel(LOG_CHANNEL_ID)
@@ -31,7 +31,7 @@ async def log_to_channel(bot: discord.Bot, message: str):
             logger.error(f"Cannot send log to channel {LOG_CHANNEL_ID}")
 
 # --------------- Resource Command ---------------
-async def send_resource_embed(ctx: discord.ApplicationContext):
+async def send_resource_embed(ctx):
     """Send a series of embeds with study resources."""
     resources = [
         {
@@ -99,7 +99,7 @@ def fetch_jobs(query: str = "Network Technician", location: str = "Sweden") -> l
         logger.error(f"Job fetch error: {e}")
         return []
 
-async def fetch_and_post_jobs(bot: discord.Bot, channel_id: int):
+async def fetch_and_post_jobs(bot, channel_id: int):
     """Fetch jobs and post as embeds in specified channel."""
     jobs = fetch_jobs()
     if not jobs:

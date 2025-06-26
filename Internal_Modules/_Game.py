@@ -79,7 +79,7 @@ def generate_network_question() -> tuple:
     return question, options, correct_index
 
 
-async def start_game(ctx, game_type: str, bot: discord.Bot):
+async def start_game(ctx, game_type: str, Bot):
     """Begin Q&A game session of specified type."""
     global game_active, game_initiator, current_game_type
     if game_active:
@@ -92,7 +92,7 @@ async def start_game(ctx, game_type: str, bot: discord.Bot):
     await next_question(ctx, bot)
 
 
-async def next_question(ctx, bot: discord.Bot):
+async def next_question(ctx, Bot):
     """Ask the next question based on game type."""
     global current_question, correct_answer
     if current_game_type == 'subnet':

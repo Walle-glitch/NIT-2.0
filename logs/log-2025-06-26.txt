@@ -1,0 +1,423 @@
+2025-06-26 19:58:51 ERROR: Error loading auctions file: Expecting value: line 1 column 1 (char 0)
+2025-06-26 19:58:54 INFO: Loaded 0 auctions from file.
+2025-06-26 19:58:56 INFO: Loaded 0 auctions from file.
+2025-06-26 19:58:59 INFO: Loaded 0 auctions from file.
+2025-06-26 19:59:02 INFO: Loaded 0 auctions from file.
+2025-06-26 19:59:06 INFO: Loaded 0 auctions from file.
+2025-06-26 19:59:11 INFO: Loaded 0 auctions from file.
+2025-06-26 19:59:20 INFO: Loaded 0 auctions from file.
+2025-06-26 19:59:35 INFO: Loaded 0 auctions from file.
+2025-06-26 20:00:02 INFO: Loaded 0 auctions from file.
+2025-06-26 20:00:56 INFO: Loaded 0 auctions from file.
+2025-06-26 20:01:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:40 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:43 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:45 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:48 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:51 INFO: Loaded 0 auctions from file.
+2025-06-26 20:02:55 INFO: Loaded 0 auctions from file.
+2025-06-26 20:03:00 INFO: Loaded 0 auctions from file.
+2025-06-26 20:03:09 INFO: Loaded 0 auctions from file.
+2025-06-26 20:03:24 INFO: Loaded 0 auctions from file.
+2025-06-26 20:03:52 INFO: Loaded 0 auctions from file.
+2025-06-26 20:04:45 INFO: Loaded 0 auctions from file.
+2025-06-26 20:04:54 INFO: Loaded 0 auctions from file.
+2025-06-26 20:04:56 INFO: Loaded 0 auctions from file.
+2025-06-26 20:04:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:01 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:04 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:08 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:13 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:22 INFO: Loaded 0 auctions from file.
+2025-06-26 20:05:37 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:05 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:43 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:46 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:48 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:51 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:54 INFO: Loaded 0 auctions from file.
+2025-06-26 20:06:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:12 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:27 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:35 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:37 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:40 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:42 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:45 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:49 INFO: Loaded 0 auctions from file.
+2025-06-26 20:07:55 INFO: Loaded 0 auctions from file.
+2025-06-26 20:08:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:08:18 INFO: Loaded 0 auctions from file.
+2025-06-26 20:08:46 INFO: Loaded 0 auctions from file.
+2025-06-26 20:09:39 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:14 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:17 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:19 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:22 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:25 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:29 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:34 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:43 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:55 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:55 INFO: Created file: /app/Json_Files/active_users.json
+2025-06-26 20:10:55 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:10:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:10:58 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:00 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:00 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:03 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:06 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:06 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:10 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:10 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:15 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:15 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:24 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:24 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:11:39 INFO: Loaded 0 auctions from file.
+2025-06-26 20:11:39 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:12:07 INFO: Loaded 0 auctions from file.
+2025-06-26 20:12:07 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:13:01 INFO: Loaded 0 auctions from file.
+2025-06-26 20:13:01 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:14:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:14:03 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:08 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:08 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:08 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:12 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:12 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:12 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:14 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:14 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:14 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:17 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:17 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:17 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:19 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:19 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:19 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:22 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:22 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:22 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:26 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:26 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:26 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:32 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:32 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:32 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:41 INFO: Loaded 0 auctions from file.
+2025-06-26 20:16:41 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:16:41 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:16:56 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:24 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:50 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:50 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:17:50 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:17:50 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:17:52 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:52 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:17:52 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:17:52 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:17:55 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:55 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:17:55 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:17:55 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:17:57 INFO: Loaded 0 auctions from file.
+2025-06-26 20:17:57 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:17:57 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:17:57 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:18:00 INFO: Loaded 0 auctions from file.
+2025-06-26 20:18:00 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:18:00 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:18:00 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:18:04 INFO: Loaded 0 auctions from file.
+2025-06-26 20:18:04 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:18:04 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:18:04 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:18:10 INFO: Loaded 0 auctions from file.
+2025-06-26 20:18:10 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:18:10 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:18:10 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:18:18 INFO: Loaded 0 auctions from file.
+2025-06-26 20:18:18 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:18:18 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:18:18 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:18:33 INFO: Loaded 0 auctions from file.
+2025-06-26 20:18:33 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:18:33 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:18:33 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:19:01 INFO: Loaded 0 auctions from file.
+2025-06-26 20:19:01 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:19:01 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:19:01 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:19:55 INFO: Loaded 0 auctions from file.
+2025-06-26 20:19:55 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:19:55 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:19:55 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:19:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:19:58 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:19:58 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:19:58 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:00 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:00 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:00 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:00 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:03 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:03 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:03 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:06 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:06 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:06 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:06 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:09 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:09 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:09 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:09 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:13 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:13 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:13 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:13 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:18 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:18 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:18 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:18 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:27 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:27 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:27 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:27 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:20:42 INFO: Loaded 0 auctions from file.
+2025-06-26 20:20:42 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:20:42 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:20:42 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:21:10 INFO: Loaded 0 auctions from file.
+2025-06-26 20:21:10 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:21:10 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:21:10 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:22:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:22:03 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:22:03 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:22:03 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:06 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:06 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:06 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:06 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:34 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:34 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:34 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:34 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:37 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:37 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:37 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:37 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:39 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:39 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:39 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:39 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:42 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:42 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:42 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:42 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:45 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:45 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:45 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:45 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:49 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:49 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:49 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:49 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:23:54 INFO: Loaded 0 auctions from file.
+2025-06-26 20:23:54 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:23:54 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:23:54 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:24:03 INFO: Loaded 0 auctions from file.
+2025-06-26 20:24:03 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:24:03 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:24:03 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:24:18 INFO: Loaded 0 auctions from file.
+2025-06-26 20:24:18 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:24:18 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:24:18 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:24:46 INFO: Loaded 0 auctions from file.
+2025-06-26 20:24:46 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:24:46 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:24:46 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:09 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:09 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:09 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:09 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:11 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:11 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:11 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:11 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:13 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:13 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:13 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:13 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:16 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:16 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:16 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:16 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:19 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:19 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:19 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:19 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:23 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:23 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:23 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:23 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:29 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:29 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:29 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:29 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:37 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:37 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:37 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:37 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:25:52 INFO: Loaded 0 auctions from file.
+2025-06-26 20:25:52 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:25:52 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:25:52 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:20 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:20 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:20 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:20 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:38 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:38 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:38 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:38 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:41 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:41 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:41 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:41 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:43 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:43 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:43 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:43 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:46 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:46 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:46 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:46 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:49 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:49 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:49 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:49 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:53 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:53 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:53 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:53 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:26:59 INFO: Loaded 0 auctions from file.
+2025-06-26 20:26:59 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:26:59 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:26:59 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:27:07 INFO: Loaded 0 auctions from file.
+2025-06-26 20:27:07 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:27:07 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:27:07 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:27:22 INFO: Loaded 0 auctions from file.
+2025-06-26 20:27:22 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:27:22 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:27:22 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:27:50 INFO: Loaded 0 auctions from file.
+2025-06-26 20:27:50 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:27:50 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:27:50 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:10 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:10 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:10 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:10 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:13 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:13 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:13 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:13 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:15 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:15 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:15 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:15 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:18 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:18 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:18 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:18 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:21 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:21 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:21 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:21 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:25 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:25 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:25 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:25 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:30 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:30 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:30 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:30 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:39 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:39 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:39 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:39 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:28:54 INFO: Loaded 0 auctions from file.
+2025-06-26 20:28:54 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:28:54 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:28:54 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:22 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:22 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:22 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:22 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:44 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:44 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:44 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:44 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:46 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:46 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:46 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:46 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:49 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:49 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:49 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:49 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:51 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:51 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:51 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:51 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:54 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:54 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:54 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:54 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:29:58 INFO: Loaded 0 auctions from file.
+2025-06-26 20:29:58 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:29:58 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:29:58 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:30:04 INFO: Loaded 0 auctions from file.
+2025-06-26 20:30:04 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:30:04 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:30:04 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:30:13 INFO: Loaded 0 auctions from file.
+2025-06-26 20:30:13 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:30:13 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:30:13 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:30:28 INFO: Loaded 0 auctions from file.
+2025-06-26 20:30:28 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:30:28 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:30:28 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:30:52 INFO: Loaded 0 auctions from file.
+2025-06-26 20:30:52 INFO: MemberModeration: set ADMIN_CHANNEL_ID=1012447677880995920
+2025-06-26 20:30:52 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:30:52 INFO: Slash_Commands setup completed (stub).
+2025-06-26 20:30:52 INFO: Loaded 0 auctions from file.
+2025-06-26 20:30:52 INFO: logging in using static token
+2025-06-26 20:30:53 INFO: Shard ID None has connected to Gateway (Session ID: b242bfc1cc13973ff39e0564c76cfe52).
+2025-06-26 20:30:55 INFO: Bot logged in as Net-BOT#2203
+2025-06-26 20:30:55 INFO: ✅ Logged in as Net-BOT#2203
+2025-06-26 20:30:57 INFO: Global commands synced.
+2025-06-26 20:30:57 INFO: Roles saved to JSON file.
+2025-06-26 20:30:57 ERROR: Job fetch error: HTTPSConnectionPool(host='api.indeed.com', port=443): Max retries exceeded with url: /ads/apisearch?q=Network+Technician&l=Sweden&sort=date&format=json&v=2 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7ad6f03e0550>: Failed to resolve 'api.indeed.com' ([Errno -5] No address associated with hostname)"))
+2025-06-26 20:30:57 INFO: No jobs found.
+2025-06-26 20:31:50 WARNING: XP file missing or invalid: ./Json_Files/xp_data.json, initializing empty.
+2025-06-26 20:31:50 INFO: Assigned late-night role to walle_glitch
+2025-06-26 20:31:50 ERROR: Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "game_start" is not found
+2025-06-26 20:32:04 ERROR: Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "game" is not found
+2025-06-26 20:33:57 INFO: Shard ID None has successfully RESUMED session b242bfc1cc13973ff39e0564c76cfe52.
