@@ -23,7 +23,7 @@ import _Bot_Modul
 import _Auction
 import _Slash_Commands
 import _Activity_Tracking
-#import _Ticket_System
+import _Ticket_System
 from _logging_setup import setup_logging
 
 # Ensure required directories
@@ -164,6 +164,7 @@ async def reload_module(ctx, module_name: str = None):
         'Auction': _Auction,
         'Game': _Game,
         'Moderation': _Member_Moderation,
+        '_Ticket_System': _Ticket_System,
     }
     if not module_name:
         await ctx.send(f"Modules: {', '.join(modules.keys())}")
