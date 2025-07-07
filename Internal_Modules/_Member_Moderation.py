@@ -22,6 +22,9 @@ def setup(admin_channel_id: int):
     """Configure the admin channel ID for reporting moderation actions."""
     global ADMIN_CHANNEL_ID
     ADMIN_CHANNEL_ID = admin_channel_id
+    @bot.tree.command(name="moderation", description="Commands for member moderation.")
+    async def moderation_commands(interaction: discord.Interaction):
+        await interaction.response.send_message("Moderation commands are not yet implemented.")
     logger.info(f"MemberModeration: set ADMIN_CHANNEL_ID={ADMIN_CHANNEL_ID}")
 
 

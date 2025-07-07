@@ -35,6 +35,13 @@ xp_data = {}
 active_users = {}
 
 
+def setup():
+    """Initializes the XP module by loading data from file."""
+    global xp_data
+    xp_data = load_xp_data()
+    logger.info(f"XP data loaded for {len(xp_data)} users.")
+
+
 def load_xp_data() -> dict:
     """Load XP data from JSON file."""
     try:

@@ -20,6 +20,15 @@ GUILD_ID = _Bot_Config._Guild_ID()  # You need to add _Guild_ID() in _Bot_Config
 LATE_NIGHT_ROLE_ID = _Bot_Config._Late_Night_Role_ID()
 
 
+# --- RENAMED SETUP FUNCTION ---
+def setup():
+    """Ensure the activity tracking file exists."""
+    if not os.path.exists(ACTIVE_USERS_FILE):
+        with open(ACTIVE_USERS_FILE, 'w') as f:
+            json.dump({}, f)
+    logger.info("Activity Tracking module setup complete.")
+
+
 def setup_file():
     """Ensure Json_Files directory and active_users.json exist."""
     try:

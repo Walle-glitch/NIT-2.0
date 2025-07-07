@@ -15,6 +15,18 @@ def _Open_AI_Token():
     """Returns the OpenAI API key from environment."""
     return os.getenv("OPENAI_API_KEY")
 
+
+def setup():
+    """Initializes the Role Management module."""
+    global role_file_path
+    role_file_path = _Bot_Config._Role_Json_File()
+    # Ensure the file exists
+    if not os.path.exists(role_file_path):
+        with open(role_file_path, 'w') as f:
+            json.dump({}, f)
+    logger.info("Role Management module setup complete.")
+
+
 # ------------------
 # Role Names
 # ------------------
