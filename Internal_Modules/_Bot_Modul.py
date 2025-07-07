@@ -4,172 +4,112 @@ Core utility module for resource embeds, RFC lookup, and job postings.
 """
 import os
 import json
-import requests
+import requests  # For synchronous RFC lookup
+import aiohttp   # For asynchronous job fetching
 from bs4 import BeautifulSoup
 import discord
 from datetime import datetime
 
-import _Bot_Config  # type: ignore
+import _Bot_Config
 from _logging_setup import setup_logging
 
-# Initialize logger
+# --- 1. Initial Setup ---
 logger = setup_logging()
 
-# Channel IDs
-LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
-ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()
-
-
-# Internal_Modules/_Bot_Modul.py
-import discord
-import aiohttp
-import json
-from . import _Bot_Config
-from ._logging_setup import setup_logging
-
-logger = setup_logging()
-
-# --- NEW SETUP FUNCTION ---
+# --- 2. Setup Function ---
 def setup():
     """Initializes the Bot Module."""
-    # This module doesn't need complex setup, but the function must exist.
-    logger.info("Bot Module (Jobs) setup complete.")
-
-async def fetch_and_post_jobs(bot, channel_id):
-    """Fetches job listings from the Indeed API and posts them."""
-    params = {
-        "q": "Network Technician",
-        "l": "Sweden",
-        "sort": "date",
-        "format": "json",
-        "v": "2",
-        # You will need to get a publisher ID from Indeed's program if it's still available
-        # "publisher": "YOUR_INDEED_PUBLISHER_ID" 
-    }
-    # Note: The public Indeed API was deprecated. This URL might not work.
-    # You may need to find a new job API provider.
-    url = "http://api.indeed.com/ads/apisearch"
-
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    jobs = data.get("results", [])
-                    if jobs:
-                        channel = bot.get_channel(channel_id)
-                        if channel:
-                            for job in jobs[:5]: # Post top 5 new jobs
-                                embed = discord.Embed(title=job.get("jobtitle"), url=job.get("url"), description=job.get("snippet"), color=discord.Color.blue())
-                                embed.set_footer(text=f"{job.get('company')} - {job.get('formattedLocation')}")
-                                await channel.send(embed=embed)
-                        else:
-                            logger.error(f"Job channel with ID {channel_id} not found.")
-                    else:
-                        logger.info("No new jobs found.")
-                else:
-                    logger.error(f"Failed to fetch jobs, status code: {response.status}")
-    except Exception as e:
-        logger.error(f"Job fetch error: {e}")
+    # This module doesn't need complex setup for now, but the function must exist.
+    logger.info("Bot Module (Jobs & Utilities) setup complete.")
 
 
+# --- 3. Job Posting ---
+INDEED_API_KEY = os.getenv('INDEED_API_KEY') # It's better to load this once
 
+async def fetch_and_post_jobs(bot: discord.Client, channel_id: int):
+    """
+    Fetches job listings from the Indeed API asynchronously and posts them as embeds.
+    This is the single, corrected version of the function.
+    """
+    # Note: Indeed's public API for job search was deprecated.
+    # This may not work without a valid, grandfathered publisher key.
+    if not INDEED_API_KEY:
+        logger.warning("INDEED_API_KEY is not set. Skipping job fetch.")
+        return
 
-# --------------- Logging Utility ---------------
-async def log_to_channel(bot, message: str):
-    """Send message to log channel and server console."""
-    logger.info(message)
-    channel = bot.get_channel(LOG_CHANNEL_ID)
-    if channel:
-        try:
-            await channel.send(message)
-        except discord.Forbidden:
-            logger.error(f"Cannot send log to channel {LOG_CHANNEL_ID}")
-
-# --------------- Resource Command ---------------
-async def send_resource_embed(ctx):
-    """Send a series of embeds with study resources."""
-    resources = [
-        {
-            "title": "Course Books and Resources",
-            "fields": [
-                ("linux (ogl)", "https://dl.remilia.se/os/"),
-                ("python notes", "https://files.catbox.moe/tj6k7c.zip"),
-                # add more as needed
-            ]
-        },
-        {
-            "title": "YouTube Resources",
-            "fields": [
-                ("CCNA Playlist", "https://youtube.com/playlist?list=PLxbwE86jKRgM"),
-                ("NetworkChuck", "https://www.youtube.com/@NetworkChuck"),
-            ]
-        },
-    ]
-    for res in resources:
-        embed = discord.Embed(title=res["title"], color=discord.Color.blue())
-        for name, url in res["fields"]:
-            embed.add_field(name=name, value=url, inline=False)
-        await ctx.send(embed=embed)
-
-# --------------- RFC Lookup Command ---------------
-def get_rfc(rfc_number: int) -> str:
-    """Fetch RFC title and return it with link."""
-    if rfc_number <= 0:
-        return "Error: Invalid RFC number."
-    url = f"https://datatracker.ietf.org/doc/html/rfc{rfc_number}"
-    try:
-        resp = requests.get(url)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        title_tag = soup.find('title')
-        title = title_tag.text if title_tag else "RFC title not found."
-        return f"{title}\nLink: {url}"
-    except requests.RequestException as e:
-        logger.error(f"RFC fetch error: {e}")
-        return f"Error retrieving RFC: {e}"
-
-# --------------- Job Posting Command ---------------
-INDEED_API_URL = "https://api.indeed.com/ads/apisearch"
-INDEED_API_KEY = os.getenv('INDEED_API_KEY')
-
-def fetch_jobs(query: str = "Network Technician", location: str = "Sweden") -> list:
-    """Fetch jobs from Indeed API and return list of dicts."""
     params = {
         'publisher': INDEED_API_KEY,
-        'q': query,
-        'l': location,
+        'q': "Network Engineer",
+        'l': "Sweden",
         'sort': 'date',
         'format': 'json',
         'v': '2'
     }
-    try:
-        response = requests.get(INDEED_API_URL, params=params)
-        response.raise_for_status()
-        data = response.json().get('results', [])
-        return [
-            {'title': job['jobtitle'], 'company': job['company'], 'location': job['formattedLocation'], 'url': job['url']}
-            for job in data
-        ]
-    except Exception as e:
-        logger.error(f"Job fetch error: {e}")
-        return []
+    url = "https://api.indeed.com/ads/apisearch"
 
-async def fetch_and_post_jobs(bot, channel_id: int):
-    """Fetch jobs and post as embeds in specified channel."""
-    jobs = fetch_jobs()
-    if not jobs:
-        logger.info("No jobs found.")
-        return
-    channel = bot.get_channel(channel_id)
-    if not channel:
-        logger.error(f"Channel {channel_id} not found.")
-        return
-    for job in jobs:
-        embed = discord.Embed(
-            title=job['title'],
-            description=f"{job['company']} - {job['location']}",
-            url=job['url'],
-            color=discord.Color.green()
-        )
-        await channel.send(embed=embed)
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as response:
+                response.raise_for_status() # Will raise an error for 4xx/5xx status
+                data = await response.json()
+                jobs = data.get('results', [])
+
+                if not jobs:
+                    logger.info("No new jobs found via API.")
+                    return
+
+                channel = bot.get_channel(channel_id)
+                if not channel:
+                    logger.error(f"Job posting channel with ID {channel_id} not found.")
+                    return
+
+                logger.info(f"Posting {len(jobs)} new jobs to channel {channel.name}.")
+                for job in jobs[:5]: # Limit to the 5 newest jobs
+                    embed = discord.Embed(
+                        title=job.get('jobtitle', 'No Title'),
+                        description=f"{job.get('company', 'N/A')} - {job.get('formattedLocation', 'N/A')}",
+                        url=job.get('url'),
+                        color=discord.Color.blue()
+                    )
+                    await channel.send(embed=embed)
+
+    except aiohttp.ClientError as e:
+        logger.error(f"Job fetch network error: {e}")
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during job fetching: {e}", exc_info=True)
+
+
+# --- 4. Other Utilities (for potential use in slash commands) ---
+
+async def log_to_channel(bot: discord.Client, message: str):
+    """Send message to the designated log channel."""
+    log_channel_id = _Bot_Config._Log_Channel_ID()
+    logger.info(message)
+    channel = bot.get_channel(log_channel_id)
+    if channel:
+        try:
+            await channel.send(f"```{datetime.now():%Y-%m-%d %H:%M:%S} - {message}```")
+        except discord.Forbidden:
+            logger.error(f"Cannot send log to channel {log_channel_id} due to permissions.")
+
+
+def get_rfc(rfc_number: int) -> str:
+    """
+    Fetches an RFC title and link using a synchronous request.
+    This is suitable for a command context where a small block is acceptable.
+    """
+    if rfc_number <= 0:
+        return "Error: Invalid RFC number provided."
+
+    url = f"https://datatracker.ietf.org/doc/html/rfc{rfc_number}"
+    try:
+        # Using requests here is fine for a one-off command action
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        title_tag = soup.find('title')
+        title = title_tag.text.strip() if title_tag else "RFC title not found."
+        return f"**{title}**\n{url}"
+    except requests.RequestException as e:
+        logger.error(f"RFC fetch error for RFC {rfc_number}: {e}")
+        return f"Error: Could not retrieve RFC {rfc_number}."
