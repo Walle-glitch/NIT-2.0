@@ -3,45 +3,59 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from _logging_setup import setup_logging  # CORRECTED IMPORT
+from _logging_setup import setup_logging
 
 logger = setup_logging()
 
-# This will be initialized by the setup() function
+# We will only configure the API key at startup.
+# The model itself will be loaded on the first use.
 model = None
 
 def setup():
-    """Initializes the Gemini Handler module by loading the API key and model."""
-    global model
-
+    """Initializes the Gemini Handler module by loading and configuring the API key."""
     # Load environment variables from the project's .env file
     load_dotenv()
 
-    # Use the specific key name from your .env file: 'Gemini_API'
     api_key = os.getenv('Gemini_API')
 
     if not api_key:
         logger.critical("Gemini API Key ('Gemini_API') was not found in the .env file.")
-        model = None
         return
 
     try:
         genai.configure(api_key=api_key)
-        # Initialize the generative model
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        logger.info("Gemini module setup complete and model 'gemini-1.5-flash' initialized.")
+        logger.info("Gemini module setup complete. API key configured.")
     except Exception as e:
-        logger.error(f"Failed to configure or initialize Gemini model: {e}")
-        model = None
+        logger.error(f"Failed to configure Gemini API key: {e}")
+
+async def get_or_create_model():
+    """
+    A helper function to get the existing model or create it if it doesn't exist.
+    This is known as 'lazy initialization'.
+    """
+    global model
+    if model is None:
+        try:
+            logger.info("Initializing Gemini model for the first time...")
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            logger.info("Gemini model 'gemini-1.5-flash' has been initialized.")
+        except Exception as e:
+            logger.error(f"Failed to initialize Gemini model on first use: {e}")
+            return None
+    return model
 
 async def ask_gemini(prompt: str) -> str:
     """Sends a prompt to the Gemini API and returns the response."""
-    if not model:
-        return "Error: The Gemini model is not initialized. Please check the API key and server logs."
+    
+    # Get the model, creating it if it's the first time.
+    active_model = await get_or_create_model()
+
+    if not active_model:
+        return "Error: The Gemini model could not be initialized. Please check the server logs."
 
     try:
         # Generate content using the asynchronous API
-        response = await model.generate_content_async(prompt)
+        response = await active_model.generate_content_async(prompt)
         return response.text
     except Exception as e:
         logger.error(f"An error occurred while communicating with the Gemini API: {e}")

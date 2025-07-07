@@ -132,6 +132,4 @@ def setup(bot: commands.Bot):
     # Add the admin command group to the bot's command tree
     bot.tree.add_command(admin_group)
 
-    # --- REMOVED SECTION ---
-    # The lines that called setup() on other modules have been deleted.
-    # main.py is now the single source of truth for module initialization.
+  
