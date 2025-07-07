@@ -29,6 +29,23 @@ AUCTIONS_FILE = _Bot_Config._Auctions_File()
 active_auctions = {}
 
 
+def setup(bot: commands.Bot):
+    """Initializes the Auction module by loading data and registering commands."""
+    global auctions
+    if os.path.exists(AUCTION_FILE):
+        with open(AUCTION_FILE, 'r') as f:
+            auctions = json.load(f)
+    logger.info(f"Loaded {len(auctions)} auctions from file.")
+
+    @bot.tree.command(name="auction", description="Manage auctions.")
+    async def auction(interaction: discord.Interaction, action: str, item: str = None, starting_bid: int = 0):
+        # Your auction logic here
+        await interaction.response.send_message(f"Auction command '{action}' executed.", ephemeral=True)
+
+    logger.info("Auction module setup complete.")
+
+
+
 def load_auctions():
     """Load existing auctions from JSON file."""
     if os.path.isfile(AUCTIONS_FILE):

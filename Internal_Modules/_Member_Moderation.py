@@ -1,118 +1,53 @@
 # Internal_Modules/_Member_Moderation.py
-"""
-Module to handle member moderation: kick, ban, mute actions with logging and reporting.
-"""
-import logging
-from datetime import datetime, timedelta
-
 import discord
+from discord import app_commands
 from discord.ext import commands
+from . import _Bot_Config
+from ._logging_setup import setup_logging
 
-import _Bot_Config  # type: ignore
-from _logging_setup import setup_logging
+logger = setup_logging()
+# Internal_Modules/_Member_Moderation.py
+import discord
+from discord import app_commands
+from discord.ext import commands
+from . import _Bot_Config
+from ._logging_setup import setup_logging
 
-# Initialize logger
 logger = setup_logging()
 
-# Admin channel ID (to be set by main)
-ADMIN_CHANNEL_ID: int = None
+# --- CORRECTED SETUP FUNCTION ---
+def setup(bot: commands.Bot):
+    """Initializes the moderation module and registers its slash commands."""
+    
+    admin_channel_id = _Bot_Config._Admin_Channel_ID()
+    
+    # The command definition MUST be inside the setup function
+    @bot.tree.command(name="moderate", description="Moderates a member (kick or ban).")
+    @app_commands.describe(action="The moderation action to take.", member="The member to moderate.", reason="The reason for the moderation action.")
+    @app_commands.choices(action=[
+        app_commands.Choice(name="Kick", value="kick"),
+        app_commands.Choice(name="Ban", value="ban"),
+    ])
+    async def moderate(interaction: discord.Interaction, action: app_commands.Choice[str], member: discord.Member, reason: str):
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+            return
 
+        embed = discord.Embed(title=f"User {action.name.capitalize()}", color=discord.Color.red())
+        embed.add_field(name="User", value=member.mention, inline=False)
+        embed.add_field(name="Moderator", value=interaction.user.mention, inline=False)
+        embed.add_field(name="Reason", value=reason, inline=False)
+        
+        try:
+            if action.value == "kick":
+                await member.kick(reason=reason)
+            elif action.value == "ban":
+                await member.ban(reason=reason)
+            
+            await interaction.response.send_message(embed=embed)
+        except discord.Forbidden:
+            await interaction.response.send_message("I don't have the required permissions to do that.", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An error occurred: {e}", ephemeral=True)
 
-def setup(admin_channel_id: int):
-    """Configure the admin channel ID for reporting moderation actions."""
-    global ADMIN_CHANNEL_ID
-    ADMIN_CHANNEL_ID = admin_channel_id
-    @bot.tree.command(name="moderation", description="Commands for member moderation.")
-    async def moderation_commands(interaction: discord.Interaction):
-        await interaction.response.send_message("Moderation commands are not yet implemented.")
-    logger.info(f"MemberModeration: set ADMIN_CHANNEL_ID={ADMIN_CHANNEL_ID}")
-
-
-def has_privileged_role(member: discord.Member) -> bool:
-    """Return True if member has admin, mod, or bot-admin role."""
-    role_names = [role.name for role in member.roles]
-    return (
-        _Bot_Config._Admin_Role_Name() in role_names or
-        _Bot_Config._Mod_Role_Name() in role_names or
-        _Bot_Config._Bot_Admin_Role_Name() in role_names
-    )
-
-
-async def report_action(ctx: commands.Context, user: discord.Member, action: str,
-                        reason: str = None, duration: int = None):
-    """Send a report of the moderation action to the admin channel."""
-    if not ADMIN_CHANNEL_ID:
-        logger.warning("Admin channel ID not set; skipping report_action.")
-        return
-
-    guild = ctx.guild
-    report_channel = guild.get_channel(ADMIN_CHANNEL_ID) if guild else None
-    if not report_channel:
-        logger.error(f"Cannot find admin channel {ADMIN_CHANNEL_ID}")
-        return
-
-    admin = ctx.author.name
-    target = user.name
-    if action == "mute":
-        msg = f"**{admin}** muted **{target}** for {duration}h. Reason: {reason}"
-    else:
-        msg = f"**{admin}** {action}ed **{target}**. Reason: {reason}"
-
-    try:
-        await report_channel.send(msg)
-        logger.info(f"Reported {action} action: {msg}")
-    except Exception as e:
-        logger.error(f"Failed to send report: {e}")
-
-
-@commands.check(lambda ctx: has_privileged_role(ctx.author))
-@commands.has_permissions(kick_members=True)
-async def kick_user(ctx: commands.Context, user: discord.Member, *, reason: str = None):
-    """Kick a user from the guild."""
-    try:
-        await user.kick(reason=reason)
-        await report_action(ctx, user, "kick", reason)
-        await ctx.send(f"Kicked {user.mention}. Reason: {reason}")
-        logger.info(f"{ctx.author} kicked {user} for: {reason}")
-    except discord.Forbidden:
-        await ctx.send("I lack permission to kick this user.")
-        logger.warning(f"Kick forbidden: {ctx.author} -> {user}")
-    except Exception as e:
-        await ctx.send(f"Error kicking user: {e}")
-        logger.error(f"Exception kicking {user}: {e}")
-
-
-@commands.check(lambda ctx: has_privileged_role(ctx.author))
-@commands.has_permissions(ban_members=True)
-async def ban_user(ctx: commands.Context, user: discord.Member, *, reason: str = None):
-    """Ban a user from the guild."""
-    try:
-        await user.ban(reason=reason)
-        await report_action(ctx, user, "ban", reason)
-        await ctx.send(f"Banned {user.mention}. Reason: {reason}")
-        logger.info(f"{ctx.author} banned {user} for: {reason}")
-    except discord.Forbidden:
-        await ctx.send("I lack permission to ban this user.")
-        logger.warning(f"Ban forbidden: {ctx.author} -> {user}")
-    except Exception as e:
-        await ctx.send(f"Error banning user: {e}")
-        logger.error(f"Exception banning {user}: {e}")
-
-
-@commands.check(lambda ctx: has_privileged_role(ctx.author))
-@commands.has_permissions(moderate_members=True)
-async def mute_user(ctx: commands.Context, user: discord.Member,
-                    duration: int, *, reason: str = None):
-    """Timeout (mute) a user for a specified duration in hours."""
-    try:
-        until = datetime.utcnow() + timedelta(hours=duration)
-        await user.timeout(until, reason=reason)
-        await report_action(ctx, user, "mute", reason, duration)
-        await ctx.send(f"Muted {user.mention} for {duration}h. Reason: {reason}")
-        logger.info(f"{ctx.author} muted {user} for {duration}h: {reason}")
-    except discord.Forbidden:
-        await ctx.send("I lack permission to mute this user.")
-        logger.warning(f"Mute forbidden: {ctx.author} -> {user}")
-    except Exception as e:
-        await ctx.send(f"Error muting user: {e}")
-        logger.error(f"Exception muting {user}: {e}")
+    logger.info("Member Moderation module setup complete.")

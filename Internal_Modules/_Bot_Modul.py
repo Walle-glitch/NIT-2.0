@@ -19,6 +19,62 @@ logger = setup_logging()
 LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
 ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()
 
+
+# Internal_Modules/_Bot_Modul.py
+import discord
+import aiohttp
+import json
+from . import _Bot_Config
+from ._logging_setup import setup_logging
+
+logger = setup_logging()
+
+# --- NEW SETUP FUNCTION ---
+def setup():
+    """Initializes the Bot Module."""
+    # This module doesn't need complex setup, but the function must exist.
+    logger.info("Bot Module (Jobs) setup complete.")
+
+async def fetch_and_post_jobs(bot, channel_id):
+    """Fetches job listings from the Indeed API and posts them."""
+    params = {
+        "q": "Network Technician",
+        "l": "Sweden",
+        "sort": "date",
+        "format": "json",
+        "v": "2",
+        # You will need to get a publisher ID from Indeed's program if it's still available
+        # "publisher": "YOUR_INDEED_PUBLISHER_ID" 
+    }
+    # Note: The public Indeed API was deprecated. This URL might not work.
+    # You may need to find a new job API provider.
+    url = "http://api.indeed.com/ads/apisearch"
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    jobs = data.get("results", [])
+                    if jobs:
+                        channel = bot.get_channel(channel_id)
+                        if channel:
+                            for job in jobs[:5]: # Post top 5 new jobs
+                                embed = discord.Embed(title=job.get("jobtitle"), url=job.get("url"), description=job.get("snippet"), color=discord.Color.blue())
+                                embed.set_footer(text=f"{job.get('company')} - {job.get('formattedLocation')}")
+                                await channel.send(embed=embed)
+                        else:
+                            logger.error(f"Job channel with ID {channel_id} not found.")
+                    else:
+                        logger.info("No new jobs found.")
+                else:
+                    logger.error(f"Failed to fetch jobs, status code: {response.status}")
+    except Exception as e:
+        logger.error(f"Job fetch error: {e}")
+
+
+
+
 # --------------- Logging Utility ---------------
 async def log_to_channel(bot, message: str):
     """Send message to log channel and server console."""

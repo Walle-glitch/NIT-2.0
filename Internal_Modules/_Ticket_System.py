@@ -21,6 +21,50 @@ GITHUB_API_URL = _Bot_Config._GitHub_API_URL()  # e.g. "https://api.github.com/r
 GITHUB_TOKEN = _Bot_Config._GitHub_Token()
 MENTOR_ROLE = _Bot_Config._Mentor_Role_Name()
 
+# Internal_Modules/_Ticket_System.py
+import discord
+from discord.ext import commands
+from ._logging_setup import setup_logging
+
+logger = setup_logging()
+
+# --- NEW SETUP FUNCTION ---
+def setup(bot: commands.Bot):
+    """Initializes the Ticket System module."""
+    # The setup function registers the view so it persists across bot restarts.
+    bot.add_view(TicketView())
+    logger.info("Ticket System module setup complete.")
+
+class TicketView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None) # Persistent view
+
+    @discord.ui.button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket_button")
+    async def create_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Logic to create a new ticket channel
+        guild = interaction.guild
+        category = discord.utils.get(guild.categories, name="Tickets") # Assumes a 'Tickets' category exists
+        if not category:
+            category = await guild.create_category("Tickets")
+
+        # Permissions for the new channel
+        overwrites = {
+            guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            interaction.user: discord.PermissionOverwrite(read_messages=True, send_messages=True),
+            # Add roles for support staff here
+        }
+
+        channel = await guild.create_text_channel(
+            name=f"ticket-{interaction.user.name}",
+            category=category,
+            overwrites=overwrites
+        )
+
+        await interaction.response.send_message(f"Your ticket has been created: {channel.mention}", ephemeral=True)
+        await channel.send(f"Welcome {interaction.user.mention}! Please describe your issue.")
+
+
+
 # Utility for ticket numbering
 def load_counter():
     if os.path.exists(COUNTER_FILE):
