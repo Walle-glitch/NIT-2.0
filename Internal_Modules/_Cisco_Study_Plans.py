@@ -4,11 +4,11 @@ Unified module for CCNA, CCNP, and CCIE study plan management.
 Each class provides static methods to load current week, fetch weekly goals,
 post to Discord, and cycle weeks automatically.
 """
-import os
-import json
-from datetime import datetime
 import discord
-from discord.ext import tasks
+import json
+import os
+from datetime import datetime
+from _logging_setup import setup_logging # CORRECTED IMPORT
 
 import _Bot_Config  # type: ignore
 from _logging_setup import setup_logging

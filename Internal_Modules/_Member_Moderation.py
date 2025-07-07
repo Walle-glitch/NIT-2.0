@@ -10,15 +10,14 @@ logger = setup_logging()
 import discord
 from discord import app_commands
 from discord.ext import commands
-from . import _Bot_Config
-from ._logging_setup import setup_logging
+import _Bot_Config # CORRECTED IMPORT
+from _logging_setup import setup_logging 
 
 logger = setup_logging()
 
 # --- CORRECTED SETUP FUNCTION ---
 def setup(bot: commands.Bot):
     """Initializes the moderation module and registers its slash commands."""
-    
     admin_channel_id = _Bot_Config._Admin_Channel_ID()
     
     # The command definition MUST be inside the setup function

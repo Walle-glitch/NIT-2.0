@@ -3,13 +3,12 @@ import discord
 from discord.ext import commands
 import json
 import os
-from . import _Bot_Config
-from ._logging_setup import setup_logging
+import _Bot_Config  # CORRECTED IMPORT
+from _logging_setup import setup_logging # CORRECTED IMPORT
 
 logger = setup_logging()
-role_file_path = "" # Module-level variable
+role_file_path = ""
 
-# --- CORRECTED SETUP FUNCTION ---
 def setup():
     """Initializes the Role Management module."""
     global role_file_path
@@ -36,15 +35,13 @@ async def fetch_and_save_roles(bot: commands.Bot):
         logger.error(f"Failed to save roles to JSON: {e}")
 
 def create_role_buttons_view():
-    """Creates a view with buttons for each manageable role."""
-    # This function is now primarily used by the /role slash command
-    # You might want to adapt it further based on your slash command needs
-    pass # Leaving this to be implemented with slash commands logic
+    # This logic is handled by the /role slash command
+    pass
 
 async def assign_role(ctx, role_name):
-    # This logic is now handled by the /role slash command
+    # This logic is handled by the /role slash command
     pass
 
 async def remove_role(ctx, role_name):
-    # This logic is now handled by the /role slash command
+    # This logic is handled by the /role slash command
     pass
