@@ -19,6 +19,7 @@ import _XP_Handler
 import _Bot_Modul
 import _Slash_Commands
 import _Activity_Tracking
+import _Gemini_Handler
 from _logging_setup import setup_logging
 
 # --- 1. Initial Setup ---
