@@ -1,9 +1,3 @@
-# Internal_Modules/_Member_Moderation.py
-import discord
-from discord import app_commands
-from discord.ext import commands
-from . import _Bot_Config
-from ._logging_setup import setup_logging
 
 logger = setup_logging()
 # Internal_Modules/_Member_Moderation.py
