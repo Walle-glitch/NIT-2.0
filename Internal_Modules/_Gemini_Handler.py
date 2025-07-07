@@ -3,23 +3,25 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from ._logging_setup import setup_logging
+from _logging_setup import setup_logging  # CORRECTED IMPORT
 
 logger = setup_logging()
 
-# --- NEW SETUP FUNCTION ---
+# This will be initialized by the setup() function
+model = None
+
 def setup():
     """Initializes the Gemini Handler module by loading the API key and model."""
     global model
-    
-    # Load environment variables from .env file
+
+    # Load environment variables from the project's .env file
     load_dotenv()
-    
-    # Use the specific key name you created: 'Gemini_API'
+
+    # Use the specific key name from your .env file: 'Gemini_API'
     api_key = os.getenv('Gemini_API')
-    
+
     if not api_key:
-        logger.critical("Gemini API Key ('Gemini_API') not found in .env file.")
+        logger.critical("Gemini API Key ('Gemini_API') was not found in the .env file.")
         model = None
         return
 
@@ -32,9 +34,6 @@ def setup():
         logger.error(f"Failed to configure or initialize Gemini model: {e}")
         model = None
 
-# This will be initialized by the setup() function
-model = None
-
 async def ask_gemini(prompt: str) -> str:
     """Sends a prompt to the Gemini API and returns the response."""
     if not model:
@@ -46,4 +45,4 @@ async def ask_gemini(prompt: str) -> str:
         return response.text
     except Exception as e:
         logger.error(f"An error occurred while communicating with the Gemini API: {e}")
-        return f"Sorry, an error occurred while processing your request."
+        return "Sorry, an error occurred while processing your request."
