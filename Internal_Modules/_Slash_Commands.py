@@ -2,19 +2,22 @@
 
 import discord
 from discord import app_commands
+from discord.ext import commands # Make sure commands is imported
 import subprocess
 import importlib
 from datetime import datetime
+import asyncio # Make sure asyncio is imported
 
-# Import modules needed for command logic
-from . import _XP_Handler
-from . import _Role_Management
-from . import _Cisco_Study_Plans
-from . import _Bot_Config
-from . import _Member_Moderation
-from . import _Game
-from . import _Auction
-from . import _Ticket_System
+# --- CORRECTED IMPORTS ---
+# Changed from relative (from . import X) to absolute (import X)
+import _XP_Handler
+import _Role_Management
+import _Cisco_Study_Plans
+import _Bot_Config
+import _Member_Moderation
+import _Game
+import _Auction
+import _Ticket_System
 
 # --- Central Command Setup ---
 # This class will hold all slash commands, making them easy to register.
@@ -23,7 +26,7 @@ class CommandGroup(app_commands.Group):
 
 def setup(bot: commands.Bot):
     """This function is called by main.py to register all commands."""
-    
+
     # --- Ping Command ---
     @bot.tree.command(name="ping", description="Performs a ping test to a specified IP address (default: 8.8.8.8).")
     @app_commands.describe(ip="The IP address to ping.")
@@ -37,12 +40,12 @@ def setup(bot: commands.Bot):
                 stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await process.communicate()
-            
+
             if process.returncode == 0:
                 response = stdout.decode()
             else:
                 response = stderr.decode()
-                
+
             await interaction.followup.send(f"```\n{response}\n```")
         except Exception as e:
             await interaction.followup.send(f"An error occurred: {e}")
@@ -53,13 +56,13 @@ def setup(bot: commands.Bot):
         version_nr = _Bot_Config.VERSION_NR if hasattr(_Bot_Config, 'VERSION_NR') else "Not specified"
         await interaction.response.send_message(f"Current version: {version_nr}", ephemeral=True)
 
-    # --- Level Command (already a slash command, just ensuring it's here) ---
+    # --- Level Command ---
     @bot.tree.command(name="level", description="Shows your or another member's level and XP.")
     @app_commands.describe(member="The member to check the level of. Defaults to you.")
     async def level(interaction: discord.Interaction, member: discord.Member = None):
         if member is None:
             member = interaction.user
-        
+
         user_id = str(member.id)
         user_data = _XP_Handler.xp_data.get(user_id)
 
@@ -78,14 +81,14 @@ def setup(bot: commands.Bot):
         embed.set_thumbnail(url=member.display_avatar.url)
         embed.add_field(name="Level", value=f"**{current_level}**", inline=True)
         embed.add_field(name="XP", value=f"`{current_xp} / {xp_needed}`", inline=True)
-        
+
         progress = int((current_xp / xp_needed) * 20)
         progress_bar = '🟩' * progress + '⬛' * (20 - progress)
         embed.add_field(name="Progress", value=progress_bar, inline=False)
-        
+
         await interaction.response.send_message(embed=embed)
-        
-    # --- Role Command (replaces !addrole and !removerole) ---
+
+    # --- Role Command ---
     @bot.tree.command(name="role", description="Assign or remove roles using buttons.")
     async def role(interaction: discord.Interaction):
         view = _Role_Management.create_role_buttons_view()
@@ -107,7 +110,6 @@ def setup(bot: commands.Bot):
         app_commands.Choice(name="Bot Module (Jobs)", value="Bot_Modul"),
     ])
     async def reload_module(interaction: discord.Interaction, module: app_commands.Choice[str]):
-        # You should add a role or permission check here for security
         bot_admin_role_name = _Bot_Config._Bot_Admin_Role_Name()
         if not discord.utils.get(interaction.user.roles, name=bot_admin_role_name):
             await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
@@ -124,14 +126,12 @@ def setup(bot: commands.Bot):
             'Bot_Modul': _Bot_Modul
         }
         mod_to_reload = modules_map.get(module.value)
-        
+
         try:
             importlib.reload(mod_to_reload)
             await interaction.response.send_message(f"✅ Module `{module.name}` reloaded successfully.", ephemeral=True)
-            # logger.info(f"Module {module.name} reloaded by {interaction.user.name}.") # If you pass logger here
         except Exception as e:
             await interaction.response.send_message(f"🔥 Failed to reload module `{module.name}`. Error: {e}", ephemeral=True)
-            # logger.error(f"Failed to reload module {module.name}: {e}", exc_info=True)
 
     # Add the admin command group to the bot's command tree
     bot.tree.add_command(admin_group)
