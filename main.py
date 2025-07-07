@@ -1,13 +1,12 @@
-# main.py - Restored and Corrected Version
+# main.py - Slash Command Only Version
 
 import os
 import sys
 import logging
-import subprocess
 import asyncio
+from datetime import datetime
 import discord
 from discord.ext import commands, tasks
-import openai
 
 # Add Internal_Modules to path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Internal_Modules'))
@@ -27,45 +26,38 @@ import _Ticket_System
 from _logging_setup import setup_logging
 
 # --- 1. Initial Setup ---
-# Ensure required directories and files exist before anything else
 os.makedirs('logs', exist_ok=True)
 os.makedirs('Json_Files', exist_ok=True)
 
-# Setup logging
 logger = setup_logging()
 
-# Bot intents and initialization
+# Bot intents and initialization. Note: command_prefix is removed.
 intents = discord.Intents.all()
 intents.message_content = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix=None, intents=intents) # No command prefix needed
 
 # Load configuration from _Bot_Config
 try:
     BOT_TOKEN = _Bot_Config._Bot_Token()
     XP_UPDATE_CHANNEL_ID = _Bot_Config._XP_Update_Channel_ID()
     LOG_CHANNEL_ID = _Bot_Config._Log_Channel_ID()
-    ADMIN_CHANNEL_ID = _Bot_Config._Admin_Channel_ID()
+    # ... (rest of your config loading)
     JOB_CHANNEL_ID = _Bot_Config._Job_Channel_ID()
     CCNA_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
     CCNP_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
     CCIE_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
-    BOT_ADMIN_ROLE = _Bot_Config._Bot_Admin_Role_Name()
-    VERSION_NR = "v2.1.0" # You can manage versioning as you see fit
+    VERSION_NR = "v2.2.0" # Version bump for slash commands
 except Exception as e:
     logger.critical(f"Could not load essential configuration from _Bot_Config.py. Error: {e}")
     sys.exit("Fatal: Configuration error.")
 
 
 # --- 2. Data Handling and Background Tasks ---
-
-# Setup modules that require it
 _Activity_Tracking.setup_file()
-_Member_Moderation.setup(ADMIN_CHANNEL_ID)
 _Role_Management.setup(_Bot_Config._Role_Json_File())
-_Auction.setup() # Loads auctions from file
+_Auction.setup()
 
 async def log_to_channel(message: str):
-    """Send logs to the designated Discord channel and the local log file."""
     logger.info(message)
     log_channel = bot.get_channel(LOG_CHANNEL_ID)
     if log_channel:
@@ -76,7 +68,6 @@ async def log_to_channel(message: str):
 
 @tasks.loop(minutes=5)
 async def save_xp_data_loop():
-    """Periodically saves the in-memory XP data to the JSON file."""
     await bot.wait_until_ready()
     try:
         _XP_Handler.save_xp_data(_XP_Handler.xp_data)
@@ -85,22 +76,16 @@ async def save_xp_data_loop():
         logger.error(f"Error in periodic XP save loop: {e}")
 
 # --- 3. Bot Events ---
-
 @bot.event
 async def on_ready():
-    """
-    This function runs ONCE when the bot has started and connected to Discord.
-    """
     print("-" * 30)
     logger.info(f"Bot logged in as {bot.user.name} ({bot.user.id})")
     print(f"Bot logged in as {bot.user.name}")
     print("-" * 30)
 
-    # --- XP Data Loading with Safeguard ---
     _XP_Handler.xp_data = _XP_Handler.load_xp_data()
     logger.info(f"XP data loaded for {len(_XP_Handler.xp_data)} users.")
 
-    # Safeguard to prevent data loss on loading error
     xp_file_path = _Bot_Config._XP_File()
     if not _XP_Handler.xp_data and os.path.exists(xp_file_path) and os.path.getsize(xp_file_path) > 10:
         fatal_error_msg = "FATAL ERROR: XP data loading failed, but the data file is not empty! To prevent data loss, the bot will now shut down. Please check for a corrupt JSON file or permission errors."
@@ -109,7 +94,8 @@ async def on_ready():
         await bot.close()
         return
 
-    # Sync application (slash) commands
+    # --- Setup and Sync Slash Commands ---
+    _Slash_Commands.setup(bot)
     try:
         await bot.tree.sync()
         logger.info("Global slash commands synced.")
@@ -129,136 +115,51 @@ async def on_ready():
 
 @bot.event
 async def on_message(message: discord.Message):
-    """Handles incoming messages for XP and commands."""
     if message.author.bot:
         return
-
-    # --- Correct XP Handling ---
-    # This now uses the in-memory xp_data dictionary, not reading from file each time.
     try:
-        # Note: We pass the bot instance to the handler now.
         await _XP_Handler.handle_xp(message, XP_UPDATE_CHANNEL_ID)
     except Exception as e:
         logger.error(f"Error in handle_xp on_message: {e}")
-
-    await bot.process_commands(message)
+    # Note: `await bot.process_commands(message)` is no longer needed.
 
 @bot.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
-    """Handles XP for reactions."""
     if payload.user_id == bot.user.id:
         return
-
     channel = bot.get_channel(payload.channel_id)
-    if not channel:
-        return
+    if not channel: return
     try:
         message = await channel.fetch_message(payload.message_id)
-        if message.author.bot: # Don't give XP for reacting to bot messages
-            return
+        if message.author.bot: return
         await _XP_Handler.handle_reaction_xp(message, XP_UPDATE_CHANNEL_ID)
     except discord.NotFound:
         return
     except Exception as e:
         logger.error(f"Error in on_raw_reaction_add: {e}")
 
-# --- 4. Command Registration ---
-
-# Setup Slash Commands from the dedicated module
-_Slash_Commands.setup(bot)
-#_Ticket_System.setup_ticketer(bot) # You have this commented out, keeping it that way.
-
-# Basic text commands that you had
-@bot.command()
-async def ping(ctx, ip: str = '8.8.8.8'):
-    """Performs a ping test to the specified IP address."""
-    # This is a blocking call, for a production bot consider `asyncio.create_subprocess_shell`
-    result = subprocess.run(['ping', '-c', '4', ip], capture_output=True, text=True)
-    await ctx.send(f"```\n{result.stdout}\n```")
-
-@bot.command()
-async def version(ctx):
-    """Shows the current bot version."""
-    await ctx.send(f"Current version: {VERSION_NR}")
-
-# Role management commands
-@bot.command(name='addrole')
-async def addrole(ctx, *, role_name: str = None):
-    """Assign a role via buttons or by name."""
-    # This seems to be handled by your slash commands now, but keeping it for compatibility
-    if not role_name:
-        view = _Role_Management.create_role_buttons_view()
-        await ctx.send("Select a role to assign:", view=view)
-    else:
-        await _Role_Management.assign_role(ctx, role_name)
-
-@bot.command(name='removerole')
-async def removerole(ctx, *, role_name: str):
-    """Removes a specified role from the user."""
-    await _Role_Management.remove_role(ctx, role_name)
-
-
-# Admin command to reload modules
-@bot.command()
-@commands.has_role(BOT_ADMIN_ROLE)
-async def reload_module(ctx, module_name: str = None):
-    """Reloads a specified internal module."""
-    modules = {
-        'Role_Management': _Role_Management,
-        'XP_Handler': _XP_Handler,
-        'Auction': _Auction,
-        'Game': _Game,
-        'Moderation': _Member_Moderation,
-        'Ticket_System': _Ticket_System,
-        'Cisco_Study_Plans': _Cisco_Study_Plans,
-        'Bot_Modul': _Bot_Modul
-    }
-    if not module_name:
-        await ctx.send(f"Available modules: `{'`, `'.join(modules.keys())}`")
-        return
-
-    mod = modules.get(module_name)
-    if not mod:
-        await ctx.send(f"Module not found: `{module_name}`")
-        return
-
-    try:
-        import importlib
-        importlib.reload(mod)
-        await ctx.send(f"✅ Module `{module_name}` reloaded successfully.")
-        logger.info(f"Module {module_name} reloaded by {ctx.author.name}.")
-    except Exception as e:
-        await ctx.send(f"🔥 Failed to reload module `{module_name}`. Error: {e}")
-        logger.error(f"Failed to reload module {module_name}: {e}", exc_info=True)
-
-
-# --- 5. Looping Tasks ---
+# --- 4. Looping Tasks (No changes needed here) ---
 
 def is_sunday():
-    """Checks if the current day is Sunday."""
     return datetime.now().weekday() == 6
 
 @tasks.loop(hours=24)
 async def weekly_study_plan_CCNA():
-    """Posts the weekly CCNA study plan on Sundays."""
     if is_sunday():
         await _Cisco_Study_Plans._CCNA_Study_Plan.post_weekly_goal(bot, CCNA_CHANNEL_ID)
 
 @tasks.loop(hours=24)
 async def weekly_study_plan_CCNP():
-    """Posts the weekly CCNP study plan on Sundays."""
     if is_sunday():
         await _Cisco_Study_Plans._CCNP_Study_Plan.post_weekly_goal(bot, CCNP_CHANNEL_ID)
 
 @tasks.loop(hours=24)
 async def weekly_study_plan_CCIE():
-    """Posts the weekly CCIE study plan on Sundays."""
     if is_sunday():
         await _Cisco_Study_Plans._CCIE_Study_Plan.post_weekly_goal(bot, CCIE_CHANNEL_ID)
 
 @tasks.loop(hours=1)
 async def update_roles():
-    """Periodically fetches and saves all server roles to a JSON file."""
     try:
         await _Role_Management.fetch_and_save_roles(bot)
     except Exception as e:
@@ -266,17 +167,16 @@ async def update_roles():
 
 @tasks.loop(hours=24)
 async def job_posting_loop():
-    """Fetches and posts new job listings daily."""
     try:
         await _Bot_Modul.fetch_and_post_jobs(bot, JOB_CHANNEL_ID)
     except Exception as e:
         logger.error(f"Job posting task failed: {e}")
 
-# --- 6. Run the Bot ---
 
+# --- 5. Run the Bot ---
 if __name__ == '__main__':
     if not BOT_TOKEN:
-        logger.critical('FATAL: DISCORD_TOKEN is not set in the environment or config!')
+        logger.critical('FATAL: DISCORD_TOKEN is not set!')
         raise RuntimeError('Missing DISCORD_TOKEN. The bot cannot start.')
     try:
         bot.run(BOT_TOKEN)
