@@ -29,6 +29,18 @@ def setup():
     global xp_data
     xp_data = load_xp_data() # This will now produce better logs
 
+# Lägg till denna funktion i Internal_Modules/_XP_Handler.py
+
+def add_xp_for_history(user_id: int, user_name: str, amount: int):
+    """
+    A simplified function to add a bulk amount of XP to a user from history.
+    This does NOT trigger a level-up check.
+    """
+    uid = str(user_id)
+    user_entry = xp_data.setdefault(uid, {'xp': 0, 'level': 1, 'name': user_name})
+    user_entry['name'] = user_name # Ensure username is up to date
+    user_entry['xp'] += amount
+
 # --- Data Loading and Saving with Enhanced Logging ---
 def load_xp_data() -> dict:
     """Load XP data from JSON file."""
