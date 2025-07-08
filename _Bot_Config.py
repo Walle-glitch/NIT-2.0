@@ -142,8 +142,13 @@ def _Role_Json_File():
 def _Welcome_Message_File():
     return "./Json_Files/welcome_message_id.json"
 
-def _XP_File():
-    return "./Json_Files/xp_data.json"
+def _XP_File() -> str:
+    """
+    Returns the absolute path to the XP file INSIDE the Docker container.
+    This ensures the path is always correct and removes ambiguity.
+    """
+    # The working directory inside the container is /app
+    return "/app/Json_Files/xp_data.json"
 
 def _Question_File():
     """Returns the path to the network questions JSON file."""
