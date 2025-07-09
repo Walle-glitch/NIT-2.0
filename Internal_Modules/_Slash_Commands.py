@@ -62,7 +62,7 @@ def setup(bot: commands.Bot):
 
     @bot.tree.command(name="version", description="Shows the current bot version.")
     async def version(interaction: discord.Interaction):
-        version_nr = getattr(_Bot_Config, 'VERSION_NR', "Not specified")
+        version_nr = _Bot_Config._Version_Number()  
         await interaction.response.send_message(f"Current version: {version_nr}", ephemeral=True)
 
     @bot.tree.command(name="level", description="Shows your or another member's level and XP.")

@@ -27,7 +27,7 @@ def _GitHub_Token() -> str:
 
 def _Version_Number() -> str:
     """Returns the current version number of the bot."""
-    return "v2.6.0"  # Update this when you change the bot version
+    return "v2.6.2"  # Update this when you change the bot version
 
 # --- Generic Bot Info ---
 
