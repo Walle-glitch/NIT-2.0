@@ -40,7 +40,7 @@ try:
     CCNA_CHANNEL_ID = _Bot_Config._CCNA_Study_Channel_ID()
     CCNP_CHANNEL_ID = _Bot_Config._CCNP_Study_Channel_ID()
     CCIE_CHANNEL_ID = _Bot_Config._CCIE_Study_Channel_ID()
-    VERSION_NR = "v2.4.0" # Version bump for error fixes
+    VERSION_NR = _Bot_Config._Version_Number()
 except Exception as e:
     logger.critical(f"Could not load essential configuration from _Bot_Config.py. Error: {e}")
     sys.exit("Fatal: Configuration error.")

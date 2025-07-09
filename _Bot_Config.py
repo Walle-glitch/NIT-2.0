@@ -23,6 +23,12 @@ def _GitHub_Token() -> str:
     """Returns the GitHub token from the environment."""
     return os.getenv("GITHUB_TOKEN")
 
+# --- Version Information ---
+
+def _Version_Number() -> str:
+    """Returns the current version number of the bot."""
+    return "v2.6.0"  # Update this when you change the bot version
+
 # --- Generic Bot Info ---
 
 def _Guild_ID() -> int:
@@ -144,6 +150,3 @@ def _Welcome_Message_File() -> str:
 def _Question_File() -> str:
     """Returns the absolute path to the network questions file."""
     return "/app/Json_Files/network_questions.json"
-
-# --- Versioning ---
-VERSION_NR = "v2.6.0"
