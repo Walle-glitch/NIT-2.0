@@ -200,5 +200,37 @@ def setup(bot: commands.Bot):
 
         await interaction.followup.send(f"✅ **XP Population Complete!**\n- Scanned `{total_messages_scanned}` messages.\n- Updated XP for `{len(message_counts)}` unique users.", ephemeral=True)
 
+    # I filen Internal_Modules/_Slash_Commands.py, inuti setup()-funktionen
+
+    # ... (efter /admin/populate_xp kommandot)
+
+    @admin_group.command(name="recalculate_levels", description="Calculates all user levels after a historical XP population.")
+    async def recalculate_levels(interaction: discord.Interaction):
+        """Processes all accumulated XP and updates every user's level."""
+        bot_admin_role_name = _Bot_Config._Bot_Admin_Role_Name()
+        if not discord.utils.get(interaction.user.roles, name=bot_admin_role_name):
+            await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+            return
+
+        await interaction.response.defer(thinking=True, ephemeral=True)
+
+        logger.info(f"Level recalculation started by {interaction.user.name}.")
+        
+        # Call the new handler function
+        users_updated, total_levels_gained = _XP_Handler.recalculate_all_levels()
+        
+        logger.info(f"Level recalculation complete. Users updated: {users_updated}, Total levels gained: {total_levels_gained}.")
+
+        embed = discord.Embed(
+            title="✅ Level Recalculation Complete",
+            description="All users' levels have been updated based on their total XP.",
+            color=discord.Color.green()
+        )
+        embed.add_field(name="Users Updated", value=str(users_updated), inline=True)
+        embed.add_field(name="Total Levels Gained", value=str(total_levels_gained), inline=True)
+
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+
     # Add the admin command group to the bot's command tree
     bot.tree.add_command(admin_group)

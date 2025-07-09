@@ -150,5 +150,40 @@ async def handle_reaction_xp(reaction_message: discord.Message, xp_update_channe
     
     await check_level_up(user, xp_update_channel_id)
 
+# Lägg till denna funktion i Internal_Modules/_XP_Handler.py
+
+def recalculate_all_levels() -> tuple[int, int]:
+    """
+    Iterates through all users in xp_data and calculates their correct level
+    based on their current XP. This is a batch operation.
+    Returns the number of users updated and total levels gained.
+    """
+    users_updated = 0
+    total_levels_gained = 0
+
+    # Create a copy of the items to iterate over, as we might modify the dict
+    for user_id, user_data in list(xp_data.items()):
+        leveled_up = False
+        # Use a while loop in case a user gained enough XP for multiple levels
+        while user_data.get('xp', 0) >= xp_needed_for_level(user_data.get('level', 1)):
+            current_level = user_data.get('level', 1)
+            needed = xp_needed_for_level(current_level)
+            
+            user_data['xp'] -= needed
+            user_data['level'] += 1
+            total_levels_gained += 1
+            leveled_up = True
+            
+            logger.info(f"User {user_data.get('name', user_id)} leveled up to {user_data['level']} during recalculation.")
+
+        if leveled_up:
+            users_updated += 1
+            
+    if total_levels_gained > 0:
+        save_xp_data(xp_data)
+        
+    return users_updated, total_levels_gained
+
+
 # Note: Late-night role management was removed from this file in a previous step
 # as it was not being used by the main logic. It can be re-added if needed.
